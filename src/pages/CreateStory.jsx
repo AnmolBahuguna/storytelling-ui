@@ -51,13 +51,40 @@ const CreateStory = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log("Generating story with:", formData);
 
-    // Simulate AI Generation delay
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/story-view");
-    }, 2000);
+    // --- REAL API CALL ---
+    const generateStory = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/generate-story",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          },
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Navigate to viewer and pass the generated story data
+          navigate("/story-view", { state: { story: data.story } });
+        } else {
+          alert("Error generating story: " + data.message);
+        }
+      } catch (error) {
+        console.error("Connection Error:", error);
+        alert(
+          "Failed to connect to the server. Is the backend running on port 5000?",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    generateStory();
   };
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
