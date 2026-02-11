@@ -15,6 +15,9 @@ import {
   PauseCircle,
 } from "lucide-react";
 
+// Get Server URL from environment variable
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+
 // Mock Data for Fallback
 const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
@@ -88,6 +91,13 @@ const StoryViewer = () => {
     const pageWidth = 300;
     const pageHeight = 200;
     const margin = 10;
+
+    // Check if jsPDF is available
+    if (!jsPDF) {
+      alert("PDF generation library not loaded.");
+      setIsPdfGenerating(false);
+      return;
+    }
 
     const doc = new jsPDF({
       orientation: "landscape",
@@ -176,14 +186,11 @@ const StoryViewer = () => {
       setIsAudioLoading(true);
       setIsPlaying(true); // Optimistic UI update
 
-      const response = await fetch(
-        "http://localhost:5000/api/generate-speech",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: currentSlide.text }),
-        },
-      );
+      const response = await fetch(`http://${SERVER_URL}/api/generate-speech`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: currentSlide.text }),
+      });
 
       if (!response.ok) throw new Error("Failed to fetch audio");
 

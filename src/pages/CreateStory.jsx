@@ -17,6 +17,10 @@ import {
 } from "lucide-react";
 import Particles from "../components/ui/Particles";
 
+// Get Server URL from environment variable (Vite)
+// Ensure your backend is running on port 5000
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+
 const CreateStory = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -55,8 +59,10 @@ const CreateStory = () => {
     // --- REAL API CALL ---
     const generateStory = async () => {
       try {
+        console.log("Sending request to:", `${SERVER_URL}/api/generate-story`);
+
         const response = await fetch(
-          "http://localhost:5000/api/generate-story",
+          `http://${SERVER_URL}/api/generate-story`,
           {
             method: "POST",
             headers: {
@@ -69,15 +75,16 @@ const CreateStory = () => {
         const data = await response.json();
 
         if (data.success) {
+          console.log("Story generated successfully:", data.story);
           // Navigate to viewer and pass the generated story data
           navigate("/story-view", { state: { story: data.story } });
         } else {
-          alert("Error generating story: " + data.message);
+          alert("Error generating story: " + (data.message || "Unknown error"));
         }
       } catch (error) {
         console.error("Connection Error:", error);
         alert(
-          "Failed to connect to the server. Is the backend running on port 5000?",
+          `Failed to connect to the server at ${SERVER_URL}. Is the backend running?`,
         );
       } finally {
         setLoading(false);
