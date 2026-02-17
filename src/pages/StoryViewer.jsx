@@ -14,17 +14,20 @@ import {
   PlayCircle,
   PauseCircle,
 } from "lucide-react";
+import { COLORS } from "../constants/theme";
 
 // Get Server URL from environment variable
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5000";
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://localhost:5000";
 
 // Mock Data for Fallback
 const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
   // Using loremflickr for random cartoon/fantasy images appropriate for kids
-  // Added 'lock' parameter to ensure consistent images for each slide index
   image: `https://loremflickr.com/1080/1920/cartoon,fantasy,illustration/all?lock=${i + 10}`,
-  text: `This is page ${i + 1} of the magical adventure. The hero enters a new realm filled with wonder, facing challenges that require bravery and wit to overcome. The stars shine brightly above as the journey continues.`,
+  text: `This is page ${i + 1} of the magical adventure. The hero enters a new realm filled with wonder, facing challenges that require bravery and wit to overcome.`,
 }));
 
 const StoryViewer = () => {
@@ -45,67 +48,46 @@ const StoryViewer = () => {
   const currentSlide = slides[currentIndex];
 
   // Stop audio when slide changes or component unmounts
-  // Also handles Auto-Play triggering logic
   useEffect(() => {
-    // 1. Stop any currently playing audio from previous slide
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
 
-    // 2. If Auto-Play is ON, strictly start the next audio
     if (isAutoPlaying) {
       handlePlayAudio();
     } else {
-      // Only reset playing state if NOT auto-playing (avoids UI flicker)
       setIsPlaying(false);
       setIsAudioLoading(false);
     }
 
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
+      if (audioRef.current) audioRef.current.pause();
     };
   }, [currentIndex]);
 
-  // Handle Play/Pause Toggle
   const toggleAutoPlay = () => {
     if (isAutoPlaying) {
-      // STOP
       setIsAutoPlaying(false);
       setIsPlaying(false);
       if (audioRef.current) audioRef.current.pause();
     } else {
-      // START
       setIsAutoPlaying(true);
       handlePlayAudio();
     }
   };
 
-  // --- PDF Generation Logic (3:2 Ratio) ---
   const downloadPDF = async () => {
     setIsPdfGenerating(true);
-
-    // Custom 3:2 Aspect Ratio Page (e.g., 300mm x 200mm)
-    const pageWidth = 300;
-    const pageHeight = 200;
-    const margin = 10;
-
-    // Check if jsPDF is available
-    if (!jsPDF) {
-      alert("PDF generation library not loaded.");
-      setIsPdfGenerating(false);
-      return;
-    }
-
     const doc = new jsPDF({
       orientation: "landscape",
       unit: "mm",
-      format: [pageWidth, pageHeight],
+      format: [300, 200],
     });
 
-    // Layout Calculations (60% Image, 40% Text)
+    const pageWidth = 300;
+    const pageHeight = 200;
+    const margin = 10;
     const imageWidth = (pageWidth - margin * 3) * 0.6;
     const imageHeight = pageHeight - margin * 2;
     const textStartX = margin + imageWidth + margin;
@@ -114,10 +96,8 @@ const StoryViewer = () => {
     try {
       for (let i = 0; i < slides.length; i++) {
         const slide = slides[i];
-
         if (i > 0) doc.addPage([pageWidth, pageHeight], "landscape");
 
-        // 1. Add Image (Left Side)
         try {
           const imgData = await getImageData(slide.image);
           doc.addImage(
@@ -130,16 +110,14 @@ const StoryViewer = () => {
           );
         } catch (err) {
           console.error("Failed to load image for PDF:", err);
-          doc.text("[Image could not be loaded]", margin, pageHeight / 2);
+          doc.text("[Image Error]", margin, pageHeight / 2);
         }
 
-        // 2. Add Text (Right Side)
         doc.setFontSize(16);
         doc.setFont("helvetica", "normal");
         const textLines = doc.splitTextToSize(slide.text, textWidth);
         doc.text(textLines, textStartX, margin + 20);
 
-        // 3. Add Page Number
         doc.setFontSize(10);
         doc.setTextColor(100);
         doc.text(
@@ -152,21 +130,19 @@ const StoryViewer = () => {
         );
         doc.setTextColor(0);
       }
-
       doc.save(`${storyData?.title || "magic-story"}.pdf`);
     } catch (error) {
-      console.error("PDF Generation Error:", error);
-      alert("Could not generate PDF. Please try again.");
+      console.error("PDF Error:", error);
+      alert("Could not generate PDF.");
     } finally {
       setIsPdfGenerating(false);
     }
   };
 
-  // Helper to convert URL to base64 for PDF
   const getImageData = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.crossOrigin = "Anonymous"; // Handle CORS
+      img.crossOrigin = "Anonymous";
       img.onload = () => {
         const canvas = document.createElement("canvas");
         canvas.width = img.width;
@@ -180,13 +156,12 @@ const StoryViewer = () => {
     });
   };
 
-  // --- Audio Logic ---
   const handlePlayAudio = async () => {
     try {
       setIsAudioLoading(true);
-      setIsPlaying(true); // Optimistic UI update
+      setIsPlaying(true);
 
-      const response = await fetch(`http://${SERVER_URL}/api/generate-speech`, {
+      const response = await fetch(`${SERVER_URL}/api/generate-speech`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: currentSlide.text }),
@@ -201,7 +176,6 @@ const StoryViewer = () => {
       audioRef.current.play();
       setIsAudioLoading(false);
 
-      // Handle Audio End -> Auto Advance
       audioRef.current.onended = () => {
         if (isAutoPlaying) {
           if (currentIndex < slides.length - 1) {
@@ -219,15 +193,6 @@ const StoryViewer = () => {
       setIsAudioLoading(false);
       setIsAutoPlaying(false);
       setIsPlaying(false);
-
-      // Fallback: Browser TTS
-      const utterance = new SpeechSynthesisUtterance(currentSlide.text);
-      utterance.onend = () => {
-        if (isAutoPlaying && currentIndex < slides.length - 1) {
-          handleNext();
-        }
-      };
-      window.speechSynthesis.speak(utterance);
     }
   };
 
@@ -245,15 +210,6 @@ const StoryViewer = () => {
     }
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowRight") handleNext();
-      if (e.key === "ArrowLeft") handlePrev();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, slides.length]);
-
   const slideVariants = {
     enter: (direction) => ({ x: direction > 0 ? 1000 : -1000, opacity: 0 }),
     center: { zIndex: 1, x: 0, opacity: 1 },
@@ -265,63 +221,65 @@ const StoryViewer = () => {
   };
 
   return (
-    <div className="relative w-full h-screen bg-[#020205] overflow-hidden flex flex-col font-sans">
-      {/* --- Top Bar --- */}
-      <div className="absolute top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+    <div
+      className={`fixed inset-0 w-full h-full ${COLORS.background.main} flex flex-col font-sans overflow-hidden`}
+    >
+      {/* --- Header (Mobile: Compact, Desktop: Standard) --- */}
+      <div className="absolute top-0 left-0 right-0 z-50 px-4 py-3 md:px-6 md:py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
         <Link
           to="/create-story"
-          className="p-2 bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-white/20 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 transition-colors"
         >
-          <Home size={20} />
+          <Home size={18} />
+          <span className="hidden md:inline font-bold text-sm">Home</span>
         </Link>
-        <div className="flex gap-3">
-          {/* Auto Play Button (Green when playing, White when paused) */}
+
+        <div className="flex gap-2 md:gap-3">
+          {/* Auto Play Button */}
           <button
             onClick={toggleAutoPlay}
-            className={`flex items-center gap-2 px-5 py-2.5 backdrop-blur-md rounded-full font-bold text-sm tracking-wide transition-all duration-300 transform hover:scale-105 ${
+            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-all duration-300 shadow-sm ${
               isAutoPlaying
-                ? "bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.6)] border border-green-400"
-                : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+                ? "bg-green-100 text-green-700 border border-green-200"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
             }`}
-            title="Auto Play Story"
           >
             {isAutoPlaying ? (
               <>
                 {" "}
-                <PauseCircle size={18} className="animate-pulse" /> PLAYING{" "}
+                <PauseCircle size={16} className="animate-pulse" />{" "}
+                <span className="hidden sm:inline">Playing</span>{" "}
               </>
             ) : (
               <>
                 {" "}
-                <PlayCircle size={18} /> START STORY{" "}
+                <PlayCircle size={16} />{" "}
+                <span className="hidden sm:inline">Read to Me</span>{" "}
               </>
             )}
           </button>
 
-          {/* Download PDF Button */}
+          {/* Download PDF */}
           <button
             onClick={downloadPDF}
             disabled={isPdfGenerating}
-            className={`p-2.5 backdrop-blur-md rounded-full text-white transition-all duration-300 ${
-              isPdfGenerating
-                ? "bg-white/5 cursor-wait opacity-50"
-                : "bg-white/10 hover:bg-white/20"
-            }`}
+            className="p-2 md:px-4 md:py-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-full transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
             title="Download PDF"
           >
             {isPdfGenerating ? (
-              <Loader2 size={20} className="animate-spin" />
+              <Loader2 size={16} className="animate-spin" />
             ) : (
-              <Download size={20} />
+              <Download size={16} />
             )}
+            <span className="hidden md:inline font-bold text-xs">PDF</span>
           </button>
         </div>
       </div>
 
-      {/* --- Main Content Split Layout --- */}
-      <div className="flex flex-col md:flex-row h-full w-full relative">
-        {/* --- Left: Image Area (60%) --- */}
-        <div className="relative w-full md:w-[60%] h-[50%] md:h-full bg-slate-900 overflow-hidden shadow-2xl z-10">
+      {/* --- Main Content Area --- */}
+      <div className="flex flex-col md:flex-row h-full w-full pt-[60px] md:pt-[72px]">
+        {/* --- Image Section (Mobile: Top 55%, Desktop: Left 60%) --- */}
+        <div className="relative w-full h-[55%] md:h-full md:w-[60%] bg-slate-100 overflow-hidden shadow-inner md:shadow-none">
           <AnimatePresence initial={false} custom={direction}>
             <motion.img
               key={currentIndex}
@@ -336,77 +294,73 @@ const StoryViewer = () => {
                 opacity: { duration: 0.2 },
               }}
               className="absolute inset-0 w-full h-full object-cover"
-              alt={`Scene ${currentSlide.id || currentIndex + 1}`}
+              alt={`Scene ${currentIndex + 1}`}
             />
           </AnimatePresence>
-          {/* Gradients for text readability if needed, mostly for mobile */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#020205] to-transparent pointer-events-none hidden md:block" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#020205] to-transparent pointer-events-none md:hidden" />
+
+          {/* Mobile Overlay Gradient for text readability transition */}
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent md:hidden" />
         </div>
 
-        {/* --- Right: Text Area (40%) --- */}
-        <div className="w-full md:w-[40%] h-[50%] md:h-full bg-[#020205] text-white p-6 md:p-12 flex flex-col justify-center relative z-20 border-l border-white/5">
-          {/* Progress Dots */}
-          <div className="flex gap-1.5 mb-8 justify-center md:justify-start">
+        {/* --- Text Section (Mobile: Bottom 45%, Desktop: Right 40%) --- */}
+        <div
+          className={`relative w-full h-[45%] md:h-full md:w-[40%] ${COLORS.background.card} flex flex-col justify-between p-6 md:p-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] md:shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-20`}
+        >
+          {/* Progress Indicator */}
+          <div className="flex justify-center md:justify-start gap-1.5 mb-4">
             {slides.map((_, idx) => (
               <div
                 key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" : "w-2 bg-slate-800"}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-yellow-400" : "w-2 bg-slate-200"}`}
               />
             ))}
           </div>
 
           {/* Story Text */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.4 }}
-              className="flex-1 flex items-center"
-            >
-              <p className="text-xl md:text-2xl leading-relaxed text-slate-300 font-medium font-serif">
+          <div className="flex-1 overflow-y-auto no-scrollbar flex items-center">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className={`text-lg md:text-2xl leading-relaxed ${COLORS.text.main} font-medium text-center md:text-left`}
+              >
                 {currentSlide.text}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+              </motion.p>
+            </AnimatePresence>
+          </div>
 
-          {/* Manual Controls */}
-          <div className="mt-8 flex justify-between items-center pt-6 border-t border-white/10">
+          {/* Audio Playing Indicator */}
+          {isAudioLoading && (
+            <div className="flex justify-center md:justify-start items-center gap-2 text-xs text-blue-500 font-bold uppercase tracking-widest animate-pulse py-2">
+              <Loader2 size={12} className="animate-spin" /> Loading Audio...
+            </div>
+          )}
+
+          {/* Navigation Controls */}
+          <div className="mt-4 flex justify-between items-center">
             <button
               onClick={handlePrev}
               disabled={currentIndex === 0}
-              className="p-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white group"
+              className="p-4 rounded-full bg-slate-100 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-200 hover:text-slate-600 transition-all"
             >
-              <ChevronLeft
-                size={28}
-                className="group-hover:-translate-x-1 transition-transform"
-              />
+              <ChevronLeft size={24} />
             </button>
 
-            <div className="text-sm text-slate-500 font-mono">
+            <span className="text-sm font-bold text-slate-400">
               {currentIndex + 1} / {slides.length}
-            </div>
+            </span>
 
             <button
               onClick={handleNext}
               disabled={currentIndex === slides.length - 1}
-              className="p-4 rounded-full bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 text-blue-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all group"
+              className={`p-4 rounded-full ${COLORS.primary.DEFAULT} text-black ${COLORS.primary.shadow} shadow-lg disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed ${COLORS.primary.hover} hover:scale-105 transition-all`}
             >
-              <ChevronRight
-                size={28}
-                className="group-hover:translate-x-1 transition-transform"
-              />
+              <ChevronRight size={24} />
             </button>
           </div>
-
-          {/* Audio Status Indicator */}
-          {isAudioLoading && (
-            <div className="absolute top-6 right-6 flex items-center gap-2 text-xs text-blue-400 font-mono animate-pulse">
-              <Loader2 size={12} className="animate-spin" /> Loading Audio...
-            </div>
-          )}
         </div>
       </div>
     </div>
