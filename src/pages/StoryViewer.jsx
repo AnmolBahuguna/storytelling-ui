@@ -47,6 +47,15 @@ const StoryViewer = () => {
 
   const currentSlide = slides[currentIndex];
 
+  // Helper to resolve full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://placehold.co/600x400?text=No+Image";
+    if (imagePath.startsWith("http")) return imagePath; // Already absolute
+    return `${SERVER_URL}${imagePath}`; // Prepend backend URL
+  };
+
+  const currentImageUrl = getImageUrl(currentSlide.image);
+
   // Stop audio when slide changes or component unmounts
   useEffect(() => {
     if (audioRef.current) {
@@ -99,7 +108,7 @@ const StoryViewer = () => {
         if (i > 0) doc.addPage([pageWidth, pageHeight], "landscape");
 
         try {
-          const imgData = await getImageData(slide.image);
+          const imgData = await getImageData(getImageUrl(slide.image));
           doc.addImage(
             imgData,
             "JPEG",
@@ -110,7 +119,7 @@ const StoryViewer = () => {
           );
         } catch (err) {
           console.error("Failed to load image for PDF:", err);
-          doc.text("[Image Error]", margin, pageHeight / 2);
+          doc.text("[Image Error: Could not load]", margin, pageHeight / 2);
         }
 
         doc.setFontSize(16);
@@ -151,7 +160,10 @@ const StoryViewer = () => {
         ctx.drawImage(img, 0, 0);
         resolve(canvas.toDataURL("image/jpeg"));
       };
-      img.onerror = (e) => reject(e);
+      img.onerror = (e) => {
+        console.error("Image load error:", url);
+        reject(e);
+      };
       img.src = url;
     });
   };
@@ -224,7 +236,7 @@ const StoryViewer = () => {
     <div
       className={`fixed inset-0 w-full h-full ${COLORS.background.main} flex flex-col font-sans overflow-hidden`}
     >
-      {/* --- Header (Mobile: Compact, Desktop: Standard) --- */}
+      {/* --- Header --- */}
       <div className="absolute top-0 left-0 right-0 z-50 px-4 py-3 md:px-6 md:py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
         <Link
           to="/create-story"
@@ -235,7 +247,6 @@ const StoryViewer = () => {
         </Link>
 
         <div className="flex gap-2 md:gap-3">
-          {/* Auto Play Button */}
           <button
             onClick={toggleAutoPlay}
             className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-all duration-300 shadow-sm ${
@@ -259,7 +270,6 @@ const StoryViewer = () => {
             )}
           </button>
 
-          {/* Download PDF */}
           <button
             onClick={downloadPDF}
             disabled={isPdfGenerating}
@@ -276,14 +286,14 @@ const StoryViewer = () => {
         </div>
       </div>
 
-      {/* --- Main Content Area --- */}
+      {/* --- Main Content --- */}
       <div className="flex flex-col md:flex-row h-full w-full pt-[60px] md:pt-[72px]">
-        {/* --- Image Section (Mobile: Top 55%, Desktop: Left 60%) --- */}
+        {/* --- Image Section --- */}
         <div className="relative w-full h-[55%] md:h-full md:w-[60%] bg-slate-100 overflow-hidden shadow-inner md:shadow-none">
           <AnimatePresence initial={false} custom={direction}>
             <motion.img
               key={currentIndex}
-              src={currentSlide.image}
+              src={currentImageUrl}
               custom={direction}
               variants={slideVariants}
               initial="enter"
@@ -295,14 +305,19 @@ const StoryViewer = () => {
               }}
               className="absolute inset-0 w-full h-full object-cover"
               alt={`Scene ${currentIndex + 1}`}
+              onError={(e) => {
+                console.error("Failed to load image:", currentImageUrl);
+                e.target.src =
+                  "https://placehold.co/600x400?text=Image+Not+Found";
+              }}
             />
           </AnimatePresence>
 
-          {/* Mobile Overlay Gradient for text readability transition */}
+          {/* Mobile Overlay Gradient */}
           <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent md:hidden" />
         </div>
 
-        {/* --- Text Section (Mobile: Bottom 45%, Desktop: Right 40%) --- */}
+        {/* --- Text Section --- */}
         <div
           className={`relative w-full h-[45%] md:h-full md:w-[40%] ${COLORS.background.card} flex flex-col justify-between p-6 md:p-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] md:shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-20`}
         >
