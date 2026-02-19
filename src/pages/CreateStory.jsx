@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CreateStorySection from "../components/story/CreateStorySection";
 import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection";
 import FinalTouchesSection from "../components/story/FinalTouchesSection";
-import { ArrowRight, Wand2 } from "lucide-react";
+import { ArrowRight, Wand2, Stars } from "lucide-react";
 import { COLORS, STYLES, FONTS } from "../constants/theme";
 
 // Get Server URL
@@ -49,10 +49,13 @@ const CreateStory = () => {
 
     const generateStory = async () => {
       try {
-        let ageNum = 7;
+        let ageNum = 7; // Default
+        
+        // Updated backend mapping for the new age groups
+        if (formData.ageGroup === "1-3") ageNum = 2;
         if (formData.ageGroup === "3-5") ageNum = 4;
         if (formData.ageGroup === "5-8") ageNum = 7;
-        if (formData.ageGroup === "9+") ageNum = 10;
+        if (formData.ageGroup === "9-14") ageNum = 11;
 
         const payload = {
           ...formData,
@@ -84,32 +87,66 @@ const CreateStory = () => {
     generateStory();
   };
 
+  // Step labels
+  const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
+
   return (
-    <div
-      className={`min-h-screen ${COLORS.background.main} ${FONTS.main} ${COLORS.text.main} flex flex-col items-center py-10 px-4`}
-    >
-      {/* Top Progress Pill */}
-      <div className="mb-8">
-        <div
-          className={`bg-yellow-50 ${COLORS.primary.text} font-bold px-6 py-2 rounded-full border border-yellow-200 shadow-sm text-sm`}
-        >
-          Step {activeSection} of 3
+    <div className={`min-h-screen ${FONTS.main} ${COLORS.text.main} flex flex-col items-center py-10 px-4`}>
+
+      {/* Header badge */}
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="mb-6"
+      >
+        <div className="step-pill flex items-center gap-2">
+          <Stars size={15} />
+          Step {activeSection} of 3 — {stepLabels[activeSection - 1]}
+        </div>
+      </motion.div>
+
+      {/* Progress bar */}
+      <div className="w-full max-w-2xl mb-6">
+        <div className="flex gap-2">
+          {[1, 2, 3].map((step) => (
+            <div
+              key={step}
+              className="flex-1 h-2.5 rounded-full overflow-hidden bg-blue-100"
+            >
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
+                initial={{ width: "0%" }}
+                animate={{ width: activeSection >= step ? "100%" : "0%" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Main Title */}
-      <div className="text-center mb-8">
-        <h1 className={`text-4xl md:text-5xl ${FONTS.heading} mb-3`}>
-          Let's build a story!
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-center mb-6"
+      >
+        <h1 className={`text-4xl md:text-5xl ${FONTS.heading} ${COLORS.text.main} mb-2`}>
+          ✨ Let's Build a Story!
         </h1>
-        <p className={`${COLORS.text.sub} font-medium`}>
-          First, tell us the basics of your adventure.
+        <p className={`${COLORS.text.sub} font-bold text-base`}>
+          {activeSection === 1 && "Tell us about your hero! 🦸"}
+          {activeSection === 2 && "Where does the adventure take place? 🗺️"}
+          {activeSection === 3 && "Almost ready! Pick the finishing touches 🎉"}
         </p>
-      </div>
+      </motion.div>
 
       {/* Card Container */}
-      <div
-        className={`w-full max-w-2xl ${COLORS.background.card} ${STYLES.card}`}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.15 }}
+        className={`w-full max-w-2xl bg-white ${STYLES.card}`}
       >
         <AnimatePresence mode="wait">
           {activeSection === 1 && (
@@ -134,20 +171,20 @@ const CreateStory = () => {
             />
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
-      {/* Bottom Navigation Area */}
+      {/* Navigation Buttons */}
       <div className="mt-8 flex gap-4 w-full max-w-2xl justify-end">
         {activeSection > 1 && (
           <button onClick={handleBack} className={STYLES.button.secondary}>
-            Back
+            ← Back
           </button>
         )}
 
         {activeSection < 3 ? (
           <button
             onClick={handleNext}
-            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} ${COLORS.primary.shadow}`}
+            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary}`}
           >
             Next Step <ArrowRight size={20} />
           </button>
@@ -155,15 +192,15 @@ const CreateStory = () => {
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} ${COLORS.primary.shadow}`}
+            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} disabled:opacity-60 disabled:cursor-not-allowed`}
           >
             {loading ? (
               <>
-                <Wand2 className="animate-spin" /> Creating...
+                <Wand2 className="animate-spin" /> Creating Magic...
               </>
             ) : (
               <>
-                <Wand2 /> Create Story
+                <Wand2 /> Create Story! 🌟
               </>
             )}
           </button>

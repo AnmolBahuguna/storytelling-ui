@@ -1,1 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import "tailwindcss";
+
+
+
+/* ===== Kid-Friendly Blue Theme ===== */
+
+:root {
+  --blue-primary: #3b82f6;
+  --blue-light: #e0f2fe;
+  --blue-dark: #1e3a5f;
+  --yellow-accent: #fbbf24;
+  --teal-accent: #2dd4bf;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: #e0f2fe;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated bubbly background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 10% 20%, rgba(147, 210, 255, 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(99, 179, 255, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(186, 230, 253, 0.6) 0%, transparent 70%),
+    linear-gradient(180deg, #bae6fd 0%, #e0f2fe 60%, #f0f9ff 100%);
+}
+
+/* Floating stars / sparkles */
+body::after {
+  content: '⭐ 🌟 ✨ 💫 ⭐ 🌟 ✨';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: -1;
+  font-size: 1.4rem;
+  word-spacing: 8vw;
+  letter-spacing: 6vw;
+  line-height: 3;
+  opacity: 0.18;
+  animation: floatStars 18s linear infinite alternate;
+}
+
+@keyframes floatStars {
+  0%   { transform: translateY(0px) translateX(0px); }
+  50%  { transform: translateY(-20px) translateX(10px); }
+  100% { transform: translateY(0px) translateX(-10px); }
+}
+
+/* Bubbly card feel */
+.card-kid {
+  background: white;
+  border-radius: 2rem;
+  border: 2.5px solid #bae6fd;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.12), 0 2px 8px rgba(59, 130, 246, 0.08);
+}
+
+/* Input fields */
+input[type="text"] {
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Fun button bounce */
+button {
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Progress pill */
+.step-pill {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: white;
+  border-radius: 999px;
+  font-weight: 800;
+  padding: 0.4rem 1.4rem;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+  letter-spacing: 0.03em;
+}
+
+/* Selected state glow */
+.selected-glow {
+  box-shadow: 0 0 0 3px white, 0 0 0 5px #3b82f6, 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Wiggle animation for icons */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-4deg); }
+  50%       { transform: rotate(4deg); }
+}
+
+.wiggle:hover {
+  animation: wiggle 0.4s ease-in-out infinite;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #e0f2fe; }
+::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 999px; }
+
