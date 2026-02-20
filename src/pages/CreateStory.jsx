@@ -50,7 +50,7 @@ const CreateStory = () => {
     const generateStory = async () => {
       try {
         let ageNum = 7; // Default
-        
+
         // Updated backend mapping for the new age groups
         if (formData.ageGroup === "1-3") ageNum = 2;
         if (formData.ageGroup === "3-5") ageNum = 4;
@@ -63,7 +63,7 @@ const CreateStory = () => {
           lesson: `A story set in ${formData.locationName || "a magical place"}. Language: ${formData.language}. Duration: ${formData.duration}.`,
         };
 
-        const response = await fetch(`${SERVER_URL}/api/v1/generate-story`, {
+        const response = await fetch(`${SERVER_URL}/api/generate-story`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -91,8 +91,9 @@ const CreateStory = () => {
   const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
 
   return (
-    <div className={`min-h-screen ${FONTS.main} ${COLORS.text.main} flex flex-col items-center py-10 px-4`}>
-
+    <div
+      className={`min-h-screen ${FONTS.main} ${COLORS.text.main} flex flex-col items-center py-10 px-4`}
+    >
       {/* Header badge */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
@@ -131,7 +132,9 @@ const CreateStory = () => {
         transition={{ delay: 0.1 }}
         className="text-center mb-6"
       >
-        <h1 className={`text-4xl md:text-5xl ${FONTS.heading} ${COLORS.text.main} mb-2`}>
+        <h1
+          className={`text-4xl md:text-5xl ${FONTS.heading} ${COLORS.text.main} mb-2`}
+        >
           ✨ Let's Build a Story!
         </h1>
         <p className={`${COLORS.text.sub} font-bold text-base`}>
