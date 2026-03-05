@@ -1,0 +1,1626 @@
+
+================================================================================
+FILE: App.jsx
+================================================================================
+
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import CreateStory from "./pages/CreateStory";
+import StoryViewer from "./pages/StoryViewer";
+import LandingPage from "./pages/LandingPage";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Redirect root URL to Login for now */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* Story Routes */}
+        <Route path="/create-story" element={<CreateStory />} />
+        <Route path="/story-view" element={<StoryViewer />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+
+
+================================================================================
+FILE: main.jsx
+================================================================================
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+================================================================================
+FILE: components\landing\heroSection.jsx
+================================================================================
+
+import React from "react";
+import { motion } from "framer-motion";
+
+const HeroSection = () => {
+  return (
+    <section className="bg-[#FAFBFC] pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden text-center relative font-sans">
+      <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center">
+        {/* Top Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-emerald-50 text-emerald-600 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full mb-8 shadow-sm border border-emerald-100"
+        >
+          Magical Stories In Seconds
+        </motion.div>
+
+        {/* Main Heading */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-[40px] md:text-[64px] font-[800] text-[#111827] leading-[1.1] mb-6 tracking-tight"
+        >
+          Unleash Your Child's <br />
+          <span className="text-[#2b7fff] inline-block mt-2">Imagination</span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-lg md:text-xl text-[#4B5563] max-w-2xl mx-auto leading-relaxed mb-10 font-medium"
+        >
+          Create magical, personalized stories for your children in seconds
+          using the power of AI. Designed to spark wonder and safe learning.
+        </motion.p>
+      </div>
+
+      {/* Decorative background blur (optional enhancement) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+    </section>
+  );
+};
+
+export default HeroSection;
+
+
+================================================================================
+FILE: components\landing\pricing.jsx
+================================================================================
+
+import React from "react";
+import { Check } from "lucide-react";
+
+// This is the standalone component you can copy into your landing page
+export function PricingSection() {
+  const plans = [
+    {
+      name: "BASIC",
+      price: "0",
+      features: ["5 Stories per month", "Standard AI", "Web access"],
+      buttonText: "Start Free",
+      isPopular: false,
+    },
+    {
+      name: "ADVENTURER",
+      price: "9",
+      features: [
+        "Unlimited Stories",
+        "Advanced AI Narrator",
+        "Offline downloads",
+        "Ad-free experience",
+      ],
+      buttonText: "Start Adventure",
+      isPopular: true,
+    },
+    {
+      name: "LEGEND",
+      price: "19",
+      features: [
+        "Family Plan (4 users)",
+        "Custom Character Avatars",
+        "Hardcover Print options",
+      ],
+      buttonText: "Become Legend",
+      isPopular: false,
+    },
+  ];
+
+  return (
+    <section className="py-24 bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
+            Simple Pricing
+          </h2>
+          <p className="text-lg text-slate-500">
+            Choose the perfect plan for your little explorer.
+          </p>
+        </div>
+
+        {/* Pricing Cards Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto items-center">
+          {plans.map((plan, index) => (
+            <div
+              key={index}
+              className={`relative bg-white rounded-[2rem] p-8 flex flex-col h-full ${
+                plan.isPopular
+                  ? "border-2 border-blue-500 shadow-xl lg:-mt-8 lg:mb-8 z-10"
+                  : "border border-slate-100 shadow-sm"
+              }`}
+            >
+              {/* Most Popular Badge */}
+              {plan.isPopular && (
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <span className="bg-blue-500 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-4 rounded-full">
+                    Most Popular
+                  </span>
+                </div>
+              )}
+
+              {/* Card Header */}
+              <div className="mb-8">
+                <h3
+                  className={`text-sm font-bold tracking-widest uppercase mb-4 ${
+                    plan.isPopular ? "text-blue-500" : "text-slate-400"
+                  }`}
+                >
+                  {plan.name}
+                </h3>
+                <div className="flex items-baseline text-slate-900">
+                  <span className="text-5xl font-extrabold tracking-tight">
+                    ${plan.price}
+                  </span>
+                  <span className="text-slate-500 ml-1 font-medium">
+                    /month
+                  </span>
+                </div>
+              </div>
+
+              {/* Features List */}
+              <ul className="flex-1 space-y-4 mb-8">
+                {plan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start">
+                    <Check
+                      className="w-5 h-5 text-emerald-500 mr-3 shrink-0"
+                      strokeWidth={3}
+                    />
+                    <span className="text-slate-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Action Button */}
+              <button
+                className={`w-full py-3 px-6 rounded-xl font-bold transition-all duration-200 ${
+                  plan.isPopular
+                    ? "bg-blue-500 text-white hover:bg-blue-600 shadow-md hover:shadow-lg"
+                    : "bg-white text-slate-900 border-2 border-slate-100 hover:border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                {plan.buttonText}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+================================================================================
+FILE: components\landing\whyChooseUs.jsx
+================================================================================
+
+import React from "react";
+import { Sparkles, Shield, BookCopy } from "lucide-react";
+
+// This is the standalone component you can copy into your landing page
+export function WhyChooseUs() {
+  const features = [
+    {
+      title: "AI Magic",
+      description:
+        "Our AI weaves unique tales tailored to your child's specific interests and curiosities.",
+      icon: Sparkles,
+      iconBg: "bg-emerald-50",
+      iconColor: "text-emerald-500",
+    },
+    {
+      title: "Safe & Kid-Friendly",
+      description:
+        "Built-in filters ensure every generated story is appropriate, educational, and positive.",
+      icon: Shield,
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-600",
+    },
+    {
+      title: "Endless Stories",
+      description:
+        "The library never ends, with millions of possible character and theme combinations.",
+      icon: BookCopy,
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-500",
+    },
+  ];
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
+            Why Choose Us
+          </h2>
+          <p className="text-lg text-slate-500">
+            Designed with parents in mind and powered by advanced AI to provide
+            a safe, creative environment.
+          </p>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <div
+                key={index}
+                className="p-8 rounded-[2rem] border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col items-start"
+              >
+                {/* Icon Container */}
+                <div
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${feature.iconBg}`}
+                >
+                  <Icon
+                    className={`w-7 h-7 ${feature.iconColor}`}
+                    strokeWidth={2.5}
+                  />
+                </div>
+
+                {/* Text Content */}
+                <h3 className="text-xl font-bold text-slate-900 mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-slate-500 leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+================================================================================
+FILE: components\story\CreateCustomizeExperienceSection.jsx
+================================================================================
+
+import React from "react";
+import { motion } from "framer-motion";
+import { BookOpenText, Volume2, MapPin } from "lucide-react";
+import { COLORS, FONTS } from "../../constants/theme";
+
+const CustomizeExperienceSection = ({ formData, updateFormData }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      transition={{ duration: 0.35 }}
+      className="flex flex-col gap-7"
+    >
+      {/* Location Input */}
+      <div className="text-center">
+        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+          📍 Where does it start?
+        </label>
+        <div className="relative max-w-xs mx-auto">
+          <input
+            type="text"
+            value={formData.locationName}
+            onChange={(e) => updateFormData("locationName", e.target.value)}
+            className="w-full bg-sky-50 hover:bg-sky-100 focus:bg-white text-center text-lg font-extrabold py-3 pl-4 pr-10 rounded-2xl outline-none border-2 border-sky-100 focus:border-blue-400 transition-all placeholder-blue-200 text-blue-900"
+            placeholder="e.g. The Moon Base 🌙"
+          />
+          <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 pointer-events-none" size={18} />
+        </div>
+      </div>
+
+      {/* Reading Mode */}
+      <div className="text-center">
+        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+          📖 How do you want to enjoy it?
+        </label>
+        <div className="flex justify-center gap-4">
+          {[
+            { id: "read",   icon: <BookOpenText size={30} />, label: "I'll Read", emoji: "📚" },
+            { id: "listen", icon: <Volume2 size={30} />,      label: "Read to Me", emoji: "🔊" },
+          ].map((opt) => (
+            <motion.button
+              key={opt.id}
+              whileTap={{ scale: 0.93 }}
+              onClick={() => updateFormData("mediaType", opt.id)}
+              className={`w-36 h-32 rounded-3xl flex flex-col items-center justify-center border-2 transition-all duration-200 gap-2 ${
+                formData.mediaType === opt.id
+                  ? "bg-blue-500 border-blue-500 text-white shadow-lg shadow-blue-200 scale-105"
+                  : "bg-sky-50 border-sky-100 text-blue-400 hover:border-blue-200"
+              }`}
+            >
+              <span className="text-3xl">{opt.emoji}</span>
+              <span className="font-extrabold text-sm">{opt.label}</span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Duration */}
+      <div className="text-center">
+        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+          ⏱️ How long?
+        </label>
+        <div className="flex justify-center gap-3">
+          {[
+            { id: "short",  label: "Short",  emoji: "⚡" },
+            { id: "medium", label: "Medium", emoji: "🌙" },
+            { id: "long",   label: "Long",   emoji: "🌌" },
+          ].map((dur) => (
+            <motion.button
+              key={dur.id}
+              whileTap={{ scale: 0.93 }}
+              onClick={() => updateFormData("duration", dur.id)}
+              className={`px-5 py-3 rounded-2xl font-extrabold text-sm transition-all border-2 flex items-center gap-1.5 ${
+                formData.duration === dur.id
+                  ? "bg-blue-500 border-blue-500 text-white shadow-md shadow-blue-200"
+                  : "bg-sky-50 border-sky-100 text-blue-500 hover:border-blue-200"
+              }`}
+            >
+              <span>{dur.emoji}</span> {dur.label}
+            </motion.button>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default CustomizeExperienceSection;
+
+================================================================================
+FILE: components\story\CreateStorySection.jsx
+================================================================================
+
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  Rocket,
+  TreeDeciduous,
+  Waves,
+  Castle,
+  PenLine,
+  Zap,
+  PawPrint,
+  Wand2,
+  Ship,
+  Search,
+  Cat,
+  Bot,
+  Trophy,
+  Hourglass,
+  Snowflake,
+  Ghost,
+  Car
+} from "lucide-react";
+import { COLORS, FONTS } from "../../constants/theme";
+
+const CreateStorySection = ({ formData, updateFormData }) => {
+  // Added 1-3 and replaced 9+ with 9-14
+  const ageGroups = [
+    { id: "1-3", label: "1–3", sub: "YEARS", emoji: "🍼" },
+    { id: "3-5", label: "3–5", sub: "YEARS", emoji: "🐣" },
+    { id: "5-8", label: "5–8", sub: "YEARS", emoji: "🚀" },
+    { id: "9-14", label: "9–14", sub: "YEARS", emoji: "🦁" },
+  ];
+
+  // Expanded to 16 total themes
+  const themes = [
+    { id: "space", label: "Space", icon: <Rocket size={20} />, emoji: "🚀", bg: "bg-blue-100", accent: "text-blue-500" },
+    { id: "forest", label: "Jungle", icon: <TreeDeciduous size={20} />, emoji: "🌿", bg: "bg-green-100", accent: "text-green-500" },
+    { id: "castle", label: "Fairytale", icon: <Castle size={20} />, emoji: "🏰", bg: "bg-pink-100", accent: "text-pink-500" },
+    { id: "ocean", label: "Ocean", icon: <Waves size={20} />, emoji: "🌊", bg: "bg-cyan-100", accent: "text-cyan-500" },
+    { id: "superhero", label: "Superhero", icon: <Zap size={20} />, emoji: "⚡", bg: "bg-yellow-100", accent: "text-yellow-500" },
+    { id: "dinosaur", label: "Dinosaur", icon: <PawPrint size={20} />, emoji: "🦖", bg: "bg-emerald-100", accent: "text-emerald-500" },
+    { id: "magic", label: "Magic", icon: <Wand2 size={20} />, emoji: "✨", bg: "bg-purple-100", accent: "text-purple-500" },
+    { id: "pirate", label: "Pirate", icon: <Ship size={20} />, emoji: "🏴‍☠️", bg: "bg-stone-100", accent: "text-stone-500" },
+    { id: "mystery", label: "Mystery", icon: <Search size={20} />, emoji: "🕵️", bg: "bg-indigo-100", accent: "text-indigo-500" },
+    { id: "animal", label: "Animals", icon: <Cat size={20} />, emoji: "🐾", bg: "bg-orange-100", accent: "text-orange-500" },
+    { id: "robot", label: "Robots", icon: <Bot size={20} />, emoji: "🤖", bg: "bg-slate-100", accent: "text-slate-500" },
+    { id: "sports", label: "Sports", icon: <Trophy size={20} />, emoji: "🏆", bg: "bg-red-100", accent: "text-red-500" },
+    { id: "history", label: "History", icon: <Hourglass size={20} />, emoji: "⏳", bg: "bg-amber-100", accent: "text-amber-700" },
+    { id: "winter", label: "Winter", icon: <Snowflake size={20} />, emoji: "❄️", bg: "bg-sky-100", accent: "text-sky-500" },
+    { id: "spooky", label: "Spooky", icon: <Ghost size={20} />, emoji: "👻", bg: "bg-fuchsia-100", accent: "text-fuchsia-500" },
+    { id: "racing", label: "Racing", icon: <Car size={20} />, emoji: "🏎️", bg: "bg-rose-100", accent: "text-rose-500" },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      transition={{ duration: 0.35 }}
+      className="flex flex-col gap-7"
+    >
+      {/* Hero Name */}
+      <div className="text-center">
+        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+          🦸 Who is the hero?
+        </label>
+        <div className="relative max-w-xs mx-auto">
+          <input
+            type="text"
+            value={formData.heroName}
+            onChange={(e) => updateFormData("heroName", e.target.value)}
+            className="w-full bg-sky-50 hover:bg-sky-100 focus:bg-white text-center text-lg font-extrabold py-3 px-4 rounded-2xl outline-none border-2 border-sky-100 focus:border-blue-400 transition-all placeholder-blue-200 text-blue-900"
+            placeholder="Name your hero..."
+          />
+          <PenLine className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 pointer-events-none" size={18} />
+        </div>
+      </div>
+
+      {/* Age Selection */}
+      <div className="text-center">
+        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+          🎂 How old are they?
+        </label>
+        {/* Added flex-wrap in case screen is small */}
+        <div className="flex flex-wrap justify-center gap-4">
+          {ageGroups.map((group) => (
+            <motion.button
+              key={group.id}
+              whileTap={{ scale: 0.93 }}
+              onClick={() => updateFormData("ageGroup", group.id)}
+              className={`w-24 h-24 rounded-3xl flex flex-col items-center justify-center border-2 transition-all duration-200 gap-1 ${
+                formData.ageGroup === group.id
+                  ? "bg-blue-500 border-blue-500 text-white shadow-lg shadow-blue-200 scale-105"
+                  : "bg-sky-50 border-sky-100 text-blue-300 hover:border-blue-200 hover:text-blue-500"
+              }`}
+            >
+              <span className="text-2xl">{group.emoji}</span>
+              <span className="text-base font-extrabold leading-none">{group.label}</span>
+              <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">{group.sub}</span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Theme Selection */}
+      <div className="text-center">
+        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+          🌍 Pick a World
+        </label>
+        {/* Updated grid to be responsive and wider to accommodate 16 options */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
+          {themes.map((theme) => (
+            <motion.button
+              key={theme.id}
+              whileTap={{ scale: 0.93 }}
+              onClick={() => updateFormData("theme", theme.id)}
+              className={`aspect-square rounded-2xl flex flex-col items-center justify-center border-2 transition-all duration-200 gap-1 ${
+                formData.theme === theme.id
+                  ? "bg-blue-500 border-blue-500 shadow-md shadow-blue-200 scale-105"
+                  : "bg-sky-50 border-sky-100 hover:border-blue-200"
+              }`}
+            >
+              <div className={`p-2 rounded-xl ${formData.theme === theme.id ? "bg-white/20 text-white" : `${theme.bg} ${theme.accent}`}`}>
+                {theme.icon}
+              </div>
+              <span className={`text-xs font-extrabold ${formData.theme === theme.id ? "text-white" : "text-blue-700"}`}>
+                {theme.label}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default CreateStorySection;
+
+================================================================================
+FILE: components\story\FinalTouchesSection.jsx
+================================================================================
+
+import React from "react";
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
+import { COLORS, FONTS } from "../../constants/theme";
+
+const FinalTouchesSection = ({ formData, updateFormData }) => {
+  const languages = [
+    { id: "English", flag: "🇬🇧" },
+    { id: "Hindi",   flag: "🇮🇳" },
+    { id: "Spanish", flag: "🇪🇸" },
+    { id: "French",  flag: "🇫🇷" },
+  ];
+
+  const themeEmojis = {
+    space: "🚀", forest: "🌿", castle: "🏰", ocean: "🌊",
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      transition={{ duration: 0.35 }}
+      className="flex flex-col gap-7"
+    >
+      {/* Language Selection */}
+      <div className="text-center">
+        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+          🌐 Choose Language
+        </label>
+        <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+          {languages.map((lang) => (
+            <motion.button
+              key={lang.id}
+              whileTap={{ scale: 0.93 }}
+              onClick={() => updateFormData("language", lang.id)}
+              className={`py-3 px-4 rounded-2xl flex items-center justify-between border-2 transition-all ${
+                formData.language === lang.id
+                  ? "bg-blue-500 border-blue-500 shadow-md shadow-blue-200"
+                  : "bg-sky-50 border-sky-100 hover:border-blue-200"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{lang.flag}</span>
+                <span className={`font-extrabold text-sm ${formData.language === lang.id ? "text-white" : "text-blue-700"}`}>
+                  {lang.id}
+                </span>
+              </div>
+              {formData.language === lang.id && (
+                <div className="bg-white/30 rounded-full p-0.5">
+                  <Check size={13} className="text-white" />
+                </div>
+              )}
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Story Summary */}
+      <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-3xl p-5 border-2 border-sky-100 text-center">
+        <span className="text-blue-400 text-xs font-extrabold tracking-widest uppercase block mb-2">
+          🎉 Your Story
+        </span>
+        <p className="text-blue-900 font-bold text-base leading-relaxed">
+          A{" "}
+          <span className="text-blue-600 font-extrabold">{formData.duration}</span>{" "}
+          {themeEmojis[formData.theme] || "✨"} story about{" "}
+          <span className="text-blue-600 font-extrabold">{formData.heroName || "your hero"}</span>{" "}
+          ({formData.ageGroup} yrs) exploring{" "}
+          <span className="text-blue-600 font-extrabold capitalize">{formData.theme}</span>!
+        </p>
+        {formData.locationName && (
+          <p className="text-blue-400 font-bold text-sm mt-1">
+            📍 Starting at: {formData.locationName}
+          </p>
+        )}
+      </div>
+
+      {/* Fun ready message */}
+      <div className="text-center">
+        <p className="text-blue-400 font-extrabold text-sm animate-pulse">
+          ✨ Ready to create some magic? Hit the button below! ✨
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+
+export default FinalTouchesSection;
+
+================================================================================
+FILE: components\ui\footer.jsx
+================================================================================
+
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  BookOpen,
+  Twitter,
+  Instagram,
+  Users,
+  ShieldCheck,
+  Smile,
+} from "lucide-react";
+import { FONTS } from "../../constants/theme";
+
+const Footer = () => {
+  return (
+    <footer className="bg-white border-t border-slate-100 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 mb-16">
+          {/* Brand & Description */}
+          <div className="md:col-span-1">
+            <Link to="/" className="flex items-center gap-2.5 mb-6 group w-max">
+              <div className="bg-[#2b7fff] p-2 rounded-xl text-white group-hover:scale-105 transition-transform duration-300">
+                <BookOpen size={22} strokeWidth={2.5} />
+              </div>
+              <span
+                className={`text-xl font-extrabold text-slate-900 tracking-tight ${FONTS.heading}`}
+              >
+                StoryAI
+              </span>
+            </Link>
+            <p className="text-sm text-slate-500 leading-relaxed pr-4">
+              Empowering the next generation of storytellers through the magic
+              of artificial intelligence.
+            </p>
+            <div className="flex gap-4 mt-6 text-slate-400">
+              <a
+                href="#"
+                className="hover:text-[#2b7fff] transition-colors"
+                aria-label="Twitter"
+              >
+                <Twitter size={20} />
+              </a>
+              <a
+                href="#"
+                className="hover:text-[#2b7fff] transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={20} />
+              </a>
+            </div>
+          </div>
+
+          {/* Product Links */}
+          <div>
+            <h4 className="font-semibold text-slate-900 mb-6">Product</h4>
+            <ul className="space-y-4">
+              <li>
+                <a
+                  href="#features"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  Features
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#pricing"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  App Download
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  Story Library
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company Links */}
+          <div>
+            <h4 className="font-semibold text-slate-900 mb-6">Company</h4>
+            <ul className="space-y-4">
+              <li>
+                <a
+                  href="#"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  Terms of Service
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h4 className="font-semibold text-slate-900 mb-6">Contact</h4>
+            <ul className="space-y-4">
+              <li>
+                <a
+                  href="mailto:hello@storyai.com"
+                  className="text-sm text-slate-500 hover:text-[#2b7fff] transition-colors"
+                >
+                  hello@storyai.com
+                </a>
+              </li>
+              <li>
+                <span className="text-sm text-slate-500">
+                  1-800-MAGIC-STORY
+                </span>
+              </li>
+              <li>
+                <span className="text-sm text-slate-500">
+                  Based in Sunnyvale, CA
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-slate-400">
+            © {new Date().getFullYear()} StoryAI. All rights reserved.
+          </p>
+          <div className="flex items-center gap-4 text-slate-300">
+            <Users size={18} aria-label="Family Friendly" />
+            <ShieldCheck size={18} aria-label="Secure" />
+            <Smile size={18} aria-label="Kid Safe" />
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
+
+
+================================================================================
+FILE: components\ui\header.jsx
+================================================================================
+
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X, BookOpen } from "lucide-react";
+import { FONTS } from "../../constants/theme";
+
+const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Handle scroll effect for glassmorphism/shadow
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Features", href: "#features" },
+    { name: "Pricing", href: "#pricing" },
+  ];
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/90 backdrop-blur-md shadow-sm py-3"
+          : "bg-white border-b border-slate-100 py-4"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="bg-[#2b7fff] p-2 rounded-xl text-white group-hover:scale-105 transition-transform duration-300">
+            <BookOpen size={22} strokeWidth={2.5} />
+          </div>
+          <span
+            className={`text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight ${FONTS.heading}`}
+          >
+            StoryAI
+          </span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
+        </nav>
+
+        {/* Desktop Auth Buttons */}
+        <div className="hidden md:flex items-center gap-3">
+          <Link
+            to="/login"
+            className="text-sm font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 px-6 py-2.5 rounded-full transition-colors"
+          >
+            Login
+          </Link>
+          <Link
+            to="/signup"
+            className="text-sm font-semibold bg-[#2b7fff] hover:bg-blue-600 text-white px-6 py-2.5 rounded-full shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5"
+          >
+            Get Started
+          </Link>
+        </div>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          className="md:hidden p-2 text-slate-600 hover:text-slate-900 transition-colors"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-slate-100 shadow-xl py-4 px-6 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="font-semibold text-slate-600 hover:text-[#2b7fff]"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {link.name}
+            </a>
+          ))}
+          <hr className="border-slate-100 my-2" />
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/login"
+              className="font-semibold text-slate-700 bg-slate-50 px-6 py-3 rounded-full text-center hover:bg-slate-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              className="font-semibold bg-[#2b7fff] text-white px-6 py-3 rounded-full text-center shadow-sm hover:bg-blue-600"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Get Started
+            </Link>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};
+
+export default Header;
+
+
+================================================================================
+FILE: pages\CreateStory.jsx
+================================================================================
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import CreateStorySection from "../components/story/CreateStorySection";
+import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection";
+import FinalTouchesSection from "../components/story/FinalTouchesSection";
+import { ArrowRight, Wand2, Stars } from "lucide-react";
+import { COLORS, STYLES, FONTS } from "../constants/theme";
+
+// Get Server URL
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://localhost:5000";
+
+const CreateStory = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [activeSection, setActiveSection] = useState(1);
+
+  const [formData, setFormData] = useState({
+    heroName: "",
+    ageGroup: "5-8",
+    theme: "space",
+    mediaType: "read",
+    duration: "short",
+    locationName: "",
+    language: "English",
+  });
+
+  const updateFormData = (key, value) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleNext = () => {
+    if (activeSection === 1 && !formData.heroName) {
+      return alert("Please tell us the hero's name!");
+    }
+    setActiveSection((prev) => prev + 1);
+  };
+
+  const handleBack = () => {
+    setActiveSection((prev) => prev - 1);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const generateStory = async () => {
+      try {
+        let ageNum = 7; // Default
+
+        // Updated backend mapping for the new age groups
+        if (formData.ageGroup === "1-3") ageNum = 2;
+        if (formData.ageGroup === "3-5") ageNum = 4;
+        if (formData.ageGroup === "5-8") ageNum = 7;
+        if (formData.ageGroup === "9-14") ageNum = 11;
+
+        const payload = {
+          ...formData,
+          age: ageNum,
+          lesson: `A story set in ${formData.locationName || "a magical place"}. Language: ${formData.language}. Duration: ${formData.duration}.`,
+        };
+
+        const response = await fetch(`${SERVER_URL}/api/generate-story`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          navigate("/story-view", { state: { story: data.story } });
+        } else {
+          alert("Error: " + (data.message || "Unknown error"));
+        }
+      } catch (error) {
+        console.error("Connection Error:", error);
+        alert(`Failed to connect to server.`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    generateStory();
+  };
+
+  // Step labels
+  const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
+
+  return (
+    <div
+      className={`min-h-screen ${FONTS.main} ${COLORS.text.main} flex flex-col items-center py-10 px-4`}
+    >
+      {/* Header badge */}
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="mb-6"
+      >
+        <div className="step-pill flex items-center gap-2">
+          <Stars size={15} />
+          Step {activeSection} of 3 — {stepLabels[activeSection - 1]}
+        </div>
+      </motion.div>
+
+      {/* Progress bar */}
+      <div className="w-full max-w-2xl mb-6">
+        <div className="flex gap-2">
+          {[1, 2, 3].map((step) => (
+            <div
+              key={step}
+              className="flex-1 h-2.5 rounded-full overflow-hidden bg-blue-100"
+            >
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
+                initial={{ width: "0%" }}
+                animate={{ width: activeSection >= step ? "100%" : "0%" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Title */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-center mb-6"
+      >
+        <h1
+          className={`text-4xl md:text-5xl ${FONTS.heading} ${COLORS.text.main} mb-2`}
+        >
+          ✨ Let's Build a Story!
+        </h1>
+        <p className={`${COLORS.text.sub} font-bold text-base`}>
+          {activeSection === 1 && "Tell us about your hero! 🦸"}
+          {activeSection === 2 && "Where does the adventure take place? 🗺️"}
+          {activeSection === 3 && "Almost ready! Pick the finishing touches 🎉"}
+        </p>
+      </motion.div>
+
+      {/* Card Container */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.15 }}
+        className={`w-full max-w-2xl bg-white ${STYLES.card}`}
+      >
+        <AnimatePresence mode="wait">
+          {activeSection === 1 && (
+            <CreateStorySection
+              key="step1"
+              formData={formData}
+              updateFormData={updateFormData}
+            />
+          )}
+          {activeSection === 2 && (
+            <CustomizeExperienceSection
+              key="step2"
+              formData={formData}
+              updateFormData={updateFormData}
+            />
+          )}
+          {activeSection === 3 && (
+            <FinalTouchesSection
+              key="step3"
+              formData={formData}
+              updateFormData={updateFormData}
+            />
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Navigation Buttons */}
+      <div className="mt-8 flex gap-4 w-full max-w-2xl justify-end">
+        {activeSection > 1 && (
+          <button onClick={handleBack} className={STYLES.button.secondary}>
+            ← Back
+          </button>
+        )}
+
+        {activeSection < 3 ? (
+          <button
+            onClick={handleNext}
+            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary}`}
+          >
+            Next Step <ArrowRight size={20} />
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} disabled:opacity-60 disabled:cursor-not-allowed`}
+          >
+            {loading ? (
+              <>
+                <Wand2 className="animate-spin" /> Creating Magic...
+              </>
+            ) : (
+              <>
+                <Wand2 /> Create Story! 🌟
+              </>
+            )}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CreateStory;
+
+
+================================================================================
+FILE: pages\LandingPage.jsx
+================================================================================
+
+import HeroSection from "../components/landing/heroSection";
+import { PricingSection } from "../components/landing/pricing";
+import { WhyChooseUs } from "../components/landing/whyChooseUs";
+import Footer from "../components/ui/footer";
+import Header from "../components/ui/header";
+
+const LandingPage = () => {
+  return (
+    <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+      <Header />
+      <main>
+        <HeroSection />
+        <WhyChooseUs />
+        <PricingSection />
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default LandingPage;
+
+
+================================================================================
+FILE: pages\StoryViewer.jsx
+================================================================================
+
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { jsPDF } from "jspdf";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Home,
+  Download,
+  Loader2,
+  PlayCircle,
+  Square,
+} from "lucide-react";
+import { COLORS } from "../constants/theme";
+
+// Get Server URL from environment variable
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://localhost:5000";
+
+// Mock Data for Fallback
+const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
+  id: i + 1,
+  image: `https://loremflickr.com/1080/1920/cartoon,fantasy,illustration/all?lock=${i + 10}`,
+  text: `This is page ${i + 1} of the magical adventure. The hero enters a new realm filled with wonder, facing challenges that require bravery and wit to overcome.`,
+}));
+
+const StoryViewer = () => {
+  const location = useLocation();
+  const storyData = location.state?.story;
+  const slides = storyData?.slides || MOCK_STORY_FALLBACK;
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [isPdfGenerating, setIsPdfGenerating] = useState(false);
+
+  // Triggers the next slide safely avoiding stale closures
+  const [audioTrigger, setAudioTrigger] = useState(0);
+
+  const audioRef = useRef(new Audio());
+
+  // Audio Cache: Stores Promises that resolve to Object URLs for seamless playback
+  const audioCache = useRef({});
+
+  const currentSlide = slides[currentIndex];
+
+  // Helper to resolve full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://placehold.co/600x400?text=No+Image";
+    if (imagePath.startsWith("http")) return imagePath;
+    return `${SERVER_URL}${imagePath}`;
+  };
+
+  const currentImageUrl = getImageUrl(currentSlide.image);
+
+  // --- MEMORY CLEANUP ---
+  // Ensure we revoke the created Object URLs when the component unmounts
+  useEffect(() => {
+    const cache = audioCache.current;
+    return () => {
+      Object.values(cache).forEach((promise) => {
+        promise
+          .then((url) => {
+            if (typeof url === "string") URL.revokeObjectURL(url);
+          })
+          .catch(() => {});
+      });
+    };
+  }, []);
+
+  // --- AUDIO LOGIC (Prefetching & Closure-Safe) ---
+  useEffect(() => {
+    let isMounted = true;
+
+    const playAudio = async () => {
+      // If user stopped autoplay, halt everything
+      if (!isAutoPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+        setIsAudioLoading(false);
+        return;
+      }
+
+      try {
+        setIsAudioLoading(true);
+
+        // 1. Fetch or get cached audio for CURRENT slide
+        if (!audioCache.current[currentIndex]) {
+          audioCache.current[currentIndex] = fetch(
+            `${SERVER_URL}/api/generate-speech`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: slides[currentIndex].text }),
+            },
+          )
+            .then((res) => {
+              if (!res.ok) throw new Error("Failed to fetch audio");
+              return res.blob();
+            })
+            .then((blob) => URL.createObjectURL(blob));
+        }
+
+        // Await the promise (it will be instant if already prefetched)
+        const url = await audioCache.current[currentIndex];
+
+        // Prevent playing if user navigated away or stopped while fetching
+        if (!isMounted || !isAutoPlaying) return;
+
+        audioRef.current.src = url;
+        audioRef.current.play();
+        setIsPlaying(true);
+        setIsAudioLoading(false);
+
+        // 2. PRE-FETCH NEXT SLIDE AUDIO (Background Task)
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < slides.length && !audioCache.current[nextIndex]) {
+          audioCache.current[nextIndex] = fetch(
+            `${SERVER_URL}/api/generate-speech`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: slides[nextIndex].text }),
+            },
+          )
+            .then((res) => {
+              if (!res.ok) throw new Error("Failed to fetch audio");
+              return res.blob();
+            })
+            .then((blob) => URL.createObjectURL(blob))
+            .catch((err) => {
+              console.error("Prefetch failed:", err);
+              // Delete failed promise so it can be retried when the user actually reaches the slide
+              delete audioCache.current[nextIndex];
+            });
+        }
+
+        // 3. When audio finishes, trigger the advancement state
+        audioRef.current.onended = () => {
+          if (isMounted) {
+            setIsPlaying(false);
+            setAudioTrigger((prev) => prev + 1);
+          }
+        };
+      } catch (error) {
+        console.error("Audio Error:", error);
+        if (isMounted) {
+          setIsAudioLoading(false);
+          setIsPlaying(false);
+          setIsAutoPlaying(false);
+          delete audioCache.current[currentIndex]; // allow retry
+        }
+      }
+    };
+
+    playAudio();
+
+    // Cleanup: Stop audio immediately if slide changes or component unmounts
+    return () => {
+      isMounted = false;
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+    };
+  }, [currentIndex, isAutoPlaying, slides]);
+
+  // --- AUTO-ADVANCE LOGIC ---
+  useEffect(() => {
+    // Only run if audio just finished AND we are still in AutoPlay mode
+    if (audioTrigger > 0 && isAutoPlaying) {
+      if (currentIndex < slides.length - 1) {
+        setDirection(1);
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        // Reached the end of the story
+        setIsAutoPlaying(false);
+      }
+    }
+  }, [audioTrigger]);
+
+  const downloadPDF = async () => {
+    setIsPdfGenerating(true);
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: [300, 200],
+    });
+
+    const pageWidth = 300;
+    const pageHeight = 200;
+    const margin = 10;
+    const imageWidth = (pageWidth - margin * 3) * 0.6;
+    const imageHeight = pageHeight - margin * 2;
+    const textStartX = margin + imageWidth + margin;
+    const textWidth = (pageWidth - margin * 3) * 0.4;
+
+    try {
+      for (let i = 0; i < slides.length; i++) {
+        const slide = slides[i];
+        if (i > 0) doc.addPage([pageWidth, pageHeight], "landscape");
+
+        try {
+          const imgData = await getImageData(getImageUrl(slide.image));
+          doc.addImage(
+            imgData,
+            "JPEG",
+            margin,
+            margin,
+            imageWidth,
+            imageHeight,
+          );
+        } catch (err) {
+          console.error("Failed to load image for PDF:", err);
+          doc.text("[Image Error: Could not load]", margin, pageHeight / 2);
+        }
+
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "normal");
+        const textLines = doc.splitTextToSize(slide.text, textWidth);
+        doc.text(textLines, textStartX, margin + 20);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(
+          `Page ${i + 1}`,
+          textStartX + textWidth / 2,
+          pageHeight - margin,
+          null,
+          null,
+          "center",
+        );
+        doc.setTextColor(0);
+      }
+      doc.save(`${storyData?.title || "magic-story"}.pdf`);
+    } catch (error) {
+      console.error("PDF Error:", error);
+      alert("Could not generate PDF.");
+    } finally {
+      setIsPdfGenerating(false);
+    }
+  };
+
+  const getImageData = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/jpeg"));
+      };
+      img.onerror = (e) => reject(e);
+      img.src = url;
+    });
+  };
+
+  const handleNext = () => {
+    if (currentIndex < slides.length - 1) {
+      setDirection(1);
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setDirection(-1);
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const slideVariants = {
+    enter: (direction) => ({ x: direction > 0 ? 1000 : -1000, opacity: 0 }),
+    center: { zIndex: 1, x: 0, opacity: 1 },
+    exit: (direction) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+  };
+
+  return (
+    <div
+      className={`fixed inset-0 w-full h-full ${COLORS.background.main} flex flex-col font-sans overflow-hidden`}
+    >
+      {/* --- Header --- */}
+      <div className="absolute top-0 left-0 right-0 z-50 px-4 py-3 md:px-6 md:py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <Link
+          to="/create-story"
+          className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 transition-colors"
+        >
+          <Home size={18} />
+          <span className="hidden md:inline font-bold text-sm">Home</span>
+        </Link>
+
+        <div className="flex gap-2 md:gap-3">
+          {/* Enhanced Auto Play Button with Square (Stop) Icon */}
+          <button
+            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-all duration-300 shadow-sm ${
+              isAutoPlaying
+                ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            {isAutoPlaying ? (
+              <>
+                {" "}
+                <Square fill="currentColor" size={14} />{" "}
+                <span className="hidden sm:inline">Stop</span>{" "}
+              </>
+            ) : (
+              <>
+                {" "}
+                <PlayCircle size={16} />{" "}
+                <span className="hidden sm:inline">Read to Me</span>{" "}
+              </>
+            )}
+          </button>
+
+          {/* Download PDF */}
+          <button
+            onClick={downloadPDF}
+            disabled={isPdfGenerating}
+            className="p-2 md:px-4 md:py-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-full transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
+            title="Download PDF"
+          >
+            {isPdfGenerating ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            <span className="hidden md:inline font-bold text-xs">PDF</span>
+          </button>
+        </div>
+      </div>
+
+      {/* --- Main Content --- */}
+      <div className="flex flex-col md:flex-row h-full w-full pt-[60px] md:pt-[72px]">
+        {/* --- Image Section --- */}
+        <div className="relative w-full h-[55%] md:h-full md:w-[60%] bg-slate-100 overflow-hidden shadow-inner md:shadow-none">
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.img
+              key={currentIndex}
+              src={currentImageUrl}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              className="absolute inset-0 w-full h-full object-cover"
+              alt={`Scene ${currentIndex + 1}`}
+              onError={(e) => {
+                console.error("Failed to load image:", currentImageUrl);
+                e.target.src =
+                  "https://placehold.co/600x400?text=Image+Not+Found";
+              }}
+            />
+          </AnimatePresence>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent md:hidden" />
+        </div>
+
+        {/* --- Text Section --- */}
+        <div
+          className={`relative w-full h-[45%] md:h-full md:w-[40%] ${COLORS.background.card} flex flex-col justify-between p-6 md:p-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] md:shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-20`}
+        >
+          {/* Progress Indicator */}
+          <div className="flex justify-center md:justify-start gap-1.5 mb-4">
+            {slides.map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-yellow-400" : "w-2 bg-slate-200"}`}
+              />
+            ))}
+          </div>
+
+          {/* Story Text */}
+          <div className="flex-1 overflow-y-auto no-scrollbar flex items-center">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className={`text-lg md:text-2xl leading-relaxed ${COLORS.text.main} font-medium text-center md:text-left`}
+              >
+                {currentSlide.text}
+              </motion.p>
+            </AnimatePresence>
+          </div>
+
+          {/* Audio Playing Indicator */}
+          {isAudioLoading && (
+            <div className="flex justify-center md:justify-start items-center gap-2 text-xs text-blue-500 font-bold uppercase tracking-widest animate-pulse py-2">
+              <Loader2 size={12} className="animate-spin" /> Loading Audio...
+            </div>
+          )}
+
+          {/* Navigation Controls */}
+          <div className="mt-4 flex justify-between items-center">
+            <button
+              onClick={handlePrev}
+              disabled={currentIndex === 0}
+              className="p-4 rounded-full bg-slate-100 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-200 hover:text-slate-600 transition-all"
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            <span className="text-sm font-bold text-slate-400">
+              {currentIndex + 1} / {slides.length}
+            </span>
+
+            <button
+              onClick={handleNext}
+              disabled={currentIndex === slides.length - 1}
+              className={`p-4 rounded-full ${COLORS.primary.DEFAULT} text-black ${COLORS.primary.shadow} shadow-lg disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed ${COLORS.primary.hover} hover:scale-105 transition-all`}
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default StoryViewer;
+

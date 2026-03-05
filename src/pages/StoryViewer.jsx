@@ -6,13 +6,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Home,
-  RefreshCcw,
   Download,
-  Volume2,
   Loader2,
-  StopCircle,
   PlayCircle,
-  PauseCircle,
+  Square,
 } from "lucide-react";
 import { COLORS } from "../constants/theme";
 
@@ -25,7 +22,6 @@ const SERVER_URL =
 // Mock Data for Fallback
 const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
-  // Using loremflickr for random cartoon/fantasy images appropriate for kids
   image: `https://loremflickr.com/1080/1920/cartoon,fantasy,illustration/all?lock=${i + 10}`,
   text: `This is page ${i + 1} of the magical adventure. The hero enters a new realm filled with wonder, facing challenges that require bravery and wit to overcome.`,
 }));
@@ -42,49 +38,148 @@ const StoryViewer = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
 
-  // Ref to handle audio playback
+  // Triggers the next slide safely avoiding stale closures
+  const [audioTrigger, setAudioTrigger] = useState(0);
+
   const audioRef = useRef(new Audio());
+
+  // Audio Cache: Stores Promises that resolve to Object URLs for seamless playback
+  const audioCache = useRef({});
 
   const currentSlide = slides[currentIndex];
 
   // Helper to resolve full image URL
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "https://placehold.co/600x400?text=No+Image";
-    if (imagePath.startsWith("http")) return imagePath; // Already absolute
-    return `${SERVER_URL}${imagePath}`; // Prepend backend URL
+    if (imagePath.startsWith("http")) return imagePath;
+    return `${SERVER_URL}${imagePath}`;
   };
 
   const currentImageUrl = getImageUrl(currentSlide.image);
 
-  // Stop audio when slide changes or component unmounts
+  // --- MEMORY CLEANUP ---
+  // Ensure we revoke the created Object URLs when the component unmounts
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-
-    if (isAutoPlaying) {
-      handlePlayAudio();
-    } else {
-      setIsPlaying(false);
-      setIsAudioLoading(false);
-    }
-
+    const cache = audioCache.current;
     return () => {
-      if (audioRef.current) audioRef.current.pause();
+      Object.values(cache).forEach((promise) => {
+        promise
+          .then((url) => {
+            if (typeof url === "string") URL.revokeObjectURL(url);
+          })
+          .catch(() => {});
+      });
     };
-  }, [currentIndex]);
+  }, []);
 
-  const toggleAutoPlay = () => {
-    if (isAutoPlaying) {
-      setIsAutoPlaying(false);
-      setIsPlaying(false);
-      if (audioRef.current) audioRef.current.pause();
-    } else {
-      setIsAutoPlaying(true);
-      handlePlayAudio();
+  // --- AUDIO LOGIC (Prefetching & Closure-Safe) ---
+  useEffect(() => {
+    let isMounted = true;
+
+    const playAudio = async () => {
+      // If user stopped autoplay, halt everything
+      if (!isAutoPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+        setIsAudioLoading(false);
+        return;
+      }
+
+      try {
+        setIsAudioLoading(true);
+
+        // 1. Fetch or get cached audio for CURRENT slide
+        if (!audioCache.current[currentIndex]) {
+          audioCache.current[currentIndex] = fetch(
+            `${SERVER_URL}/api/generate-speech`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: slides[currentIndex].text }),
+            },
+          )
+            .then((res) => {
+              if (!res.ok) throw new Error("Failed to fetch audio");
+              return res.blob();
+            })
+            .then((blob) => URL.createObjectURL(blob));
+        }
+
+        // Await the promise (it will be instant if already prefetched)
+        const url = await audioCache.current[currentIndex];
+
+        // Prevent playing if user navigated away or stopped while fetching
+        if (!isMounted || !isAutoPlaying) return;
+
+        audioRef.current.src = url;
+        audioRef.current.play();
+        setIsPlaying(true);
+        setIsAudioLoading(false);
+
+        // 2. PRE-FETCH NEXT SLIDE AUDIO (Background Task)
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < slides.length && !audioCache.current[nextIndex]) {
+          audioCache.current[nextIndex] = fetch(
+            `${SERVER_URL}/api/generate-speech`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: slides[nextIndex].text }),
+            },
+          )
+            .then((res) => {
+              if (!res.ok) throw new Error("Failed to fetch audio");
+              return res.blob();
+            })
+            .then((blob) => URL.createObjectURL(blob))
+            .catch((err) => {
+              console.error("Prefetch failed:", err);
+              // Delete failed promise so it can be retried when the user actually reaches the slide
+              delete audioCache.current[nextIndex];
+            });
+        }
+
+        // 3. When audio finishes, trigger the advancement state
+        audioRef.current.onended = () => {
+          if (isMounted) {
+            setIsPlaying(false);
+            setAudioTrigger((prev) => prev + 1);
+          }
+        };
+      } catch (error) {
+        console.error("Audio Error:", error);
+        if (isMounted) {
+          setIsAudioLoading(false);
+          setIsPlaying(false);
+          setIsAutoPlaying(false);
+          delete audioCache.current[currentIndex]; // allow retry
+        }
+      }
+    };
+
+    playAudio();
+
+    // Cleanup: Stop audio immediately if slide changes or component unmounts
+    return () => {
+      isMounted = false;
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+    };
+  }, [currentIndex, isAutoPlaying, slides]);
+
+  // --- AUTO-ADVANCE LOGIC ---
+  useEffect(() => {
+    // Only run if audio just finished AND we are still in AutoPlay mode
+    if (audioTrigger > 0 && isAutoPlaying) {
+      if (currentIndex < slides.length - 1) {
+        setDirection(1);
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        // Reached the end of the story
+        setIsAutoPlaying(false);
+      }
     }
-  };
+  }, [audioTrigger]);
 
   const downloadPDF = async () => {
     setIsPdfGenerating(true);
@@ -160,52 +255,9 @@ const StoryViewer = () => {
         ctx.drawImage(img, 0, 0);
         resolve(canvas.toDataURL("image/jpeg"));
       };
-      img.onerror = (e) => {
-        console.error("Image load error:", url);
-        reject(e);
-      };
+      img.onerror = (e) => reject(e);
       img.src = url;
     });
-  };
-
-  const handlePlayAudio = async () => {
-    try {
-      setIsAudioLoading(true);
-      setIsPlaying(true);
-
-      const response = await fetch(`${SERVER_URL}/api/generate-speech`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: currentSlide.text }),
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch audio");
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-
-      audioRef.current.src = url;
-      audioRef.current.play();
-      setIsAudioLoading(false);
-
-      audioRef.current.onended = () => {
-        if (isAutoPlaying) {
-          if (currentIndex < slides.length - 1) {
-            handleNext();
-          } else {
-            setIsAutoPlaying(false);
-            setIsPlaying(false);
-          }
-        } else {
-          setIsPlaying(false);
-        }
-      };
-    } catch (error) {
-      console.error("Audio Error:", error);
-      setIsAudioLoading(false);
-      setIsAutoPlaying(false);
-      setIsPlaying(false);
-    }
   };
 
   const handleNext = () => {
@@ -247,19 +299,20 @@ const StoryViewer = () => {
         </Link>
 
         <div className="flex gap-2 md:gap-3">
+          {/* Enhanced Auto Play Button with Square (Stop) Icon */}
           <button
-            onClick={toggleAutoPlay}
+            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
             className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-all duration-300 shadow-sm ${
               isAutoPlaying
-                ? "bg-green-100 text-green-700 border border-green-200"
+                ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
                 : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
             }`}
           >
             {isAutoPlaying ? (
               <>
                 {" "}
-                <PauseCircle size={16} className="animate-pulse" />{" "}
-                <span className="hidden sm:inline">Playing</span>{" "}
+                <Square fill="currentColor" size={14} />{" "}
+                <span className="hidden sm:inline">Stop</span>{" "}
               </>
             ) : (
               <>
@@ -270,6 +323,7 @@ const StoryViewer = () => {
             )}
           </button>
 
+          {/* Download PDF */}
           <button
             onClick={downloadPDF}
             disabled={isPdfGenerating}
@@ -312,8 +366,6 @@ const StoryViewer = () => {
               }}
             />
           </AnimatePresence>
-
-          {/* Mobile Overlay Gradient */}
           <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent md:hidden" />
         </div>
 

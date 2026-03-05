@@ -1,0 +1,51 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { LANDING_THEME } from "../../constants/theme-landing";
+
+const HeroSection = () => {
+  return (
+    <section
+      className={`${LANDING_THEME.colors.background.transparent} pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden text-center relative ${LANDING_THEME.typography.family.main}`}
+    >
+      <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center">
+        {/* Top Badge from Theme */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className={`px-4 py-1.5 rounded-full mb-8 ${LANDING_THEME.components.badge.container} ${LANDING_THEME.components.badge.text}`}
+        >
+          Magical Stories In Seconds
+        </motion.div>
+
+        {/* Main Heading using Theme Typography */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className={`${LANDING_THEME.typography.size.h1} ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} leading-[1.1] mb-6 tracking-tight`}
+        >
+          Unleash Your Child's <br />
+          <span
+            className={`${LANDING_THEME.colors.text.brand} inline-block mt-2`}
+          >
+            Imagination
+          </span>
+        </motion.h1>
+
+        {/* Subtitle using Theme Typography */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className={`${LANDING_THEME.typography.size.subtitle} ${LANDING_THEME.colors.text.subtitle} ${LANDING_THEME.typography.weight.subtitle} max-w-2xl mx-auto leading-relaxed mb-10`}
+        >
+          Create magical, personalized stories for your children in seconds
+          using the power of AI. Designed to spark wonder and safe learning.
+        </motion.p>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;
