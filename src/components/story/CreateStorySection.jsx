@@ -17,7 +17,7 @@ import {
   Hourglass,
   Snowflake,
   Ghost,
-  Car
+  Car,
 } from "lucide-react";
 import { COLORS, FONTS } from "../../constants/theme";
 
@@ -32,22 +32,126 @@ const CreateStorySection = ({ formData, updateFormData }) => {
 
   // Expanded to 16 total themes
   const themes = [
-    { id: "space", label: "Space", icon: <Rocket size={20} />, emoji: "🚀", bg: "bg-blue-100", accent: "text-blue-500" },
-    { id: "forest", label: "Jungle", icon: <TreeDeciduous size={20} />, emoji: "🌿", bg: "bg-green-100", accent: "text-green-500" },
-    { id: "castle", label: "Fairytale", icon: <Castle size={20} />, emoji: "🏰", bg: "bg-pink-100", accent: "text-pink-500" },
-    { id: "ocean", label: "Ocean", icon: <Waves size={20} />, emoji: "🌊", bg: "bg-cyan-100", accent: "text-cyan-500" },
-    { id: "superhero", label: "Superhero", icon: <Zap size={20} />, emoji: "⚡", bg: "bg-yellow-100", accent: "text-yellow-500" },
-    { id: "dinosaur", label: "Dinosaur", icon: <PawPrint size={20} />, emoji: "🦖", bg: "bg-emerald-100", accent: "text-emerald-500" },
-    { id: "magic", label: "Magic", icon: <Wand2 size={20} />, emoji: "✨", bg: "bg-purple-100", accent: "text-purple-500" },
-    { id: "pirate", label: "Pirate", icon: <Ship size={20} />, emoji: "🏴‍☠️", bg: "bg-stone-100", accent: "text-stone-500" },
-    { id: "mystery", label: "Mystery", icon: <Search size={20} />, emoji: "🕵️", bg: "bg-indigo-100", accent: "text-indigo-500" },
-    { id: "animal", label: "Animals", icon: <Cat size={20} />, emoji: "🐾", bg: "bg-orange-100", accent: "text-orange-500" },
-    { id: "robot", label: "Robots", icon: <Bot size={20} />, emoji: "🤖", bg: "bg-slate-100", accent: "text-slate-500" },
-    { id: "sports", label: "Sports", icon: <Trophy size={20} />, emoji: "🏆", bg: "bg-red-100", accent: "text-red-500" },
-    { id: "history", label: "History", icon: <Hourglass size={20} />, emoji: "⏳", bg: "bg-amber-100", accent: "text-amber-700" },
-    { id: "winter", label: "Winter", icon: <Snowflake size={20} />, emoji: "❄️", bg: "bg-sky-100", accent: "text-sky-500" },
-    { id: "spooky", label: "Spooky", icon: <Ghost size={20} />, emoji: "👻", bg: "bg-fuchsia-100", accent: "text-fuchsia-500" },
-    { id: "racing", label: "Racing", icon: <Car size={20} />, emoji: "🏎️", bg: "bg-rose-100", accent: "text-rose-500" },
+    {
+      id: "space",
+      label: "Space",
+      icon: <Rocket size={20} />,
+      emoji: "🚀",
+      bg: "bg-blue-100",
+      accent: "text-blue-500",
+    },
+    {
+      id: "forest",
+      label: "Jungle",
+      icon: <TreeDeciduous size={20} />,
+      emoji: "🌿",
+      bg: "bg-green-100",
+      accent: "text-green-500",
+    },
+    {
+      id: "castle",
+      label: "Fairytale",
+      icon: <Castle size={20} />,
+      emoji: "🏰",
+      bg: "bg-pink-100",
+      accent: "text-pink-500",
+    },
+    {
+      id: "ocean",
+      label: "Ocean",
+      icon: <Waves size={20} />,
+      emoji: "🌊",
+      bg: "bg-cyan-100",
+      accent: "text-cyan-500",
+    },
+    {
+      id: "superhero",
+      label: "Superhero",
+      icon: <Zap size={20} />,
+      emoji: "⚡",
+      bg: "bg-yellow-100",
+      accent: "text-yellow-500",
+    },
+    {
+      id: "dinosaur",
+      label: "Dinosaur",
+      icon: <PawPrint size={20} />,
+      emoji: "🦖",
+      bg: "bg-emerald-100",
+      accent: "text-emerald-500",
+    },
+    {
+      id: "magic",
+      label: "Magic",
+      icon: <Wand2 size={20} />,
+      emoji: "✨",
+      bg: "bg-purple-100",
+      accent: "text-purple-500",
+    },
+    {
+      id: "pirate",
+      label: "Pirate",
+      icon: <Ship size={20} />,
+      emoji: "🏴‍☠️",
+      bg: "bg-stone-100",
+      accent: "text-stone-500",
+    },
+    {
+      id: "mystery",
+      label: "Mystery",
+      icon: <Search size={20} />,
+      emoji: "🕵️",
+      bg: "bg-indigo-100",
+      accent: "text-indigo-500",
+    },
+    {
+      id: "animal",
+      label: "Animals",
+      icon: <Cat size={20} />,
+      emoji: "🐾",
+      bg: "bg-orange-100",
+      accent: "text-orange-500",
+    },
+    {
+      id: "robot",
+      label: "Robots",
+      icon: <Bot size={20} />,
+      emoji: "🤖",
+      bg: "bg-slate-100",
+      accent: "text-slate-500",
+    },
+    {
+      id: "sports",
+      label: "Sports",
+      icon: <Trophy size={20} />,
+      emoji: "🏆",
+      bg: "bg-red-100",
+      accent: "text-red-500",
+    },
+    {
+      id: "history",
+      label: "History",
+      icon: <Hourglass size={20} />,
+      emoji: "⏳",
+      bg: "bg-amber-100",
+      accent: "text-amber-700",
+    },
+    {
+      id: "winter",
+      label: "Winter",
+      icon: <Snowflake size={20} />,
+      emoji: "❄️",
+      bg: "bg-sky-100",
+      accent: "text-sky-500",
+    },
+    {
+      id: "spooky",
+      label: "Spooky",
+      icon: <Ghost size={20} />,
+      emoji: "👻",
+      bg: "bg-fuchsia-100",
+      accent: "text-fuchsia-500",
+    },
   ];
 
   return (
@@ -60,8 +164,10 @@ const CreateStorySection = ({ formData, updateFormData }) => {
     >
       {/* Hero Name */}
       <div className="text-center">
-        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
-          🦸 Who is the hero?
+        <label
+          className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
+        >
+          Who is the hero?
         </label>
         <div className="relative max-w-xs mx-auto">
           <input
@@ -71,14 +177,19 @@ const CreateStorySection = ({ formData, updateFormData }) => {
             className="w-full bg-sky-50 hover:bg-sky-100 focus:bg-white text-center text-lg font-extrabold py-3 px-4 rounded-2xl outline-none border-2 border-sky-100 focus:border-blue-400 transition-all placeholder-blue-200 text-blue-900"
             placeholder="Name your hero..."
           />
-          <PenLine className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 pointer-events-none" size={18} />
+          <PenLine
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 pointer-events-none"
+            size={18}
+          />
         </div>
       </div>
 
       {/* Age Selection */}
       <div className="text-center">
-        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
-          🎂 How old are they?
+        <label
+          className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
+        >
+          How old are they?
         </label>
         {/* Added flex-wrap in case screen is small */}
         <div className="flex flex-wrap justify-center gap-4">
@@ -94,8 +205,12 @@ const CreateStorySection = ({ formData, updateFormData }) => {
               }`}
             >
               <span className="text-2xl">{group.emoji}</span>
-              <span className="text-base font-extrabold leading-none">{group.label}</span>
-              <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">{group.sub}</span>
+              <span className="text-base font-extrabold leading-none">
+                {group.label}
+              </span>
+              <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">
+                {group.sub}
+              </span>
             </motion.button>
           ))}
         </div>
@@ -103,11 +218,13 @@ const CreateStorySection = ({ formData, updateFormData }) => {
 
       {/* Theme Selection */}
       <div className="text-center">
-        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
-          🌍 Pick a World
+        <label
+          className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
+        >
+          Pick a World
         </label>
         {/* Updated grid to be responsive and wider to accommodate 16 options */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 max-w-2xl mx-auto">
           {themes.map((theme) => (
             <motion.button
               key={theme.id}
@@ -119,10 +236,14 @@ const CreateStorySection = ({ formData, updateFormData }) => {
                   : "bg-sky-50 border-sky-100 hover:border-blue-200"
               }`}
             >
-              <div className={`p-2 rounded-xl ${formData.theme === theme.id ? "bg-white/20 text-white" : `${theme.bg} ${theme.accent}`}`}>
+              <div
+                className={`p-2 rounded-xl ${formData.theme === theme.id ? "bg-white/20 text-white" : `${theme.bg} ${theme.accent}`}`}
+              >
                 {theme.icon}
               </div>
-              <span className={`text-xs font-extrabold ${formData.theme === theme.id ? "text-white" : "text-blue-700"}`}>
+              <span
+                className={`text-xs font-extrabold ${formData.theme === theme.id ? "text-white" : "text-blue-700"}`}
+              >
                 {theme.label}
               </span>
             </motion.button>

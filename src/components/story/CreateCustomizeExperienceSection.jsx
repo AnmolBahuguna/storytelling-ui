@@ -14,8 +14,10 @@ const CustomizeExperienceSection = ({ formData, updateFormData }) => {
     >
       {/* Location Input */}
       <div className="text-center">
-        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
-          📍 Where does it start?
+        <label
+          className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
+        >
+          Where does it start?
         </label>
         <div className="relative max-w-xs mx-auto">
           <input
@@ -23,21 +25,36 @@ const CustomizeExperienceSection = ({ formData, updateFormData }) => {
             value={formData.locationName}
             onChange={(e) => updateFormData("locationName", e.target.value)}
             className="w-full bg-sky-50 hover:bg-sky-100 focus:bg-white text-center text-lg font-extrabold py-3 pl-4 pr-10 rounded-2xl outline-none border-2 border-sky-100 focus:border-blue-400 transition-all placeholder-blue-200 text-blue-900"
-            placeholder="e.g. The Moon Base 🌙"
+            placeholder="e.g. The Moon Base"
           />
-          <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 pointer-events-none" size={18} />
+          <MapPin
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 pointer-events-none"
+            size={18}
+          />
         </div>
       </div>
 
       {/* Reading Mode */}
       <div className="text-center">
-        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
-          📖 How do you want to enjoy it?
+        <label
+          className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
+        >
+          How do you want to enjoy it?
         </label>
         <div className="flex justify-center gap-4">
           {[
-            { id: "read",   icon: <BookOpenText size={30} />, label: "I'll Read", emoji: "📚" },
-            { id: "listen", icon: <Volume2 size={30} />,      label: "Read to Me", emoji: "🔊" },
+            {
+              id: "read",
+              icon: <BookOpenText size={30} />,
+              label: "I'll Read",
+              emoji: "📚",
+            },
+            {
+              id: "listen",
+              icon: <Volume2 size={30} />,
+              label: "Read to Me",
+              emoji: "🔊",
+            },
           ].map((opt) => (
             <motion.button
               key={opt.id}
@@ -58,14 +75,16 @@ const CustomizeExperienceSection = ({ formData, updateFormData }) => {
 
       {/* Duration */}
       <div className="text-center">
-        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
-          ⏱️ How long?
+        <label
+          className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
+        >
+          How long?
         </label>
         <div className="flex justify-center gap-3">
           {[
-            { id: "short",  label: "Short",  emoji: "⚡" },
-            { id: "medium", label: "Medium", emoji: "🌙" },
-            { id: "long",   label: "Long",   emoji: "🌌" },
+            { id: "short", label: "Short" },
+            { id: "medium", label: "Medium" },
+            { id: "long", label: "Long" },
           ].map((dur) => (
             <motion.button
               key={dur.id}

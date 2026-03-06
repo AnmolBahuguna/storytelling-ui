@@ -1,11 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { LANDING_THEME } from "../../constants/theme-landing";
+import { Link } from "react-router-dom";
+import { LANDING_THEME } from "../../constants/theme-landing.js";
 
 const HeroSection = () => {
   return (
     <section
-      className={`${LANDING_THEME.colors.background.transparent} pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden text-center relative ${LANDING_THEME.typography.family.main}`}
+      className={`${LANDING_THEME.colors.background.transparent} pt-32 pb-10 md:pt-40 md:pb-14 overflow-hidden text-center relative ${LANDING_THEME.typography.family.main}`}
     >
       <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center">
         {/* Top Badge from Theme */}
@@ -43,6 +44,20 @@ const HeroSection = () => {
           Create magical, personalized stories for your children in seconds
           using the power of AI. Designed to spark wonder and safe learning.
         </motion.p>
+
+        {/* Try Now Call-to-Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <Link
+            to="/create-story"
+            className={`inline-block px-10 py-4 rounded-full text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+          >
+            Try Now
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ import CustomizeExperienceSection from "../components/story/CreateCustomizeExper
 import FinalTouchesSection from "../components/story/FinalTouchesSection";
 import { ArrowRight, Wand2, Stars } from "lucide-react";
 import { COLORS, STYLES, FONTS } from "../constants/theme";
+import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars.jsx";
 
 // Get Server URL
 const SERVER_URL =
@@ -92,122 +93,134 @@ const CreateStory = () => {
 
   return (
     <div
-      className={`min-h-screen ${FONTS.main} ${COLORS.text.main} flex flex-col items-center py-10 px-4`}
+      className={`relative min-h-screen bg-gradient-to-b from-blue-900 to-blue-950 ${FONTS.main} flex flex-col items-center py-10 px-4`}
     >
-      {/* Header badge */}
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="mb-6"
-      >
-        <div className="step-pill flex items-center gap-2">
-          <Stars size={15} />
-          Step {activeSection} of 3 — {stepLabels[activeSection - 1]}
-        </div>
-      </motion.div>
-
-      {/* Progress bar */}
-      <div className="w-full max-w-2xl mb-6">
-        <div className="flex gap-2">
-          {[1, 2, 3].map((step) => (
-            <div
-              key={step}
-              className="flex-1 h-2.5 rounded-full overflow-hidden bg-blue-100"
-            >
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
-                initial={{ width: "0%" }}
-                animate={{ width: activeSection >= step ? "100%" : "0%" }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-              />
-            </div>
-          ))}
-        </div>
+      {/* Background Layer Container - Fixed so it covers scrolling */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <StarsBackground />
       </div>
 
-      {/* Main Title */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="text-center mb-6"
-      >
-        <h1
-          className={`text-4xl md:text-5xl ${FONTS.heading} ${COLORS.text.main} mb-2`}
+      {/* Main Content Layer */}
+      <div className="relative z-10 w-full flex flex-col items-center">
+        {/* Header badge */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mb-6"
         >
-          ✨ Let's Build a Story!
-        </h1>
-        <p className={`${COLORS.text.sub} font-bold text-base`}>
-          {activeSection === 1 && "Tell us about your hero! 🦸"}
-          {activeSection === 2 && "Where does the adventure take place? 🗺️"}
-          {activeSection === 3 && "Almost ready! Pick the finishing touches 🎉"}
-        </p>
-      </motion.div>
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 px-4 py-2 rounded-full shadow-lg text-sm font-medium">
+            <Stars size={16} className="text-blue-300" />
+            Step {activeSection} of 3 — {stepLabels[activeSection - 1]}
+          </div>
+        </motion.div>
 
-      {/* Card Container */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.15 }}
-        className={`w-full max-w-2xl bg-white ${STYLES.card}`}
-      >
-        <AnimatePresence mode="wait">
-          {activeSection === 1 && (
-            <CreateStorySection
-              key="step1"
-              formData={formData}
-              updateFormData={updateFormData}
-            />
-          )}
-          {activeSection === 2 && (
-            <CustomizeExperienceSection
-              key="step2"
-              formData={formData}
-              updateFormData={updateFormData}
-            />
-          )}
-          {activeSection === 3 && (
-            <FinalTouchesSection
-              key="step3"
-              formData={formData}
-              updateFormData={updateFormData}
-            />
-          )}
-        </AnimatePresence>
-      </motion.div>
+        {/* Progress bar */}
+        <div className="w-full max-w-2xl mb-6">
+          <div className="flex gap-2">
+            {[1, 2, 3].map((step) => (
+              <div
+                key={step}
+                className="flex-1 h-2.5 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm"
+              >
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
+                  initial={{ width: "0%" }}
+                  animate={{ width: activeSection >= step ? "100%" : "0%" }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
-      {/* Navigation Buttons */}
-      <div className="mt-8 flex gap-4 w-full max-w-2xl justify-end">
-        {activeSection > 1 && (
-          <button onClick={handleBack} className={STYLES.button.secondary}>
-            ← Back
-          </button>
-        )}
-
-        {activeSection < 3 ? (
-          <button
-            onClick={handleNext}
-            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary}`}
+        {/* Main Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-center mb-6"
+        >
+          <h1
+            className={`text-4xl md:text-5xl ${FONTS.heading} text-white mb-2 drop-shadow-md`}
           >
-            Next Step <ArrowRight size={20} />
-          </button>
-        ) : (
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className={`${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} disabled:opacity-60 disabled:cursor-not-allowed`}
-          >
-            {loading ? (
-              <>
-                <Wand2 className="animate-spin" /> Creating Magic...
-              </>
-            ) : (
-              <>
-                <Wand2 /> Create Story! 🌟
-              </>
+            Let's Build a Story!
+          </h1>
+          <p className={`text-blue-100 font-bold text-base drop-shadow-sm`}>
+            {activeSection === 1 && "Tell us about your hero! 🦸"}
+            {activeSection === 2 && "Where does the adventure take place? 🗺️"}
+            {activeSection === 3 &&
+              "Almost ready! Pick the finishing touches 🎉"}
+          </p>
+        </motion.div>
+
+        {/* Card Container */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.15 }}
+          className={`w-full max-w-2xl bg-white ${STYLES.card} shadow-2xl relative`}
+        >
+          <AnimatePresence mode="wait">
+            {activeSection === 1 && (
+              <CreateStorySection
+                key="step1"
+                formData={formData}
+                updateFormData={updateFormData}
+              />
             )}
-          </button>
-        )}
+            {activeSection === 2 && (
+              <CustomizeExperienceSection
+                key="step2"
+                formData={formData}
+                updateFormData={updateFormData}
+              />
+            )}
+            {activeSection === 3 && (
+              <FinalTouchesSection
+                key="step3"
+                formData={formData}
+                updateFormData={updateFormData}
+              />
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Navigation Buttons */}
+        <div className="mt-8 flex gap-4 w-full max-w-2xl justify-end">
+          {activeSection > 1 && (
+            <button
+              onClick={handleBack}
+              className="px-6 py-3 rounded-xl font-bold transition-all bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm"
+            >
+              ← Back
+            </button>
+          )}
+
+          {activeSection < 3 ? (
+            <button
+              onClick={handleNext}
+              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0`}
+            >
+              Next Step <ArrowRight size={20} />
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0 disabled:opacity-60 disabled:cursor-not-allowed`}
+            >
+              {loading ? (
+                <>
+                  <Wand2 className="animate-spin" /> Creating Magic...
+                </>
+              ) : (
+                <>
+                  <Wand2 /> Create Story
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

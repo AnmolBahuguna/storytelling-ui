@@ -6,13 +6,16 @@ import { COLORS, FONTS } from "../../constants/theme";
 const FinalTouchesSection = ({ formData, updateFormData }) => {
   const languages = [
     { id: "English", flag: "🇬🇧" },
-    { id: "Hindi",   flag: "🇮🇳" },
+    { id: "Hindi", flag: "🇮🇳" },
     { id: "Spanish", flag: "🇪🇸" },
-    { id: "French",  flag: "🇫🇷" },
+    { id: "French", flag: "🇫🇷" },
   ];
 
   const themeEmojis = {
-    space: "🚀", forest: "🌿", castle: "🏰", ocean: "🌊",
+    space: "🚀",
+    forest: "🌿",
+    castle: "🏰",
+    ocean: "🌊",
   };
 
   return (
@@ -25,7 +28,9 @@ const FinalTouchesSection = ({ formData, updateFormData }) => {
     >
       {/* Language Selection */}
       <div className="text-center">
-        <label className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}>
+        <label
+          className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
+        >
           🌐 Choose Language
         </label>
         <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
@@ -42,7 +47,9 @@ const FinalTouchesSection = ({ formData, updateFormData }) => {
             >
               <div className="flex items-center gap-2">
                 <span className="text-xl">{lang.flag}</span>
-                <span className={`font-extrabold text-sm ${formData.language === lang.id ? "text-white" : "text-blue-700"}`}>
+                <span
+                  className={`font-extrabold text-sm ${formData.language === lang.id ? "text-white" : "text-blue-700"}`}
+                >
                   {lang.id}
                 </span>
               </div>
@@ -63,24 +70,24 @@ const FinalTouchesSection = ({ formData, updateFormData }) => {
         </span>
         <p className="text-blue-900 font-bold text-base leading-relaxed">
           A{" "}
-          <span className="text-blue-600 font-extrabold">{formData.duration}</span>{" "}
+          <span className="text-blue-600 font-extrabold">
+            {formData.duration}
+          </span>{" "}
           {themeEmojis[formData.theme] || "✨"} story about{" "}
-          <span className="text-blue-600 font-extrabold">{formData.heroName || "your hero"}</span>{" "}
+          <span className="text-blue-600 font-extrabold">
+            {formData.heroName || "your hero"}
+          </span>{" "}
           ({formData.ageGroup} yrs) exploring{" "}
-          <span className="text-blue-600 font-extrabold capitalize">{formData.theme}</span>!
+          <span className="text-blue-600 font-extrabold capitalize">
+            {formData.theme}
+          </span>
+          !
         </p>
         {formData.locationName && (
           <p className="text-blue-400 font-bold text-sm mt-1">
             📍 Starting at: {formData.locationName}
           </p>
         )}
-      </div>
-
-      {/* Fun ready message */}
-      <div className="text-center">
-        <p className="text-blue-400 font-extrabold text-sm animate-pulse">
-          ✨ Ready to create some magic? Hit the button below! ✨
-        </p>
       </div>
     </motion.div>
   );
