@@ -9,6 +9,7 @@ import {
   Smile,
 } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing";
+import elephantLogo from "../../../public/elephant.jpg";
 
 const Footer = () => {
   return (
@@ -19,16 +20,20 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 mb-16">
           {/* Brand & Description */}
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2.5 mb-6 group w-max">
+            <Link to="/" className="flex items-center gap-2.5 group mb-4">
               <div
-                className={`p-2 rounded-xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center ${LANDING_THEME.components.button.primary}`}
+                className={`rounded-xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center`}
               >
-                <BookOpen size={22} strokeWidth={2.5} />
+                <img
+                  src={elephantLogo}
+                  alt="StoryAI Logo"
+                  className="w-12 h-12 rounded-xl"
+                />
               </div>
               <span
-                className={`text-xl ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} tracking-tight ${LANDING_THEME.typography.family.main}`}
+                className={`text-xl md:text-2xl ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} tracking-tight ${LANDING_THEME.typography.family.main}`}
               >
-                StoryAI
+                Tara Story AI
               </span>
             </Link>
             <p

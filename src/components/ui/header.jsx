@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing";
+import elephantLogo from "../../../public/elephant.jpg";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,14 +35,18 @@ const Header = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group">
           <div
-            className={`p-2 rounded-xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center ${LANDING_THEME.components.button.primary}`}
+            className={`rounded-xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center`}
           >
-            <BookOpen size={22} strokeWidth={2.5} />
+            <img
+              src={elephantLogo}
+              alt="StoryAI Logo"
+              className="w-12 h-12 rounded-xl"
+            />
           </div>
           <span
             className={`text-xl md:text-2xl ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} tracking-tight ${LANDING_THEME.typography.family.main}`}
           >
-            StoryAI
+            Tara Story AI
           </span>
         </Link>
 
