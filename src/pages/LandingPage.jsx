@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import HeroSection from "../components/landing/heroSection";
 import { PricingSection } from "../components/landing/pricing";
 import { WhyChooseUs } from "../components/landing/whyChooseUs";
@@ -6,17 +6,51 @@ import Footer from "../components/ui/footer";
 import Header from "../components/ui/header";
 
 import ClickSpark from "../components/ClickSpark";
-import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars";
+import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui/components/backgrounds/stars-blue";
+import { StarsBackground as StarsBackgroundWhite } from "../components/animate-ui/components/backgrounds/stars-light";
 import { LANDING_THEME } from "../constants/theme-landing";
 
 const LandingPage = () => {
+  // Theme state: Initialize from localStorage, fallback to system preference
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        return savedTheme === "dark";
+      }
+      // Optional: Check user's system preference if no saved theme exists
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ) {
+        return true;
+      }
+    }
+    return false;
+  });
+
+  // Toggle class on the HTML document and save choice to localStorage
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+
   return (
     <div
-      // Changed to a brighter dark blue gradient so it doesn't look purely black
-      className={`relative min-h-screen bg-gradient-to-b from-blue-900 to-blue-950 ${LANDING_THEME.typography.family.main} overflow-hidden`}
+      className={`relative min-h-screen transition-colors duration-700 ${
+        isDarkMode ? "bg-gradient-to-b from-blue-900 to-blue-950" : "bg-white"
+      } ${LANDING_THEME.typography.family.main} overflow-hidden`}
     >
+      {/* Spark color matches the active theme */}
       <ClickSpark
-        sparkColor="#ffffff"
+        sparkColor={isDarkMode ? "#ffffff" : "#2b7fff"}
         sparkSize={12}
         sparkRadius={20}
         sparkCount={10}
@@ -24,13 +58,17 @@ const LandingPage = () => {
       >
         {/* Background Layer Container */}
         <div className="absolute inset-0 z-0 pointer-events-none">
-          {/* Base Stars Background */}
-          <StarsBackground speed={100} />
+          {/* Dynamically swap background component based on theme */}
+          {isDarkMode ? (
+            <StarsBackgroundBlue speed={100} />
+          ) : (
+            <StarsBackgroundWhite speed={100} />
+          )}
         </div>
 
         {/* Main Content Layer */}
         <div className="relative z-10 flex flex-col min-h-screen bg-transparent">
-          <Header />
+          <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
           <main className="flex-grow">
             <HeroSection />
             <WhyChooseUs />

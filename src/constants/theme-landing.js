@@ -1,26 +1,26 @@
 /**
  * Global Theme Configuration for the Landing Page
- * Completely light, whitish, minimal, with absolutely no dark colors or cyan.
+ * Supports both Light and Dark modes using Tailwind's 'dark:' classes.
  */
 
 export const LANDING_THEME = {
   colors: {
     // Backgrounds
     background: {
-      main: "bg-white",
+      main: "bg-white dark:bg-transparent", // Dark mode gradient handled by wrapper
       transparent: "bg-transparent",
     },
-    // Typography Colors (Soft mid-tones to keep it light but readable)
+    // Typography Colors
     text: {
-      heading: "text-stone-200", // Soft slate instead of dark
-      subtitle: "text-stone-200", // Lighter gray for subtitles
-      brand: "text-stone-200", // Neutral replacement for the brand blue
-      light: "text-stone-200",
+      heading: "text-slate-900 dark:text-stone-200",
+      subtitle: "text-slate-600 dark:text-slate-300",
+      brand: "text-[#2b7fff] dark:text-blue-400",
+      light: "text-slate-500 dark:text-stone-400",
     },
     // Accents & Decorations
     accent: {
-      brandBg: "bg-white",
-      blurEffect: "bg-slate-200/40",
+      brandBg: "bg-[#2b7fff] dark:bg-slate-800",
+      blurEffect: "bg-slate-200/40 dark:bg-blue-900/40",
     },
   },
 
@@ -43,14 +43,15 @@ export const LANDING_THEME = {
   // Specific UI Component Styles
   components: {
     badge: {
-      container: "bg-white border border-slate-100 shadow-sm",
-      text: "text-blue-800 text-xs font-bold uppercase tracking-wider",
+      container:
+        "bg-blue-50 dark:bg-white/10 border border-blue-100 dark:border-white/20 shadow-sm backdrop-blur-md",
+      text: "text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider",
     },
     button: {
       primary:
-        "bg-slate-100 hover:bg-slate-200 text-blue-800 shadow-sm transition-all border border-slate-200",
+        "bg-[#2b7fff] hover:bg-blue-600 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-blue-900 shadow-md transition-all border border-transparent",
       secondary:
-        "bg-white text-blue-800 border border-slate-100 hover:bg-slate-50",
+        "bg-white dark:bg-slate-800/50 text-[#2b7fff] dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 backdrop-blur-sm transition-all",
     },
   },
 };

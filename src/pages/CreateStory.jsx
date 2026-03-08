@@ -6,7 +6,7 @@ import CustomizeExperienceSection from "../components/story/CreateCustomizeExper
 import FinalTouchesSection from "../components/story/FinalTouchesSection";
 import { ArrowRight, Wand2, Stars } from "lucide-react";
 import { COLORS, STYLES, FONTS } from "../constants/theme";
-import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars.jsx";
+import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars-blue.jsx";
 
 // Get Server URL
 const SERVER_URL =
