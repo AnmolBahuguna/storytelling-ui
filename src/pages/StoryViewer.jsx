@@ -94,7 +94,10 @@ const StoryViewer = () => {
             `${SERVER_URL}/api/generate-speech`,
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
               body: JSON.stringify({ text: slides[currentIndex].text }),
             },
           )
@@ -123,7 +126,11 @@ const StoryViewer = () => {
             `${SERVER_URL}/api/generate-speech`,
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+
               body: JSON.stringify({ text: slides[nextIndex].text }),
             },
           )

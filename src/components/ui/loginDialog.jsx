@@ -1,41 +1,81 @@
-import React, { useEffect } from "react";
-import { X } from "lucide-react";
-import { LANDING_THEME } from "../../constants/theme-landing";
+import React, { useState, useEffect } from "react";
+import { X, Loader2 } from "lucide-react";
+import { LANDING_THEME } from "../../constants/theme-landing.js";
 
-const LoginDialog = ({ isOpen, onClose, onSignupClick }) => {
-  // Prevent scrolling on the background when the modal is open
+// Default to FastAPI's typical local port (8000)
+const SERVER_URL = "http://localhost:8000";
+
+const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      setEmail("");
+      setPassword("");
+      setError("");
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
   }, [isOpen]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const formData = new URLSearchParams();
+      formData.append("username", email);
+      formData.append("password", password);
+
+      const response = await fetch(`${SERVER_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Incorrect username or password");
+      }
+
+      // Store token in cookies (expires in 1 day)
+      const maxAge = 24 * 60 * 60;
+      document.cookie = `access_token=${data.access_token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+
+      // Notify parent component
+      if (onLoginSuccess) onLoginSuccess();
+
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
         onClick={onClose}
       />
-
-      {/* Dialog Content */}
       <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-100 dark:border-white/10 p-8 animate-in zoom-in-95 duration-200">
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           <X size={20} />
         </button>
-
-        {/* Header */}
         <div className="mb-8 text-center">
           <h2
             className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
@@ -46,9 +86,12 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick }) => {
             Login to continue your magical story journey.
           </p>
         </div>
-
-        {/* Form */}
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={handleLogin}>
+          {error && (
+            <div className="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200">
+              {error}
+            </div>
+          )}
           <div>
             <label
               className={`block text-sm mb-1.5 ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.colors.text.heading}`}
@@ -57,8 +100,10 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick }) => {
             </label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="hello@storyai.com"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff] transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff]"
               required
             />
           </div>
@@ -70,30 +115,22 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick }) => {
             </label>
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff] transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff]"
               required
             />
           </div>
-
-          <div className="flex justify-end mb-4">
-            <a
-              href="#"
-              className={`text-sm ${LANDING_THEME.colors.text.brand} hover:underline`}
-            >
-              Forgot password?
-            </a>
-          </div>
-
           <button
             type="submit"
-            className={`w-full py-3 mt-4 rounded-xl ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+            disabled={loading}
+            className={`w-full py-3 mt-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-70 ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
           >
-            Sign In
+            {loading && <Loader2 size={18} className="animate-spin" />}
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
-
-        {/* Footer */}
         <div className="mt-6 text-center">
           <p className={`text-sm ${LANDING_THEME.colors.text.subtitle}`}>
             Don't have an account?{" "}

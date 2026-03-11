@@ -1,23 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import CreateStorySection from "../components/story/CreateStorySection";
-import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection";
-import FinalTouchesSection from "../components/story/FinalTouchesSection";
-import { ArrowRight, Wand2, Stars } from "lucide-react";
-import { COLORS, STYLES, FONTS } from "../constants/theme";
+import CreateStorySection from "../components/story/CreateStorySection.jsx";
+import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection.jsx";
+import FinalTouchesSection from "../components/story/FinalTouchesSection.jsx";
+import { ArrowRight, Wand2, Stars, Lock } from "lucide-react";
+import { COLORS, STYLES, FONTS } from "../constants/theme.js";
 import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars-blue.jsx";
 
-// Get Server URL
-const SERVER_URL =
-  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
-    ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:5000";
+// Server URL (matching your previous setup)
+const SERVER_URL = "http://localhost:8000";
 
 const CreateStory = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [activeSection, setActiveSection] = useState(1);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   const [formData, setFormData] = useState({
     heroName: "",
@@ -28,6 +26,25 @@ const CreateStory = () => {
     locationName: "",
     language: "English",
   });
+
+  // Helper to retrieve the access token from cookies
+  const getAccessToken = () => {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="))
+      ?.split("=")[1];
+  };
+
+  // Authorization Check on Mount
+  useEffect(() => {
+    const token = getAccessToken();
+    if (!token) {
+      // If no token, redirect to home so they can see the login modal
+      navigate("/");
+    } else {
+      setIsAuthorized(true);
+    }
+  }, [navigate]);
 
   const updateFormData = (key, value) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -50,9 +67,13 @@ const CreateStory = () => {
 
     const generateStory = async () => {
       try {
-        let ageNum = 7; // Default
+        const token = getAccessToken();
+        if (!token) {
+          alert("Session expired. Please log in again.");
+          return navigate("/");
+        }
 
-        // Updated backend mapping for the new age groups
+        let ageNum = 7;
         if (formData.ageGroup === "1-3") ageNum = 2;
         if (formData.ageGroup === "3-5") ageNum = 4;
         if (formData.ageGroup === "5-8") ageNum = 7;
@@ -66,16 +87,26 @@ const CreateStory = () => {
 
         const response = await fetch(`${SERVER_URL}/api/generate-story`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            // Authorizing the API request with the Bearer token
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(payload),
         });
 
         const data = await response.json();
 
-        if (data.success) {
+        if (response.ok && data.success) {
           navigate("/story-view", { state: { story: data.story } });
         } else {
-          alert("Error: " + (data.message || "Unknown error"));
+          // Handle 401 Unauthorized errors from backend
+          if (response.status === 401) {
+            alert("Unauthorized! Please login again.");
+            navigate("/");
+          } else {
+            alert("Error: " + (data.message || "Failed to generate story"));
+          }
         }
       } catch (error) {
         console.error("Connection Error:", error);
@@ -88,19 +119,19 @@ const CreateStory = () => {
     generateStory();
   };
 
-  // Step labels
+  // Prevent flicker before redirect
+  if (!isAuthorized) return null;
+
   const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
 
   return (
     <div
       className={`relative min-h-screen bg-gradient-to-b from-blue-900 to-blue-950 ${FONTS.main} flex flex-col items-center py-10 px-4`}
     >
-      {/* Background Layer Container - Fixed so it covers scrolling */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <StarsBackground />
       </div>
 
-      {/* Main Content Layer */}
       <div className="relative z-10 w-full flex flex-col items-center">
         {/* Header badge */}
         <motion.div
