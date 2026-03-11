@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
 
-// Default to FastAPI's typical local port (8000)
-const SERVER_URL = "http://localhost:8000";
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://localhost:8000";
 
 const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
   const [email, setEmail] = useState("");
