@@ -8,8 +8,10 @@ import { ArrowRight, Wand2, Stars, Lock } from "lucide-react";
 import { COLORS, STYLES, FONTS } from "../constants/theme.js";
 import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars-blue.jsx";
 
-// Server URL (matching your previous setup)
-const SERVER_URL = "http://localhost:8000";
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://localhost:8000";
 
 const CreateStory = () => {
   const navigate = useNavigate();
