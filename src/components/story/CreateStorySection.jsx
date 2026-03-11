@@ -1,24 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Rocket,
-  TreeDeciduous,
-  Waves,
-  Castle,
-  PenLine,
-  Zap,
-  PawPrint,
-  Wand2,
-  Ship,
-  Search,
-  Cat,
-  Bot,
-  Trophy,
-  Hourglass,
-  Snowflake,
-  Ghost,
-  Car,
-} from "lucide-react";
+import { PenLine } from "lucide-react";
 import { COLORS, FONTS } from "../../constants/theme";
 
 const CreateStorySection = ({ formData, updateFormData }) => {
@@ -28,130 +10,6 @@ const CreateStorySection = ({ formData, updateFormData }) => {
     { id: "3-5", label: "3–5", sub: "YEARS", emoji: "🐣" },
     { id: "5-8", label: "5–8", sub: "YEARS", emoji: "🚀" },
     { id: "9-14", label: "9–14", sub: "YEARS", emoji: "🦁" },
-  ];
-
-  // Expanded to 16 total themes
-  const themes = [
-    {
-      id: "space",
-      label: "Space",
-      icon: <Rocket size={20} />,
-      emoji: "🚀",
-      bg: "bg-blue-100",
-      accent: "text-blue-500",
-    },
-    {
-      id: "forest",
-      label: "Jungle",
-      icon: <TreeDeciduous size={20} />,
-      emoji: "🌿",
-      bg: "bg-green-100",
-      accent: "text-green-500",
-    },
-    {
-      id: "castle",
-      label: "Fairytale",
-      icon: <Castle size={20} />,
-      emoji: "🏰",
-      bg: "bg-pink-100",
-      accent: "text-pink-500",
-    },
-    {
-      id: "ocean",
-      label: "Ocean",
-      icon: <Waves size={20} />,
-      emoji: "🌊",
-      bg: "bg-cyan-100",
-      accent: "text-cyan-500",
-    },
-    {
-      id: "superhero",
-      label: "Superhero",
-      icon: <Zap size={20} />,
-      emoji: "⚡",
-      bg: "bg-yellow-100",
-      accent: "text-yellow-500",
-    },
-    {
-      id: "dinosaur",
-      label: "Dinosaur",
-      icon: <PawPrint size={20} />,
-      emoji: "🦖",
-      bg: "bg-emerald-100",
-      accent: "text-emerald-500",
-    },
-    {
-      id: "magic",
-      label: "Magic",
-      icon: <Wand2 size={20} />,
-      emoji: "✨",
-      bg: "bg-purple-100",
-      accent: "text-purple-500",
-    },
-    {
-      id: "pirate",
-      label: "Pirate",
-      icon: <Ship size={20} />,
-      emoji: "🏴‍☠️",
-      bg: "bg-stone-100",
-      accent: "text-stone-500",
-    },
-    {
-      id: "mystery",
-      label: "Mystery",
-      icon: <Search size={20} />,
-      emoji: "🕵️",
-      bg: "bg-indigo-100",
-      accent: "text-indigo-500",
-    },
-    {
-      id: "animal",
-      label: "Animals",
-      icon: <Cat size={20} />,
-      emoji: "🐾",
-      bg: "bg-orange-100",
-      accent: "text-orange-500",
-    },
-    {
-      id: "robot",
-      label: "Robots",
-      icon: <Bot size={20} />,
-      emoji: "🤖",
-      bg: "bg-slate-100",
-      accent: "text-slate-500",
-    },
-    {
-      id: "sports",
-      label: "Sports",
-      icon: <Trophy size={20} />,
-      emoji: "🏆",
-      bg: "bg-red-100",
-      accent: "text-red-500",
-    },
-    {
-      id: "history",
-      label: "History",
-      icon: <Hourglass size={20} />,
-      emoji: "⏳",
-      bg: "bg-amber-100",
-      accent: "text-amber-700",
-    },
-    {
-      id: "winter",
-      label: "Winter",
-      icon: <Snowflake size={20} />,
-      emoji: "❄️",
-      bg: "bg-sky-100",
-      accent: "text-sky-500",
-    },
-    {
-      id: "spooky",
-      label: "Spooky",
-      icon: <Ghost size={20} />,
-      emoji: "👻",
-      bg: "bg-fuchsia-100",
-      accent: "text-fuchsia-500",
-    },
   ];
 
   return (
@@ -191,7 +49,6 @@ const CreateStorySection = ({ formData, updateFormData }) => {
         >
           How old are they?
         </label>
-        {/* Added flex-wrap in case screen is small */}
         <div className="flex flex-wrap justify-center gap-4">
           {ageGroups.map((group) => (
             <motion.button
@@ -216,36 +73,30 @@ const CreateStorySection = ({ formData, updateFormData }) => {
         </div>
       </div>
 
-      {/* Theme Selection */}
+      {/* Duration (Moved from Step 2) */}
       <div className="text-center">
         <label
           className={`block text-lg ${FONTS.heading} ${COLORS.text.main} mb-3`}
         >
-          Pick a World
+          How long?
         </label>
-        {/* Updated grid to be responsive and wider to accommodate 16 options */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 max-w-2xl mx-auto">
-          {themes.map((theme) => (
+        <div className="flex justify-center gap-3">
+          {[
+            { id: "short", label: "Short", emoji: "⏱️" },
+            { id: "medium", label: "Medium", emoji: "⏳" },
+            { id: "long", label: "Long", emoji: "🕰️" },
+          ].map((dur) => (
             <motion.button
-              key={theme.id}
+              key={dur.id}
               whileTap={{ scale: 0.93 }}
-              onClick={() => updateFormData("theme", theme.id)}
-              className={`aspect-square rounded-2xl flex flex-col items-center justify-center border-2 transition-all duration-200 gap-1 ${
-                formData.theme === theme.id
-                  ? "bg-blue-500 border-blue-500 shadow-md shadow-blue-200 scale-105"
-                  : "bg-sky-50 border-sky-100 hover:border-blue-200"
+              onClick={() => updateFormData("duration", dur.id)}
+              className={`px-5 py-3 rounded-2xl font-extrabold text-sm transition-all border-2 flex items-center gap-1.5 ${
+                formData.duration === dur.id
+                  ? "bg-blue-500 border-blue-500 text-white shadow-md shadow-blue-200"
+                  : "bg-sky-50 border-sky-100 text-blue-500 hover:border-blue-200"
               }`}
             >
-              <div
-                className={`p-2 rounded-xl ${formData.theme === theme.id ? "bg-white/20 text-white" : `${theme.bg} ${theme.accent}`}`}
-              >
-                {theme.icon}
-              </div>
-              <span
-                className={`text-xs font-extrabold ${formData.theme === theme.id ? "text-white" : "text-blue-700"}`}
-              >
-                {theme.label}
-              </span>
+              <span>{dur.emoji}</span> {dur.label}
             </motion.button>
           ))}
         </div>
