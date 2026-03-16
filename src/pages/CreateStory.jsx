@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CreateStorySection from "../components/story/CreateStorySection.jsx";
 import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection.jsx";
 import FinalTouchesSection from "../components/story/FinalTouchesSection.jsx";
-import { ArrowRight, Wand2, Stars, Lock } from "lucide-react";
-import { COLORS, STYLES, FONTS } from "../constants/theme.js";
+import { ArrowRight, Wand2, Stars, Sun, Moon } from "lucide-react";
 import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars-blue.jsx";
 
 const SERVER_URL =
@@ -19,6 +18,32 @@ const CreateStory = () => {
   const [activeSection, setActiveSection] = useState(1);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
+  // Theme logic synchronized with LandingPage
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) return savedTheme === "dark";
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      )
+        return true;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+
   const [formData, setFormData] = useState({
     heroName: "",
     ageGroup: "5-8",
@@ -29,7 +54,6 @@ const CreateStory = () => {
     language: "English",
   });
 
-  // Helper to retrieve the access token from cookies
   const getAccessToken = () => {
     return document.cookie
       .split("; ")
@@ -37,11 +61,9 @@ const CreateStory = () => {
       ?.split("=")[1];
   };
 
-  // Authorization Check on Mount
   useEffect(() => {
     const token = getAccessToken();
     if (!token) {
-      // If no token, redirect to home so they can see the login modal
       navigate("/");
     } else {
       setIsAuthorized(true);
@@ -91,7 +113,6 @@ const CreateStory = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Authorizing the API request with the Bearer token
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
@@ -102,7 +123,6 @@ const CreateStory = () => {
         if (response.ok && data.success) {
           navigate("/story-view", { state: { story: data.story } });
         } else {
-          // Handle 401 Unauthorized errors from backend
           if (response.status === 401) {
             alert("Unauthorized! Please login again.");
             navigate("/");
@@ -121,39 +141,46 @@ const CreateStory = () => {
     generateStory();
   };
 
-  // Prevent flicker before redirect
   if (!isAuthorized) return null;
 
   const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
 
   return (
     <div
-      className={`relative min-h-screen bg-gradient-to-b from-blue-900 to-blue-950 ${FONTS.main} flex flex-col items-center py-10 px-4`}
+      className={`relative min-h-screen font-sans flex flex-col items-center py-10 px-4 transition-colors duration-700 ${isDarkMode ? "bg-slate-950" : "bg-slate-50"}`}
     >
+      {/* Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        className="absolute top-6 right-6 p-3 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all z-50"
+        title="Toggle Theme"
+      >
+        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
+
+      {/* Passed isDarkMode to Dynamic Stars Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <StarsBackground />
+        <StarsBackground isDarkMode={isDarkMode} />
       </div>
 
-      <div className="relative z-10 w-full flex flex-col items-center">
-        {/* Header badge */}
+      <div className="relative z-10 w-full flex flex-col items-center mt-12 md:mt-4">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="mb-6"
         >
-          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 px-4 py-2 rounded-full shadow-lg text-sm font-medium">
-            <Stars size={16} className="text-blue-300" />
+          <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-full shadow-lg text-sm font-medium transition-colors">
+            <Stars size={16} className="text-blue-500" />
             Step {activeSection} of 3 — {stepLabels[activeSection - 1]}
           </div>
         </motion.div>
 
-        {/* Progress bar */}
         <div className="w-full max-w-2xl mb-6">
           <div className="flex gap-2">
             {[1, 2, 3].map((step) => (
               <div
                 key={step}
-                className="flex-1 h-2.5 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm"
+                className="flex-1 h-2.5 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 backdrop-blur-sm transition-colors"
               >
                 <motion.div
                   className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
@@ -166,19 +193,16 @@ const CreateStory = () => {
           </div>
         </div>
 
-        {/* Main Title */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="text-center mb-6"
         >
-          <h1
-            className={`text-4xl md:text-5xl ${FONTS.heading} text-white mb-2 drop-shadow-md`}
-          >
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 drop-shadow-sm transition-colors">
             Let's Build a Story!
           </h1>
-          <p className={`text-blue-100 font-bold text-base drop-shadow-sm`}>
+          <p className="text-blue-600 dark:text-blue-400 font-bold text-base drop-shadow-sm transition-colors">
             {activeSection === 1 && "Tell us about your hero! 🦸"}
             {activeSection === 2 && "Where does the adventure take place? 🗺️"}
             {activeSection === 3 &&
@@ -186,12 +210,11 @@ const CreateStory = () => {
           </p>
         </motion.div>
 
-        {/* Card Container */}
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.15 }}
-          className={`w-full max-w-2xl bg-white ${STYLES.card} shadow-2xl relative`}
+          className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-2xl relative transition-colors duration-700"
         >
           <AnimatePresence mode="wait">
             {activeSection === 1 && (
@@ -218,12 +241,11 @@ const CreateStory = () => {
           </AnimatePresence>
         </motion.div>
 
-        {/* Navigation Buttons */}
         <div className="mt-8 flex gap-4 w-full max-w-2xl justify-end">
           {activeSection > 1 && (
             <button
               onClick={handleBack}
-              className="px-6 py-3 rounded-xl font-bold transition-all bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm"
+              className="px-6 py-3 rounded-xl font-bold transition-all bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700"
             >
               ← Back
             </button>
@@ -232,7 +254,7 @@ const CreateStory = () => {
           {activeSection < 3 ? (
             <button
               onClick={handleNext}
-              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0`}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl border-0"
             >
               Next Step <ArrowRight size={20} />
             </button>
@@ -240,7 +262,7 @@ const CreateStory = () => {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0 disabled:opacity-60 disabled:cursor-not-allowed`}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl border-0 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
