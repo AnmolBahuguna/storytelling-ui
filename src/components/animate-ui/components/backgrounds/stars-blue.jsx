@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
@@ -62,7 +62,7 @@ function StarsBackground({
   factor = 0.05,
   speed = 50,
   transition = { stiffness: 50, damping: 20 },
-  isDarkMode = false, // Added isDarkMode Prop
+  starColor = "#fff",
   pointerEvents = true,
   ...props
 }) {
@@ -76,23 +76,20 @@ function StarsBackground({
     (e) => {
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
-      offsetX.set(-(e.clientX - centerX) * factor);
-      offsetY.set(-(e.clientY - centerY) * factor);
+      const newOffsetX = -(e.clientX - centerX) * factor;
+      const newOffsetY = -(e.clientY - centerY) * factor;
+      offsetX.set(newOffsetX);
+      offsetY.set(newOffsetY);
     },
     [offsetX, offsetY, factor],
   );
-
-  // Switch colors based on mode
-  const starColor = isDarkMode ? "#ffffff" : "#2b7fff";
 
   return (
     <div
       data-slot="stars-background"
       className={cn(
-        "relative size-full overflow-hidden transition-colors duration-700",
-        isDarkMode
-          ? "bg-[radial-gradient(ellipse_at_bottom,_#1e3a8a_0%,_#0f172a_100%)]"
-          : "bg-white",
+        // Changed from black/gray to a deep dark blue radial gradient
+        "relative size-full overflow-hidden bg-[radial-gradient(ellipse_at_bottom,_#1e3a8a_0%,_#0f172a_100%)]",
         className,
       )}
       onMouseMove={handleMouseMove}
@@ -111,13 +108,21 @@ function StarsBackground({
         <StarLayer
           count={400}
           size={2}
-          transition={{ repeat: Infinity, duration: speed * 2, ease: "linear" }}
+          transition={{
+            repeat: Infinity,
+            duration: speed * 2,
+            ease: "linear",
+          }}
           starColor={starColor}
         />
         <StarLayer
           count={200}
           size={3}
-          transition={{ repeat: Infinity, duration: speed * 3, ease: "linear" }}
+          transition={{
+            repeat: Infinity,
+            duration: speed * 3,
+            ease: "linear",
+          }}
           starColor={starColor}
         />
       </motion.div>
