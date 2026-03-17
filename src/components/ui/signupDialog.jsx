@@ -164,7 +164,7 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
               <h2
                 className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
               >
-                Join the Magic ✨
+                Join the Magic
               </h2>
               <p className={`text-sm ${LANDING_THEME.colors.text.subtitle}`}>
                 Create an account to start generating unlimited stories.

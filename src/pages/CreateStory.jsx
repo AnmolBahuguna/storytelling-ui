@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import CreateStorySection from "../components/story/CreateStorySection.jsx";
-import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection.jsx";
-import FinalTouchesSection from "../components/story/FinalTouchesSection.jsx";
+import CreateStorySection from "../components/story/CreateStorySection";
+import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection";
+import FinalTouchesSection from "../components/story/FinalTouchesSection";
 import { ArrowRight, Wand2, Stars, Sun, Moon } from "lucide-react";
-import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars-blue.jsx";
+import { COLORS, STYLES, FONTS } from "../constants/theme";
 
-const SERVER_URL =
-  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
-    ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:8000";
+// Import BOTH backgrounds to swap them seamlessly
+import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui/components/backgrounds/stars-blue";
+import { StarsBackground as StarsBackgroundWhite } from "../components/animate-ui/components/backgrounds/stars-light";
+
+// Hardcoded for preview environment to prevent 'import.meta' build errors
+const SERVER_URL = "http://localhost:8000";
 
 const CreateStory = () => {
   const navigate = useNavigate();
@@ -158,9 +160,13 @@ const CreateStory = () => {
         {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
       </button>
 
-      {/* Passed isDarkMode to Dynamic Stars Background */}
+      {/* Conditionally Render the correct Background Component based on theme */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <StarsBackground isDarkMode={isDarkMode} />
+        {isDarkMode ? (
+          <StarsBackgroundBlue speed={100} />
+        ) : (
+          <StarsBackgroundWhite speed={100} />
+        )}
       </div>
 
       <div className="relative z-10 w-full flex flex-col items-center mt-12 md:mt-4">
@@ -254,7 +260,7 @@ const CreateStory = () => {
           {activeSection < 3 ? (
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl border-0"
+              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0`}
             >
               Next Step <ArrowRight size={20} />
             </button>
@@ -262,7 +268,7 @@ const CreateStory = () => {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl border-0 disabled:opacity-60 disabled:cursor-not-allowed"
+              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0 disabled:opacity-60 disabled:cursor-not-allowed`}
             >
               {loading ? (
                 <>
