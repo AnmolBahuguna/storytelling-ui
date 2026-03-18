@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
 
         {/* Story Routes */}
-        <Route path="/create-story" element={<CreateStory />} />
+        <Route path="/dashboard" element={<CreateStory />} />
         <Route path="/story-view" element={<StoryViewer />} />
       </Routes>
     </BrowserRouter>
