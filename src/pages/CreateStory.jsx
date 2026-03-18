@@ -13,7 +13,10 @@ import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui
 import { StarsBackground as StarsBackgroundWhite } from "../components/animate-ui/components/backgrounds/stars-light";
 
 // Hardcoded for preview environment to prevent 'import.meta' build errors
-const SERVER_URL = "http://localhost:8000";
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://localhost:8000";
 
 const CreateStory = () => {
   const navigate = useNavigate();

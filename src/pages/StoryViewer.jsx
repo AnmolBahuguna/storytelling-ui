@@ -1,9 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Home, Download, Loader2, PlayCircle, Square, Sun, Moon, ListMusic } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Home,
+  Download,
+  Loader2,
+  PlayCircle,
+  Square,
+  Sun,
+  Moon,
+  ListMusic,
+} from "lucide-react";
 
-const SERVER_URL = "http://localhost:8000";
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://localhost:8000";
 
 const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
@@ -13,12 +27,14 @@ const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
 
 const StoryViewer = () => {
   const location = useLocation();
-  
+
   // Playlist & Story State
   const [storyData, setStoryData] = useState(location.state?.story || null);
   const [playlist, setPlaylist] = useState(location.state?.playlist || null);
-  const [playlistIndex, setPlaylistIndex] = useState(location.state?.playlistIndex || 0);
-  
+  const [playlistIndex, setPlaylistIndex] = useState(
+    location.state?.playlistIndex || 0,
+  );
+
   const slides = storyData?.slides || MOCK_STORY_FALLBACK;
 
   // Player State
@@ -33,7 +49,11 @@ const StoryViewer = () => {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme");
       if (savedTheme) return savedTheme === "dark";
-      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) return true;
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      )
+        return true;
     }
     return false;
   });
@@ -56,7 +76,7 @@ const StoryViewer = () => {
     slidesLength: slides.length,
     playlist,
     playlistIndex,
-    isAutoPlaying
+    isAutoPlaying,
   });
 
   // Keep the Ref synced with the actual state perfectly
@@ -66,10 +86,9 @@ const StoryViewer = () => {
       slidesLength: slides.length,
       playlist,
       playlistIndex,
-      isAutoPlaying
+      isAutoPlaying,
     };
   }, [currentIndex, slides.length, playlist, playlistIndex, isAutoPlaying]);
-
 
   const audioRef = useRef(new Audio());
   const audioCache = useRef({});
@@ -87,7 +106,11 @@ const StoryViewer = () => {
   // Clear cache and reset to slide 0 when the story changes (crucial for playlists)
   useEffect(() => {
     Object.values(audioCache.current).forEach((promise) => {
-      promise.then((url) => { if (typeof url === "string") URL.revokeObjectURL(url); }).catch(() => {});
+      promise
+        .then((url) => {
+          if (typeof url === "string") URL.revokeObjectURL(url);
+        })
+        .catch(() => {});
     });
     audioCache.current = {};
     setCurrentIndex(0);
@@ -110,14 +133,22 @@ const StoryViewer = () => {
 
         // Fetch or load current audio from cache
         if (!audioCache.current[currentIndex]) {
-          audioCache.current[currentIndex] = fetch(`${SERVER_URL}/api/generate-speech`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${document.cookie.split("; ").find((row) => row.startsWith("access_token="))?.split("=")[1]}`,
+          audioCache.current[currentIndex] = fetch(
+            `${SERVER_URL}/api/generate-speech`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${
+                  document.cookie
+                    .split("; ")
+                    .find((row) => row.startsWith("access_token="))
+                    ?.split("=")[1]
+                }`,
+              },
+              body: JSON.stringify({ text: slides[currentIndex].text }),
             },
-            body: JSON.stringify({ text: slides[currentIndex].text }),
-          })
+          )
             .then((res) => {
               if (!res.ok) throw new Error("Failed to fetch audio");
               return res.blob();
@@ -137,20 +168,30 @@ const StoryViewer = () => {
         // Prefetch NEXT audio to prevent buffering
         const nextIndex = currentIndex + 1;
         if (nextIndex < slides.length && !audioCache.current[nextIndex]) {
-          audioCache.current[nextIndex] = fetch(`${SERVER_URL}/api/generate-speech`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${document.cookie.split("; ").find((row) => row.startsWith("access_token="))?.split("=")[1]}`,
+          audioCache.current[nextIndex] = fetch(
+            `${SERVER_URL}/api/generate-speech`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${
+                  document.cookie
+                    .split("; ")
+                    .find((row) => row.startsWith("access_token="))
+                    ?.split("=")[1]
+                }`,
+              },
+              body: JSON.stringify({ text: slides[nextIndex].text }),
             },
-            body: JSON.stringify({ text: slides[nextIndex].text }),
-          })
+          )
             .then((res) => {
               if (!res.ok) throw new Error("Failed to fetch audio");
               return res.blob();
             })
             .then((blob) => URL.createObjectURL(blob))
-            .catch((err) => { delete audioCache.current[nextIndex]; });
+            .catch((err) => {
+              delete audioCache.current[nextIndex];
+            });
         }
 
         // --- THE FIX: Continuous Auto-Play Logic ---
@@ -159,14 +200,23 @@ const StoryViewer = () => {
           setIsPlaying(false);
 
           // Get the absolute latest state from our Ref!
-          const { currentIndex: refCurrentIdx, slidesLength, playlist: refPlaylist, playlistIndex: refPlaylistIdx, isAutoPlaying: refAutoPlaying } = stateRef.current;
+          const {
+            currentIndex: refCurrentIdx,
+            slidesLength,
+            playlist: refPlaylist,
+            playlistIndex: refPlaylistIdx,
+            isAutoPlaying: refAutoPlaying,
+          } = stateRef.current;
 
           if (refAutoPlaying) {
             if (refCurrentIdx < slidesLength - 1) {
               // Standard: Go to next slide
               setDirection(1);
               setCurrentIndex((prev) => prev + 1);
-            } else if (refPlaylist && refPlaylistIdx < refPlaylist.stories.length - 1) {
+            } else if (
+              refPlaylist &&
+              refPlaylistIdx < refPlaylist.stories.length - 1
+            ) {
               // Playlist: Go to NEXT STORY
               setDirection(1);
               const nextStoryIdx = refPlaylistIdx + 1;
@@ -178,7 +228,6 @@ const StoryViewer = () => {
             }
           }
         };
-
       } catch (error) {
         if (isMounted) {
           setIsAudioLoading(false);
@@ -198,10 +247,12 @@ const StoryViewer = () => {
     };
   }, [currentIndex, isAutoPlaying, slides]);
 
-
   // --- THE FIX: Cross-Story Navigation for Next/Prev buttons ---
-  const isFirstSlideOverall = currentIndex === 0 && (!playlist || playlistIndex === 0);
-  const isLastSlideOverall = currentIndex === slides.length - 1 && (!playlist || playlistIndex === playlist.stories.length - 1);
+  const isFirstSlideOverall =
+    currentIndex === 0 && (!playlist || playlistIndex === 0);
+  const isLastSlideOverall =
+    currentIndex === slides.length - 1 &&
+    (!playlist || playlistIndex === playlist.stories.length - 1);
 
   const handleNext = () => {
     if (currentIndex < slides.length - 1) {
@@ -229,7 +280,6 @@ const StoryViewer = () => {
     }
   };
 
-
   const downloadPDF = async () => {
     setIsPdfGenerating(true);
     setTimeout(() => {
@@ -241,19 +291,28 @@ const StoryViewer = () => {
   const slideVariants = {
     enter: (direction) => ({ x: direction > 0 ? 1000 : -1000, opacity: 0 }),
     center: { zIndex: 1, x: 0, opacity: 1 },
-    exit: (direction) => ({ zIndex: 0, x: direction < 0 ? 1000 : -1000, opacity: 0 }),
+    exit: (direction) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
   };
 
   return (
-    <div className={`fixed inset-0 w-full h-full flex flex-col font-sans overflow-hidden transition-colors duration-700 ${isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"}`}>
-      
+    <div
+      className={`fixed inset-0 w-full h-full flex flex-col font-sans overflow-hidden transition-colors duration-700 ${isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"}`}
+    >
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-50 px-4 py-3 md:px-6 md:py-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-white/20 shadow-sm transition-colors duration-700">
-        
         <div className="flex items-center gap-4">
-          <Link to="/create-story" className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-600 dark:text-slate-300 transition-colors">
+          <Link
+            to="/create-story"
+            className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-600 dark:text-slate-300 transition-colors"
+          >
             <Home size={18} />
-            <span className="hidden md:inline font-bold text-sm">Dashboard</span>
+            <span className="hidden md:inline font-bold text-sm">
+              Dashboard
+            </span>
           </Link>
 
           {/* Show Playlist Info if active */}
@@ -266,21 +325,44 @@ const StoryViewer = () => {
         </div>
 
         <div className="flex gap-2 md:gap-3 items-center">
-          <button onClick={toggleTheme} className="p-2 md:px-3 md:py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-full transition-all shadow-sm flex items-center justify-center">
+          <button
+            onClick={toggleTheme}
+            className="p-2 md:px-3 md:py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-full transition-all shadow-sm flex items-center justify-center"
+          >
             {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
           </button>
 
           <button
             onClick={() => setIsAutoPlaying(!isAutoPlaying)}
             className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full font-bold text-xs md:text-sm transition-all duration-300 shadow-sm ${
-              isAutoPlaying ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 hover:bg-red-100 dark:hover:bg-red-900/40" : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+              isAutoPlaying
+                ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 hover:bg-red-100 dark:hover:bg-red-900/40"
+                : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
             }`}
           >
-            {isAutoPlaying ? <><Square fill="currentColor" size={14} /><span className="hidden sm:inline">Stop</span></> : <><PlayCircle size={16} /><span className="hidden sm:inline">Read to Me</span></>}
+            {isAutoPlaying ? (
+              <>
+                <Square fill="currentColor" size={14} />
+                <span className="hidden sm:inline">Stop</span>
+              </>
+            ) : (
+              <>
+                <PlayCircle size={16} />
+                <span className="hidden sm:inline">Read to Me</span>
+              </>
+            )}
           </button>
 
-          <button onClick={downloadPDF} disabled={isPdfGenerating} className="p-2 md:px-4 md:py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-full transition-all shadow-sm disabled:opacity-50 flex items-center gap-2">
-            {isPdfGenerating ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+          <button
+            onClick={downloadPDF}
+            disabled={isPdfGenerating}
+            className="p-2 md:px-4 md:py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-full transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
+          >
+            {isPdfGenerating ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
             <span className="hidden md:inline font-bold text-xs">PDF</span>
           </button>
         </div>
@@ -288,7 +370,6 @@ const StoryViewer = () => {
 
       {/* Main Content */}
       <div className="flex flex-col md:flex-row h-full w-full pt-[60px] md:pt-[72px]">
-        
         {/* Image Section */}
         <div className="relative flex items-center justify-center w-full h-[45%] sm:h-[50%] md:h-full md:w-[50%] lg:w-[55%] bg-slate-200 dark:bg-slate-950 p-4 sm:p-6 md:p-8 lg:p-12 z-10 transition-colors duration-700">
           <div className="relative aspect-square w-full h-auto max-h-full md:w-auto md:h-full md:max-w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl bg-slate-300 dark:bg-slate-800">
@@ -301,10 +382,16 @@ const StoryViewer = () => {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={`Scene ${currentIndex + 1}`}
-                onError={(e) => { e.target.src = "https://placehold.co/600x600?text=Image+Not+Found"; }}
+                onError={(e) => {
+                  e.target.src =
+                    "https://placehold.co/600x600?text=Image+Not+Found";
+                }}
               />
             </AnimatePresence>
             <div className="absolute inset-0 shadow-inner rounded-2xl sm:rounded-3xl pointer-events-none" />
@@ -312,29 +399,38 @@ const StoryViewer = () => {
         </div>
 
         {/* Text Section */}
-        <div className={`relative w-full h-[55%] sm:h-[50%] md:h-full md:flex-1 bg-white dark:bg-slate-900 flex flex-col justify-between p-6 md:p-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] md:shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-20 transition-colors duration-700`}>
-          
+        <div
+          className={`relative w-full h-[55%] sm:h-[50%] md:h-full md:flex-1 bg-white dark:bg-slate-900 flex flex-col justify-between p-6 md:p-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] md:shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-20 transition-colors duration-700`}
+        >
           <div className="flex justify-center md:justify-start gap-1.5 mb-4">
             {slides.map((_, idx) => (
-              <div key={idx} className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-blue-500 dark:bg-blue-400" : "w-2 bg-slate-200 dark:bg-slate-700"}`} />
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-blue-500 dark:bg-blue-400" : "w-2 bg-slate-200 dark:bg-slate-700"}`}
+              />
             ))}
           </div>
 
           <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col justify-center">
             <AnimatePresence mode="wait">
-              <motion.h2 
-                key={storyData?.id} 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              <motion.h2
+                key={storyData?.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="text-center md:text-left text-sm font-bold text-blue-500 mb-2 uppercase tracking-wider"
               >
                 {storyData?.title}
               </motion.h2>
             </AnimatePresence>
-            
+
             <AnimatePresence mode="wait">
               <motion.p
                 key={currentIndex + (storyData?.id || 0)}
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
                 className={`text-lg md:text-2xl leading-relaxed text-slate-800 dark:text-slate-200 font-medium text-center md:text-left`}
               >
                 {currentSlide.text}
@@ -350,16 +446,25 @@ const StoryViewer = () => {
 
           <div className="mt-4 flex justify-between items-center">
             {/* The Prev Button is now disabled if on the very first slide of the very first story */}
-            <button onClick={handlePrev} disabled={isFirstSlideOverall} className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 disabled:opacity-30 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-300 transition-all">
+            <button
+              onClick={handlePrev}
+              disabled={isFirstSlideOverall}
+              className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 disabled:opacity-30 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-300 transition-all"
+            >
               <ChevronLeft size={24} />
             </button>
-            <span className="text-sm font-bold text-slate-400 dark:text-slate-500">{currentIndex + 1} / {slides.length}</span>
+            <span className="text-sm font-bold text-slate-400 dark:text-slate-500">
+              {currentIndex + 1} / {slides.length}
+            </span>
             {/* The Next Button is now disabled if on the very last slide of the very last story */}
-            <button onClick={handleNext} disabled={isLastSlideOverall} className={`p-4 rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/30 disabled:opacity-50 hover:bg-blue-700 hover:scale-105 transition-all`}>
+            <button
+              onClick={handleNext}
+              disabled={isLastSlideOverall}
+              className={`p-4 rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/30 disabled:opacity-50 hover:bg-blue-700 hover:scale-105 transition-all`}
+            >
               <ChevronRight size={24} />
             </button>
           </div>
-          
         </div>
       </div>
     </div>
