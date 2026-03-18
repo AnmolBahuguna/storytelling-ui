@@ -108,14 +108,35 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
 
         {/* Header */}
         <div className="mb-8 text-center mt-2">
-          <h2
-            className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
-          >
-            Join the Magic ✨
-          </h2>
-          <p className={`text-sm ${LANDING_THEME.colors.text.subtitle}`}>
-            Create an account to start generating unlimited stories.
-          </p>
+          {step === 1 ? (
+            <>
+              <h2
+                className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
+              >
+                Join the Magic
+              </h2>
+              <p className={`text-sm ${LANDING_THEME.colors.text.subtitle}`}>
+                Create an account to start generating unlimited stories.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-4">
+                <Mail size={24} />
+              </div>
+              <h2
+                className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
+              >
+                Verify your email
+              </h2>
+              <p className={`text-sm ${LANDING_THEME.colors.text.subtitle}`}>
+                We've sent a 6-digit code to <br />
+                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  {email}
+                </span>
+              </p>
+            </>
+          )}
         </div>
 
         {/* Global Error/Success Messages */}

@@ -1,9 +1,25 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
+  const handleTryNow = (e) => {
+    e.preventDefault();
+    const hasToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="));
+
+    if (hasToken) {
+      navigate("/dashboard");
+    } else {
+      // Trigger the signup modal which resides in the Header component
+      window.dispatchEvent(new Event("open-signup"));
+    }
+  };
+
   return (
     <section
       className={`${LANDING_THEME.colors.background.transparent} pt-32 pb-10 md:pt-40 md:pb-14 overflow-hidden text-center relative ${LANDING_THEME.typography.family.main}`}
@@ -51,12 +67,12 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <Link
-            to="/create-story"
+          <button
+            onClick={handleTryNow}
             className={`inline-block px-10 py-4 rounded-full text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
           >
             Try Now
-          </Link>
+          </button>
         </motion.div>
       </div>
     </section>

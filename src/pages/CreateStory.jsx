@@ -5,13 +5,18 @@ import CreateStorySection from "../components/story/CreateStorySection.jsx";
 import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection.jsx";
 import FinalTouchesSection from "../components/story/FinalTouchesSection.jsx";
 import Sidebar from "../components/story/Sidebar.jsx"; // <-- Added Sidebar Import
+import CreateStorySection from "../components/story/CreateStorySection";
+import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection";
+import FinalTouchesSection from "../components/story/FinalTouchesSection";
 import { ArrowRight, Wand2, Stars, Sun, Moon } from "lucide-react";
-import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars-blue.jsx";
+import { COLORS, STYLES, FONTS } from "../constants/theme";
 
-const SERVER_URL =
-  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
-    ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:8000";
+// Import BOTH backgrounds to swap them seamlessly
+import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui/components/backgrounds/stars-blue";
+import { StarsBackground as StarsBackgroundWhite } from "../components/animate-ui/components/backgrounds/stars-light";
+
+// Hardcoded for preview environment to prevent 'import.meta' build errors
+const SERVER_URL = "http://localhost:8000";
 
 const CreateStory = () => {
   const navigate = useNavigate();
@@ -153,6 +158,32 @@ const CreateStory = () => {
           onClick={toggleTheme}
           className="absolute top-6 right-6 p-3 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all z-50"
           title="Toggle Theme"
+    <div
+      className={`relative min-h-screen font-sans flex flex-col items-center py-10 px-4 transition-colors duration-700 ${isDarkMode ? "bg-slate-950" : "bg-slate-50"}`}
+    >
+      {/* Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        className="absolute top-6 right-6 p-3 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all z-50"
+        title="Toggle Theme"
+      >
+        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
+
+      {/* Conditionally Render the correct Background Component based on theme */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        {isDarkMode ? (
+          <StarsBackgroundBlue speed={100} />
+        ) : (
+          <StarsBackgroundWhite speed={100} />
+        )}
+      </div>
+
+      <div className="relative z-10 w-full flex flex-col items-center mt-12 md:mt-4">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mb-6"
         >
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
@@ -225,6 +256,30 @@ const CreateStory = () => {
               </button>
             )}
           </div>
+          {activeSection < 3 ? (
+            <button
+              onClick={handleNext}
+              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0`}
+            >
+              Next Step <ArrowRight size={20} />
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`flex items-center gap-2 ${COLORS.primary.DEFAULT} ${COLORS.primary.hover} ${STYLES.button.primary} shadow-xl hover:shadow-blue-500/30 border-0 disabled:opacity-60 disabled:cursor-not-allowed`}
+            >
+              {loading ? (
+                <>
+                  <Wand2 className="animate-spin" /> Creating Magic...
+                </>
+              ) : (
+                <>
+                  <Wand2 /> Create Story
+                </>
+              )}
+            </button>
+          )}
         </div>
       </main>
     </div>
