@@ -10,11 +10,21 @@ const Header = ({ isDarkMode, toggleTheme }) => {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false); // Modal state
-  const [isSignupOpen, setIsSignupOpen] = useState(false); // Signup Modal state
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Handle scroll effect for glassmorphism/shadow & custom events
+  // Check auth status
+  const checkAuthStatus = () => {
+    const hasToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="));
+    setIsLoggedIn(!!hasToken);
+  };
+
   useEffect(() => {
+    checkAuthStatus(); // Check on mount
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -36,36 +46,27 @@ const Header = ({ isDarkMode, toggleTheme }) => {
     { name: "Pricing", href: "#pricing" },
   ];
 
-  const handleGetStarted = () => {
-    const hasToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("access_token="));
-    if (hasToken) {
-      navigate("/dashboard");
-    } else {
-      setIsSignupOpen(true);
-    }
+  const handleLogout = () => {
+    // Clear the access token cookie
+    document.cookie =
+      "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    setIsLoggedIn(false);
+    navigate("/");
+  };
+
+  const handleLogoutMobile = () => {
+    setMobileMenuOpen(false);
+    handleLogout();
   };
 
   const handleGetStartedMobile = () => {
     setMobileMenuOpen(false);
-    handleGetStarted();
-  };
-
-  const handleLogin = () => {
-    const hasToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("access_token="));
-    if (hasToken) {
-      navigate("/dashboard");
-    } else {
-      setIsLoginOpen(true);
-    }
+    setIsSignupOpen(true);
   };
 
   const handleLoginMobile = () => {
     setMobileMenuOpen(false);
-    handleLogin();
+    setIsLoginOpen(true);
   };
 
   return (
@@ -121,13 +122,37 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               </button>
             )}
 
-            {/* Get Started button routes to dashboard if logged in, else opens modal */}
-            <button
-              onClick={handleGetStarted}
-              className={`text-sm px-6 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.components.button.primary} transform hover:-translate-y-0.5`}
-            >
-              Get Started
-            </button>
+            {isLoggedIn ? (
+              <>
+                <button
+                  onClick={handleLogout}
+                  className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors`}
+                >
+                  Logout
+                </button>
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className={`text-sm px-6 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.components.button.primary} transform hover:-translate-y-0.5`}
+                >
+                  Dashboard
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => setIsLoginOpen(true)}
+                  className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors`}
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setIsSignupOpen(true)}
+                  className={`text-sm px-6 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.components.button.primary} transform hover:-translate-y-0.5`}
+                >
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
 
           {/* Mobile Controls (Menu Toggle & Theme Toggle) */}
@@ -163,19 +188,42 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               </a>
             ))}
             <hr className="border-slate-100 dark:border-white/10 my-2" />
+
             <div className="flex flex-col gap-3">
-              <button
-                onClick={handleLoginMobile}
-                className={`text-center py-3 rounded-full w-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.secondary}`}
-              >
-                Login
-              </button>
-              <button
-                onClick={handleGetStartedMobile}
-                className={`text-center py-3 rounded-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
-              >
-                Get Started
-              </button>
+              {isLoggedIn ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate("/dashboard");
+                    }}
+                    className={`text-center py-3 rounded-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={handleLogoutMobile}
+                    className={`text-center py-3 rounded-full w-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.secondary}`}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={handleLoginMobile}
+                    className={`text-center py-3 rounded-full w-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.secondary}`}
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={handleGetStartedMobile}
+                    className={`text-center py-3 rounded-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+                  >
+                    Get Started
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -184,7 +232,10 @@ const Header = ({ isDarkMode, toggleTheme }) => {
       {/* Login Dialog Mount */}
       <LoginDialog
         isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
+        onClose={() => {
+          setIsLoginOpen(false);
+          checkAuthStatus(); // Re-check auth status when dialog closes
+        }}
         onSignupClick={() => {
           setIsLoginOpen(false);
           setIsSignupOpen(true);
@@ -193,7 +244,10 @@ const Header = ({ isDarkMode, toggleTheme }) => {
       {/* Signup Dialog Mount */}
       <SignupDialog
         isOpen={isSignupOpen}
-        onClose={() => setIsSignupOpen(false)}
+        onClose={() => {
+          setIsSignupOpen(false);
+          checkAuthStatus(); // Re-check auth status when dialog closes
+        }}
         onLoginClick={() => {
           setIsSignupOpen(false);
           setIsLoginOpen(true);
