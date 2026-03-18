@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CreateStorySection from "../components/story/CreateStorySection.jsx";
 import CustomizeExperienceSection from "../components/story/CreateCustomizeExperienceSection.jsx";
 import FinalTouchesSection from "../components/story/FinalTouchesSection.jsx";
-import Sidebar from "../components/story/Sidebar.jsx";
+import Sidebar from "../components/story/sidebar.jsx";
 import { ArrowRight, Wand2, Stars, Sun, Moon } from "lucide-react";
 import { COLORS, STYLES, FONTS } from "../constants/theme";
 
