@@ -14,7 +14,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check auth status
+  // Check auth status by looking for the JWT token in cookies
   const checkAuthStatus = () => {
     const hasToken = document.cookie
       .split("; ")
@@ -30,7 +30,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
     };
     window.addEventListener("scroll", handleScroll);
 
-    // Listen for custom event triggered by HeroSection CTA
+    // --- KEY ADDITION: Listen for the custom event from the Hero section ---
     const handleOpenSignup = () => setIsSignupOpen(true);
     window.addEventListener("open-signup", handleOpenSignup);
 
@@ -87,7 +87,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               <img
                 src={elephantLogo}
                 alt="StoryAI Logo"
-                className="w-12 h-12 rounded-xl"
+                className="w-12 h-12 rounded-xl shadow-sm"
               />
             </div>
             <span
@@ -147,7 +147,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
                 </button>
                 <button
                   onClick={() => setIsSignupOpen(true)}
-                  className={`text-sm px-6 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.components.button.primary} transform hover:-translate-y-0.5`}
+                  className={`text-sm px-6 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.components.button.primary} transform hover:-translate-y-0.5 shadow-md`}
                 >
                   Get Started
                 </button>
@@ -229,24 +229,28 @@ const Header = ({ isDarkMode, toggleTheme }) => {
         )}
       </header>
 
-      {/* Login Dialog Mount */}
+      {/* Auth Modals Mounted Here */}
       <LoginDialog
         isOpen={isLoginOpen}
         onClose={() => {
           setIsLoginOpen(false);
-          checkAuthStatus(); // Re-check auth status when dialog closes
+          checkAuthStatus(); // Update auth UI immediately if they logged in
         }}
         onSignupClick={() => {
           setIsLoginOpen(false);
           setIsSignupOpen(true);
         }}
+        onLoginSuccess={() => {
+          checkAuthStatus();
+          navigate("/dashboard");
+        }}
       />
-      {/* Signup Dialog Mount */}
+
       <SignupDialog
         isOpen={isSignupOpen}
         onClose={() => {
           setIsSignupOpen(false);
-          checkAuthStatus(); // Re-check auth status when dialog closes
+          checkAuthStatus();
         }}
         onLoginClick={() => {
           setIsSignupOpen(false);

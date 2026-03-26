@@ -8,14 +8,18 @@ const HeroSection = () => {
 
   const handleTryNow = (e) => {
     e.preventDefault();
+
+    // Check if user is already logged in by looking for the access token
     const hasToken = document.cookie
       .split("; ")
       .find((row) => row.startsWith("access_token="));
 
     if (hasToken) {
+      // If logged in, send them straight to the dashboard
       navigate("/dashboard");
     } else {
-      // Trigger the signup modal which resides in the Header component
+      // If not logged in, trigger the custom event to open the Signup modal
+      // The Header component is already set up to listen for this event!
       window.dispatchEvent(new Event("open-signup"));
     }
   };
