@@ -17,7 +17,7 @@ import {
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:8000";
+    : "http://127.0.0.1:5000";
 
 const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,

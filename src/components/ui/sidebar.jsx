@@ -9,12 +9,13 @@ import {
   Check,
   ChevronLeft,
   Menu,
+  Trash2,
 } from "lucide-react";
 
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:8000";
+    : "http://127.0.0.1:5000";
 
 const getToken = () => {
   const match = document.cookie.match(new RegExp("(^| )access_token=([^;]+)"));
@@ -140,6 +141,28 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
     }
   };
 
+  const handleDeleteStory = async (e, storyId) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this story?")) return;
+    
+    const token = getToken();
+    try {
+      const response = await fetch(`${SERVER_URL}/api/my-stories/${storyId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        setStories(stories.filter(s => s.id !== storyId));
+        setPlaylists(playlists.map(p => ({
+          ...p,
+          stories: p.stories ? p.stories.filter(s => s.id !== storyId) : []
+        })));
+      }
+    } catch (error) {
+      console.error("Failed to delete story:", error);
+    }
+  };
+
   return (
     <div
       className={`relative h-full transition-all duration-300 ease-in-out z-50 flex-shrink-0 ${isOpen ? "w-80" : "w-0"}`}
@@ -162,7 +185,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
                   : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
               }`}
             >
-              <Clock size={16} /> History
+              <Clock size={16} /> My Stories
             </button>
             <button
               onClick={() => setActiveTab("playlists")}
@@ -225,6 +248,13 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
                         title="Add to Playlist"
                       >
                         <PlusCircle size={18} />
+                      </button>
+                      <button
+                        onClick={(e) => handleDeleteStory(e, story.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
+                        title="Delete Story"
+                      >
+                        <Trash2 size={18} />
                       </button>
                       <PlayCircle size={18} className="text-slate-400" />
                     </div>

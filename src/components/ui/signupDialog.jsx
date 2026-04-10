@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { X, Loader2, CheckCircle2 } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 import { LANDING_THEME } from "../../constants/theme-landing";
 
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:8000";
+    : "http://127.0.0.1:5000";
 
 const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
   // Form State
@@ -46,6 +47,42 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
       return data.detail;
     }
     return defaultMsg;
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(`${SERVER_URL}/api/auth/google`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: credentialResponse.credential }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Google authentication failed");
+      }
+
+      // Store token in cookies
+      const maxAge = 24 * 60 * 60;
+      document.cookie = `access_token=${data.access_token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+
+      setSuccess(true);
+      setTimeout(() => {
+        onClose();
+        // Since we got a token, they are fully registered AND logged in
+        // We can just close or refresh status (the header does checkAuthStatus on close)
+      }, 1000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Direct Signup Handler
@@ -188,6 +225,28 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
             {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
+
+        <div className="relative mt-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-slate-200 dark:border-slate-700"></span>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white dark:bg-slate-900 px-2 text-slate-500">Or continue with</span>
+          </div>
+        </div>
+        
+        <div className="mt-6 flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              setError("Google Signup Failed");
+            }}
+            useOneTap
+            shape="rectangular"
+            theme="filled_blue"
+            text="signup_with"
+          />
+        </div>
 
         {/* Footer */}
         <div className="mt-6 text-center">
