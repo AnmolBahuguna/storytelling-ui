@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
-import elephantLogo from "../../../public/elephant.jpg";
 import LoginDialog from "./loginDialog.jsx";
 import SignupDialog from "./signupDialog.jsx";
 
@@ -85,7 +84,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               className={`p-2 rounded-xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center`}
             >
               <img
-                src={elephantLogo}
+                src="/elephant.jpg"
                 alt="StoryAI Logo"
                 className="w-12 h-12 rounded-xl shadow-sm"
               />

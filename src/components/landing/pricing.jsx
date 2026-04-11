@@ -1,8 +1,83 @@
 import React from "react";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { LANDING_THEME } from "../../constants/theme-landing";
 
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "http://127.0.0.1:5000";
+
 export function PricingSection() {
+  const navigate = useNavigate();
+  const [currentTier, setCurrentTier] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchTier = async () => {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("access_token="))
+        ?.split("=")[1];
+      
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${SERVER_URL}/api/payments/status`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setCurrentTier(data.tier);
+        }
+      } catch (err) {
+        console.error("Failed to fetch tier", err);
+      }
+    };
+    fetchTier();
+  }, []);
+
+  const handleSubscribe = async (tier) => {
+    if (tier === "BASIC") {
+       // Typically directs user to free tier dashboard or sign up
+       navigate("/dashboard");
+       return;
+    }
+    
+    // Check internal cookie for auth
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="))
+      ?.split("=")[1];
+
+    if (!token) {
+      alert("Please login or create an account first to upgrade your plan!");
+      // Optionally scroll or trigger login modal if possible here
+      return;
+    }
+
+    try {
+      const response = await fetch(`${SERVER_URL}/api/payments/create-checkout-session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ tier })
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.url) {
+        // Redirection boundary: Redirects to Stripe Checkout Hosted Session
+        window.location.href = data.url; 
+      } else {
+        alert("Payment initialization failed: " + (data.detail || "Unknown error"));
+      }
+    } catch(err) {
+      console.error(err);
+      alert("Failed to connect to the payment server. Please try again later.");
+    }
+  };
+
   const plans = [
     {
       name: "BASIC",
@@ -120,13 +195,17 @@ export function PricingSection() {
 
               {/* Action Button */}
               <button
-                className={`w-full py-3 px-6 rounded-xl ${LANDING_THEME.typography.weight.bold} ${
-                  plan.isPopular
-                    ? LANDING_THEME.components.button.primary
-                    : LANDING_THEME.components.button.secondary
+                onClick={() => handleSubscribe(plan.name)}
+                disabled={currentTier === plan.name}
+                className={`w-full py-3 px-6 rounded-xl ${LANDING_THEME.typography.weight.bold} transition-all ${
+                  currentTier === plan.name 
+                    ? "bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-500" 
+                    : plan.isPopular
+                      ? LANDING_THEME.components.button.primary
+                      : LANDING_THEME.components.button.secondary
                 }`}
               >
-                {plan.buttonText}
+                {currentTier === plan.name ? "Current Plan" : plan.buttonText}
               </button>
             </div>
           ))}

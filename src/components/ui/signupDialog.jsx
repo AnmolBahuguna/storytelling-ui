@@ -91,6 +91,12 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
     setLoading(true);
     setError("");
 
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${SERVER_URL}/api/auth/register`, {
         method: "POST",

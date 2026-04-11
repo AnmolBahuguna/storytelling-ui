@@ -28,6 +28,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   const [stories, setStories] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [subscriptionTier, setSubscriptionTier] = useState("BASIC");
 
   // State for Playlist Creation
   const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false);
@@ -62,6 +63,20 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
           const fetchedPlaylists = await playlistRes.json();
           setPlaylists(fetchedPlaylists);
         }
+
+        // Fetch Subscription Status
+        try {
+          const subRes = await fetch(`${SERVER_URL}/api/payments/status`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (subRes.ok) {
+            const data = await subRes.json();
+            setSubscriptionTier(data.tier);
+          }
+        } catch (subErr) {
+          console.error("Failed to fetch sub status", subErr);
+        }
+
       } catch (error) {
         console.error("Failed to fetch sidebar data", error);
       } finally {
@@ -173,9 +188,20 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
       >
         {/* Header & Tabs */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-4">
-            Library
-          </h2>
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+              Library
+            </h2>
+            {subscriptionTier !== "BASIC" && (
+              <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md shadow-sm ${
+                subscriptionTier === "LEGEND" 
+                ? "bg-gradient-to-r from-yellow-400 to-amber-600 text-white" 
+                : "bg-blue-600 text-white"
+              }`}>
+                {subscriptionTier}
+              </span>
+            )}
+          </div>
           <div className="flex space-x-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
             <button
               onClick={() => setActiveTab("history")}

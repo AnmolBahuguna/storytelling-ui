@@ -13,6 +13,8 @@ import {
   Moon,
   ListMusic,
 } from "lucide-react";
+import jsPDF from "jspdf";
+import { toJpeg } from "html-to-image";
 
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
@@ -282,10 +284,155 @@ const StoryViewer = () => {
 
   const downloadPDF = async () => {
     setIsPdfGenerating(true);
-    setTimeout(() => {
-      alert("PDF download is mocked in this preview.");
+    try {
+      // We use a fixed aspect ratio for crisp pages
+      const pdfWidth = 800;
+      const pdfHeight = 1000;
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [pdfWidth, pdfHeight]
+      });
+
+      // Create a hidden rendering container safely
+      const container = document.createElement("div");
+      container.style.position = "absolute";
+      container.style.left = "-9999px";
+      container.style.top = "0";
+      container.style.width = `${pdfWidth}px`;
+      container.style.backgroundColor = isDarkMode ? "#0f172a" : "#ffffff";
+      container.style.color = isDarkMode ? "#f8fafc" : "#0f172a";
+      // This ensures whatever language font the browser uses is applied natively
+      container.style.fontFamily = "system-ui, -apple-system, sans-serif"; 
+      document.body.appendChild(container);
+
+      // Loop through all slides and paint them to canvases
+      for (let i = 0; i < slides.length; i++) {
+        const slide = slides[i];
+        
+        // Build slide wrapper
+        const slideDiv = document.createElement("div");
+        slideDiv.style.width = `${pdfWidth}px`;
+        slideDiv.style.height = `${pdfHeight}px`;
+        slideDiv.style.display = "flex";
+        slideDiv.style.flexDirection = "column";
+        slideDiv.style.padding = "60px";
+        slideDiv.style.boxSizing = "border-box";
+        
+        // Title (Only on first page)
+        if (i === 0 && storyData?.title) {
+          const titleDiv = document.createElement("h1");
+          titleDiv.style.fontSize = "42px";
+          titleDiv.style.textAlign = "center";
+          titleDiv.style.color = "#3b82f6";
+          titleDiv.style.marginBottom = "30px";
+          titleDiv.innerText = storyData.title;
+          slideDiv.appendChild(titleDiv);
+        }
+        
+        // Image Container
+        const imgContainer = document.createElement("div");
+        imgContainer.style.width = "100%";
+        // Adjust height if there is a title
+        imgContainer.style.height = i === 0 && storyData?.title ? "500px" : "600px";
+        imgContainer.style.borderRadius = "24px";
+        imgContainer.style.overflow = "hidden";
+        imgContainer.style.marginBottom = "40px";
+        imgContainer.style.boxShadow = "0 20px 40px rgba(0,0,0,0.1)";
+        
+        // Need to load image with anonymous CORS so canvas isn't tainted
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "cover";
+        
+        // Set cache-buster to prevent CORS issues if the image was already loaded without CORS earlier
+        const urlToFetch = getImageUrl(slide.image);
+        const urlWithCacheBuster = urlToFetch.includes('?') 
+          ? `${urlToFetch}&disableCache=${Date.now()}` 
+          : `${urlToFetch}?disableCache=${Date.now()}`;
+        
+        // Create a promise to wait for image physical loading
+        await new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = () => {
+             console.warn("Failed to natively load image via CORS fallback:", urlToFetch);
+             resolve();
+          };
+          img.src = urlWithCacheBuster;
+        });
+        
+        imgContainer.appendChild(img);
+        
+        // Narrative Text
+        const textDiv = document.createElement("div");
+        textDiv.style.fontSize = "36px";
+        textDiv.style.lineHeight = "1.5";
+        textDiv.style.textAlign = "center";
+        textDiv.style.fontWeight = "600";
+        // Browser natively resolves the correct font glyphs for any language here!
+        textDiv.innerText = slide.text; 
+        
+        // Page numbering
+        const pageNum = document.createElement("div");
+        pageNum.style.marginTop = "auto";
+        pageNum.style.textAlign = "center";
+        pageNum.style.fontSize = "18px";
+        pageNum.style.color = "#94a3b8";
+        pageNum.innerText = `${i + 1} / ${slides.length}`;
+        
+        slideDiv.appendChild(imgContainer);
+        slideDiv.appendChild(textDiv);
+        slideDiv.appendChild(pageNum);
+        
+        // --- Added StoryAI Watermark ---
+        const watermark = document.createElement("div");
+        watermark.innerText = "StoryAI";
+        watermark.style.position = "absolute";
+        watermark.style.bottom = "30px"; // Place securely inside bounding box
+        watermark.style.right = "40px";
+        watermark.style.fontSize = "36px";
+        watermark.style.fontWeight = "900";
+        watermark.style.fontFamily = "system-ui, -apple-system, sans-serif";
+        watermark.style.color = isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+        watermark.style.pointerEvents = "none"; // Make sure it interferes with nothing
+        watermark.style.userSelect = "none";
+        
+        // Ensure the parent container can host the absolute positioned watermark safely
+        slideDiv.style.position = "relative";
+        slideDiv.appendChild(watermark);
+        
+        container.innerHTML = '';
+        container.appendChild(slideDiv);
+        
+        // Snapshot the HTML node into an image using html-to-image
+        // This leverages native SVG rendering bounding, bypassing strict CSS parser bugs (like oklch)
+        const imgData = await toJpeg(slideDiv, {
+          quality: 0.95,
+          pixelRatio: 2, // 2x resolution for crispness
+          backgroundColor: isDarkMode ? "#0f172a" : "#ffffff",
+          // Avoid trying to fetch external fonts if they cause issues
+          skipFonts: true, 
+        });
+        
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      }
+      
+      // Cleanup DOM
+      document.body.removeChild(container);
+      
+      // Save PDF to user
+      const safeTitle = (storyData?.title || 'Story').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      pdf.save(`${safeTitle}.pdf`);
+      
+    } catch (error) {
+      console.error("PDF generation failed EXCEPTION:", error);
+      alert(`Error generating PDF: ${error.message}`);
+    } finally {
       setIsPdfGenerating(false);
-    }, 1500);
+    }
   };
 
   const slideVariants = {
@@ -306,8 +453,18 @@ const StoryViewer = () => {
       <div className="absolute top-0 left-0 right-0 z-50 px-4 py-3 md:px-6 md:py-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-white/20 shadow-sm transition-colors duration-700">
         <div className="flex items-center gap-4">
           <Link
-            to="/dashboard"
+            to="/"
             className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-600 dark:text-slate-300 transition-colors"
+          >
+            <ChevronLeft size={18} />
+            <span className="hidden md:inline font-bold text-sm">
+              Landing
+            </span>
+          </Link>
+          
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-blue-600 dark:text-blue-400 font-bold transition-colors shadow-sm"
           >
             <Home size={18} />
             <span className="hidden md:inline font-bold text-sm">

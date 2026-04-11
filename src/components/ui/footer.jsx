@@ -9,8 +9,6 @@ import {
   Smile,
 } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing";
-import elephantLogo from "../../../public/elephant.jpg";
-
 const Footer = () => {
   return (
     <footer
@@ -25,7 +23,7 @@ const Footer = () => {
                 className={`rounded-xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center`}
               >
                 <img
-                  src={elephantLogo}
+                  src="/elephant.jpg"
                   alt="StoryAI Logo"
                   className="w-12 h-12 rounded-xl"
                 />

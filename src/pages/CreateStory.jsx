@@ -66,12 +66,23 @@ const CreateStory = () => {
       ?.split("=")[1];
   };
 
+  const [userTier, setUserTier] = useState("BASIC");
+
   useEffect(() => {
     const token = getAccessToken();
     if (!token) {
       navigate("/");
     } else {
       setIsAuthorized(true);
+      // Fetch tier for top right badge!
+      fetch(`${SERVER_URL}/api/payments/status`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.tier) setUserTier(data.tier);
+      })
+      .catch(err => console.error("Error fetching tier", err));
     }
   }, [navigate]);
 
@@ -172,14 +183,27 @@ const CreateStory = () => {
 
       {/* MAIN CONTENT AREA ON THE RIGHT */}
       <main className="relative flex-1 flex flex-col items-center overflow-y-auto font-sans">
-        {/* Theme Toggle Button */}
-        <button
-          onClick={toggleTheme}
-          className="absolute top-6 right-6 p-3 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all z-50"
-          title="Toggle Theme"
-        >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
+        
+        {/* Top Right Controls Overlay: Theme & Badge */}
+        <div className="absolute top-6 right-6 flex items-center gap-4 z-50">
+          {userTier !== "BASIC" && (
+            <div className={`px-4 py-2 rounded-full shadow-lg border text-xs font-black uppercase tracking-widest backdrop-blur-md ${
+              userTier === "LEGEND" 
+                ? "bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-600 text-slate-900 border-yellow-200" 
+                : "bg-blue-600 text-white border-blue-500"
+            }`}>
+              {userTier}
+            </div>
+          )}
+
+          <button
+            onClick={toggleTheme}
+            className="p-3 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all font-bold"
+            title="Toggle Theme"
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        </div>
 
         {/* Conditionally Render the correct Background Component based on theme */}
         <div className="absolute inset-0 z-0 pointer-events-none">
