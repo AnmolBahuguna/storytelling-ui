@@ -12,14 +12,20 @@ import {
   Sun,
   Moon,
   ListMusic,
+  HelpCircle,
+  CheckCircle2,
+  XCircle,
+  Trophy,
+  Volume2,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import { toJpeg } from "html-to-image";
+import confetti from "canvas-confetti";
 
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://127.0.0.1:5000";
+    : "";
 
 const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
@@ -46,6 +52,17 @@ const StoryViewer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
+
+  // --- INTERACTIVE FEATURES STATE ---
+  const [activeGlossary, setActiveGlossary] = useState(null);
+  
+  // Challenge State
+  const [solvedChallenges, setSolvedChallenges] = useState({}); // { slideIndex: true }
+  const [selectedChallengeOption, setSelectedChallengeOption] = useState(null);
+  
+  // Quiz State
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizState, setQuizState] = useState({ currentQuestion: 0, score: 0, isComplete: false, selectedOption: null });
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
@@ -98,7 +115,7 @@ const StoryViewer = () => {
   const currentSlide = slides[currentIndex];
 
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return "https://placehold.co/600x600?text=No+Image";
+    if (!imagePath) return "https://loremflickr.com/1024/1024/cartoon,storybook/all?lock=1";
     if (imagePath.startsWith("http")) return imagePath;
     return `${SERVER_URL}${imagePath}`;
   };
@@ -116,7 +133,16 @@ const StoryViewer = () => {
     });
     audioCache.current = {};
     setCurrentIndex(0);
+    setSolvedChallenges({});
+    setShowQuiz(false);
+    setQuizState({ currentQuestion: 0, score: 0, isComplete: false, selectedOption: null });
   }, [storyData]);
+
+  // Reset challenge option when slide changes
+  useEffect(() => {
+    setSelectedChallengeOption(null);
+    setActiveGlossary(null);
+  }, [currentIndex]);
 
   // Audio Player Logic
   useEffect(() => {
@@ -257,19 +283,28 @@ const StoryViewer = () => {
     (!playlist || playlistIndex === playlist.stories.length - 1);
 
   const handleNext = () => {
+    // Users can now proceed to the next slide even if they haven't solved the challenge
     if (currentIndex < slides.length - 1) {
       setDirection(1);
       setCurrentIndex((prev) => prev + 1);
+    } else if (storyData?.quiz && storyData.quiz.length > 0 && !showQuiz) {
+      // Show quiz instead of ending story
+      setShowQuiz(true);
     } else if (playlist && playlistIndex < playlist.stories.length - 1) {
       // Jump to next story in playlist
       setDirection(1);
       const nextStoryIdx = playlistIndex + 1;
       setPlaylistIndex(nextStoryIdx);
       setStoryData(playlist.stories[nextStoryIdx]);
+      setShowQuiz(false);
     }
   };
-
   const handlePrev = () => {
+    if (showQuiz) {
+      setShowQuiz(false);
+      return;
+    }
+
     if (currentIndex > 0) {
       setDirection(-1);
       setCurrentIndex((prev) => prev - 1);
@@ -435,6 +470,109 @@ const StoryViewer = () => {
     }
   };
 
+  // --- INTERACTIVE HELPERS ---
+  const renderTextWithGlossary = (text) => {
+    if (!storyData?.glossary || storyData.glossary.length === 0) return text;
+    
+    let parts = [{ text, isWord: false }];
+    
+    storyData.glossary.forEach(item => {
+      const newParts = [];
+      // Use word boundary to avoid partial matches
+      const regex = new RegExp(`\\b(${item.word})\\b`, "gi");
+      
+      parts.forEach(part => {
+        if (part.isWord) {
+          newParts.push(part);
+          return;
+        }
+        
+        const splitText = part.text.split(regex);
+        splitText.forEach(segment => {
+          if (segment.toLowerCase() === item.word.toLowerCase()) {
+            newParts.push({ text: segment, isWord: true, item });
+          } else if (segment) {
+            newParts.push({ text: segment, isWord: false });
+          }
+        });
+      });
+      parts = newParts;
+    });
+
+    return parts.map((part, i) => 
+      part.isWord ? (
+        <span 
+          key={i} 
+          onClick={() => {
+            setActiveGlossary(part.item);
+            if (isPlaying) {
+              setIsAutoPlaying(false);
+              audioRef.current.pause();
+            }
+          }}
+          className="text-violet-500 border-b-2 border-dashed border-violet-300 cursor-pointer hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors font-extrabold relative inline-block group"
+          title="Click to learn this word!"
+        >
+          {part.text}
+          <span className="absolute -top-1 -right-2 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">✨</span>
+        </span>
+      ) : (
+        <span key={i}>{part.text}</span>
+      )
+    );
+  };
+
+  const handleChallengeSubmit = (option) => {
+    setSelectedChallengeOption(option);
+    if (option === currentSlide.challenge.correct_answer) {
+      setSolvedChallenges(prev => ({ ...prev, [currentIndex]: true }));
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.8 },
+        colors: ['#7C3AED', '#F59E0B', '#34D399']
+      });
+    }
+  };
+
+  const handleQuizSubmit = (option) => {
+    if (quizState.selectedOption) return; // Already answered
+    
+    const isCorrect = option === storyData.quiz[quizState.currentQuestion].correct_answer;
+    
+    setQuizState(prev => ({ ...prev, selectedOption: option }));
+    
+    if (isCorrect) {
+      setQuizState(prev => ({ ...prev, score: prev.score + 1 }));
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#7C3AED', '#F59E0B']
+      });
+    }
+
+    setTimeout(() => {
+      if (quizState.currentQuestion < storyData.quiz.length - 1) {
+        setQuizState(prev => ({
+          ...prev,
+          currentQuestion: prev.currentQuestion + 1,
+          selectedOption: null
+        }));
+      } else {
+        setQuizState(prev => ({ ...prev, isComplete: true, selectedOption: null }));
+        if (prevScore => prevScore + (isCorrect ? 1 : 0) === storyData.quiz.length) {
+          // Perfect score confetti!
+          confetti({
+            particleCount: 300,
+            spread: 120,
+            origin: { y: 0.5 },
+          });
+        }
+      }
+    }, 2500); // Wait 2.5 seconds to show explanation before moving on
+  };
+
   const slideVariants = {
     enter: (direction) => ({ x: direction > 0 ? 1000 : -1000, opacity: 0 }),
     center: { zIndex: 1, x: 0, opacity: 1 },
@@ -458,13 +596,13 @@ const StoryViewer = () => {
           >
             <ChevronLeft size={18} />
             <span className="hidden md:inline font-bold text-sm">
-              Landing
+              Home
             </span>
           </Link>
           
           <Link
             to="/dashboard"
-            className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-blue-600 dark:text-blue-400 font-bold transition-colors shadow-sm"
+            className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-violet-600 dark:text-violet-400 font-bold transition-colors shadow-sm"
           >
             <Home size={18} />
             <span className="hidden md:inline font-bold text-sm">
@@ -525,6 +663,51 @@ const StoryViewer = () => {
         </div>
       </div>
 
+      {/* Glossary Popup Modal */}
+      <AnimatePresence>
+        {activeGlossary && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
+            onClick={() => setActiveGlossary(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl border-4 border-violet-100 dark:border-slate-700 relative text-center"
+            >
+              <button 
+                onClick={() => setActiveGlossary(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+              >
+                <XCircle size={24} />
+              </button>
+              
+              <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <HelpCircle size={32} className="text-amber-500" />
+              </div>
+              
+              <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                {activeGlossary.word}
+              </h3>
+              
+              <div className="flex items-center justify-center gap-2 text-violet-500 font-bold mb-6">
+                <Volume2 size={16} />
+                <span>/{activeGlossary.pronunciation}/</span>
+              </div>
+              
+              <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed font-medium bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl">
+                {activeGlossary.explanation}
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content */}
       <div className="flex flex-col md:flex-row h-full w-full pt-[60px] md:pt-[72px]">
         {/* Image Section */}
@@ -547,7 +730,7 @@ const StoryViewer = () => {
                 alt={`Scene ${currentIndex + 1}`}
                 onError={(e) => {
                   e.target.src =
-                    "https://placehold.co/600x600?text=Image+Not+Found";
+                    `https://loremflickr.com/1024/1024/cartoon,storybook,illustration/all?lock=${currentIndex + 50}`;
                 }}
               />
             </AnimatePresence>
@@ -563,7 +746,7 @@ const StoryViewer = () => {
             {slides.map((_, idx) => (
               <div
                 key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-blue-500 dark:bg-blue-400" : "w-2 bg-slate-200 dark:bg-slate-700"}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-violet-500 dark:bg-violet-400" : "w-2 bg-slate-200 dark:bg-slate-700"}`}
               />
             ))}
           </div>
@@ -575,7 +758,7 @@ const StoryViewer = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-center md:text-left text-sm font-bold text-blue-500 mb-2 uppercase tracking-wider"
+                className="text-center md:text-left text-sm font-bold text-violet-500 mb-2 uppercase tracking-wider"
               >
                 {storyData?.title}
               </motion.h2>
@@ -590,13 +773,63 @@ const StoryViewer = () => {
                 transition={{ duration: 0.3 }}
                 className={`text-lg md:text-2xl leading-relaxed text-slate-800 dark:text-slate-200 font-medium text-center md:text-left`}
               >
-                {currentSlide.text}
+                {renderTextWithGlossary(currentSlide.text)}
               </motion.p>
+            </AnimatePresence>
+
+            {/* MINI CHALLENGE UI */}
+            <AnimatePresence>
+              {currentSlide.challenge && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 p-5 bg-gradient-to-br from-amber-50 to-violet-50 dark:from-slate-800 dark:to-slate-800/80 rounded-2xl border-2 border-violet-100 dark:border-slate-700 shadow-sm relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 p-3 opacity-20 pointer-events-none">
+                    <Trophy size={48} className="text-amber-500" />
+                  </div>
+                  <h4 className="font-bold text-violet-600 dark:text-violet-400 mb-3 flex items-center gap-2">
+                    <HelpCircle size={18} /> Mini Challenge!
+                  </h4>
+                  <p className="text-slate-800 dark:text-slate-200 font-medium mb-4">
+                    {currentSlide.challenge.question}
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {currentSlide.challenge.options.map((option, idx) => {
+                      const isSelected = selectedChallengeOption === option;
+                      const isCorrect = option === currentSlide.challenge.correct_answer;
+                      const hasAnswered = selectedChallengeOption !== null;
+                      
+                      let btnClass = "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-violet-300";
+                      
+                      if (hasAnswered) {
+                        if (isCorrect) btnClass = "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-500 text-emerald-800 dark:text-emerald-300 font-bold";
+                        else if (isSelected) btnClass = "bg-red-100 dark:bg-red-900/40 border-red-500 text-red-800 dark:text-red-300";
+                        else btnClass = "opacity-50 border-slate-200";
+                      }
+                      
+                      return (
+                        <button
+                          key={idx}
+                          disabled={hasAnswered && isCorrect}
+                          onClick={() => handleChallengeSubmit(option)}
+                          className={`p-3 rounded-xl border-2 text-left transition-all flex items-center justify-between ${btnClass}`}
+                        >
+                          <span>{option}</span>
+                          {hasAnswered && isCorrect && <CheckCircle2 size={18} className="text-emerald-500" />}
+                          {hasAnswered && isSelected && !isCorrect && <XCircle size={18} className="text-red-500" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
 
           {isAudioLoading && (
-            <div className="flex justify-center md:justify-start items-center gap-2 text-xs text-blue-500 font-bold uppercase tracking-widest animate-pulse py-2">
+            <div className="flex justify-center md:justify-start items-center gap-2 text-xs text-violet-500 font-bold uppercase tracking-widest animate-pulse py-2">
               <Loader2 size={12} className="animate-spin" /> Loading Audio...
             </div>
           )}
@@ -616,14 +849,149 @@ const StoryViewer = () => {
             {/* The Next Button is now disabled if on the very last slide of the very last story */}
             <button
               onClick={handleNext}
-              disabled={isLastSlideOverall}
-              className={`p-4 rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/30 disabled:opacity-50 hover:bg-blue-700 hover:scale-105 transition-all`}
+              disabled={isLastSlideOverall && (!storyData?.quiz || storyData.quiz.length === 0) || (currentSlide.challenge && !solvedChallenges[currentIndex])}
+              className={`p-4 rounded-full ${currentSlide.challenge && !solvedChallenges[currentIndex] ? 'bg-slate-200 dark:bg-slate-700 text-slate-400' : 'bg-violet-600 text-white shadow-lg shadow-violet-500/30 hover:bg-violet-700 hover:scale-105'} transition-all`}
             >
               <ChevronRight size={24} />
             </button>
           </div>
         </div>
       </div>
+
+      {/* END OF STORY QUIZ OVERLAY */}
+      <AnimatePresence>
+        {showQuiz && storyData?.quiz && (
+          <motion.div
+            initial={{ opacity: 0, y: "100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "100%" }}
+            className="fixed inset-0 z-50 bg-white dark:bg-slate-900 flex flex-col pt-20 pb-6 px-4 md:px-8 overflow-y-auto"
+          >
+            <div className="max-w-2xl w-full mx-auto flex flex-col h-full">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                  <Trophy className="text-amber-500" size={32} />
+                  Story Quiz Time!
+                </h2>
+                {!quizState.isComplete && (
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => setShowQuiz(false)}
+                      className="text-sm font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full"
+                    >
+                      Skip Quiz
+                    </button>
+                    <div className="text-sm font-bold text-violet-500 bg-violet-50 dark:bg-violet-900/30 px-4 py-2 rounded-full hidden sm:block">
+                      Question {quizState.currentQuestion + 1} of {storyData.quiz.length}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {quizState.isComplete ? (
+                <motion.div 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="flex-1 flex flex-col items-center justify-center text-center space-y-6"
+                >
+                  <div className="w-32 h-32 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4">
+                    <Trophy size={64} className="text-amber-500" />
+                  </div>
+                  <h3 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
+                    You scored {quizState.score} out of {storyData.quiz.length}!
+                  </h3>
+                  <p className="text-xl text-slate-600 dark:text-slate-300">
+                    {quizState.score === storyData.quiz.length 
+                      ? "Perfect! You're a story master! 🌟" 
+                      : "Great job! Keep reading and learning! 📚"}
+                  </p>
+                  
+                  <div className="pt-8 flex gap-4">
+                    <button
+                      onClick={() => setShowQuiz(false)}
+                      className="px-8 py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-white font-bold rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    >
+                      Back to Story
+                    </button>
+                    {playlist && playlistIndex < playlist.stories.length - 1 && (
+                      <button
+                        onClick={() => {
+                          setDirection(1);
+                          const nextStoryIdx = playlistIndex + 1;
+                          setPlaylistIndex(nextStoryIdx);
+                          setStoryData(playlist.stories[nextStoryIdx]);
+                          setShowQuiz(false);
+                        }}
+                        className="px-8 py-4 bg-violet-600 text-white font-bold rounded-full hover:bg-violet-700 shadow-lg shadow-violet-500/30 transition-colors"
+                      >
+                        Next Story
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              ) : (
+                <div className="flex-1 flex flex-col">
+                  <div className="bg-slate-50 dark:bg-slate-800 rounded-3xl p-6 md:p-10 mb-8 border-2 border-slate-100 dark:border-slate-700">
+                    <h3 className="text-xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-8">
+                      {storyData.quiz[quizState.currentQuestion].question}
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      {storyData.quiz[quizState.currentQuestion].options.map((option, idx) => {
+                        const isSelected = quizState.selectedOption === option;
+                        const isCorrect = option === storyData.quiz[quizState.currentQuestion].correct_answer;
+                        const hasAnswered = quizState.selectedOption !== null;
+                        
+                        let btnClass = "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-violet-300 hover:shadow-md";
+                        
+                        if (hasAnswered) {
+                          if (isCorrect) btnClass = "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-500 text-emerald-800 dark:text-emerald-300 font-bold scale-[1.02]";
+                          else if (isSelected) btnClass = "bg-red-100 dark:bg-red-900/40 border-red-500 text-red-800 dark:text-red-300 scale-95 opacity-50";
+                          else btnClass = "opacity-50 border-slate-200";
+                        }
+                        
+                        return (
+                          <button
+                            key={idx}
+                            disabled={hasAnswered}
+                            onClick={() => handleQuizSubmit(option)}
+                            className={`w-full p-4 md:p-6 rounded-2xl border-2 text-left transition-all duration-300 flex items-center justify-between text-lg font-medium ${btnClass}`}
+                          >
+                            <span>{option}</span>
+                            {hasAnswered && isCorrect && <CheckCircle2 size={24} className="text-emerald-500" />}
+                            {hasAnswered && isSelected && !isCorrect && <XCircle size={24} className="text-red-500" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  
+                  {/* Explanation popup that appears after answering */}
+                  <AnimatePresence>
+                    {quizState.selectedOption && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-amber-50 dark:bg-slate-800 p-6 rounded-2xl border-2 border-amber-200 dark:border-slate-700 flex gap-4 items-start"
+                      >
+                        <div className="bg-amber-100 dark:bg-slate-700 p-2 rounded-full shrink-0">
+                          <Sparkles className="text-amber-500" size={24} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-slate-800 dark:text-white mb-1">Did you know?</h4>
+                          <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                            {storyData.quiz[quizState.currentQuestion].explanation}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

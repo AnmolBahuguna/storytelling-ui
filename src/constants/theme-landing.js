@@ -1,32 +1,37 @@
 /**
  * Global Theme Configuration for the Landing Page
  * Supports both Light and Dark modes using Tailwind's 'dark:' classes.
+ * 
+ * 🎨 "Magical Storybook" palette — warm, inviting, kid-friendly
+ *    Primary:   Purple (#7C3AED) — magical, dreamy
+ *    Secondary: Amber (#F59E0B) — friendly, inviting
+ *    Accent:    Teal (#06B6D4) — playful energy
  */
 
 export const LANDING_THEME = {
   colors: {
     // Backgrounds
     background: {
-      main: "bg-white dark:bg-transparent", // Dark mode gradient handled by wrapper
+      main: "bg-amber-50/40 dark:bg-transparent", // Warm cream in light, gradient in dark
       transparent: "bg-transparent",
     },
     // Typography Colors
     text: {
-      heading: "text-slate-900 dark:text-stone-200",
+      heading: "text-slate-900 dark:text-amber-50",
       subtitle: "text-slate-600 dark:text-slate-300",
-      brand: "text-[#2b7fff] dark:text-blue-400",
+      brand: "text-violet-600 dark:text-violet-400",
       light: "text-slate-500 dark:text-stone-400",
     },
     // Accents & Decorations
     accent: {
-      brandBg: "bg-[#2b7fff] dark:bg-slate-800",
-      blurEffect: "bg-slate-200/40 dark:bg-blue-900/40",
+      brandBg: "bg-violet-600 dark:bg-violet-500",
+      blurEffect: "bg-violet-200/40 dark:bg-violet-900/40",
     },
   },
 
   typography: {
     family: {
-      main: "font-sans",
+      main: "font-[Nunito]",
     },
     weight: {
       heading: "font-[800]",
@@ -44,14 +49,14 @@ export const LANDING_THEME = {
   components: {
     badge: {
       container:
-        "bg-blue-50 dark:bg-white/10 border border-blue-100 dark:border-white/20 shadow-sm backdrop-blur-md",
-      text: "text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider",
+        "bg-violet-50 dark:bg-white/10 border border-violet-200 dark:border-white/20 shadow-sm backdrop-blur-md",
+      text: "text-violet-700 dark:text-violet-300 text-xs font-bold uppercase tracking-wider",
     },
     button: {
       primary:
-        "bg-[#2b7fff] hover:bg-blue-600 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-blue-900 shadow-md transition-all border border-transparent",
+        "bg-violet-600 hover:bg-violet-700 dark:bg-amber-400 dark:hover:bg-amber-300 text-white dark:text-slate-900 shadow-md shadow-violet-500/25 dark:shadow-amber-400/25 transition-all border border-transparent",
       secondary:
-        "bg-white dark:bg-slate-800/50 text-[#2b7fff] dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 backdrop-blur-sm transition-all",
+        "bg-white dark:bg-slate-800/50 text-violet-600 dark:text-white border border-violet-200 dark:border-slate-700 hover:bg-violet-50 dark:hover:bg-slate-800 backdrop-blur-sm transition-all",
     },
   },
 };

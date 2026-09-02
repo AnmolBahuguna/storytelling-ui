@@ -2,40 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bike, Rocket, Gamepad2, Plane, Car, Palette, Music, Trophy, Dribbble, Tent } from "lucide-react";
 
-const FUN_FACTS = [
-  "Did you know? Octopuses have three hearts and blue blood!",
-  "Space is completely silent because there's no air to carry sound.",
-  "A group of flamingos is called a 'flamboyance'.",
-  "Honey never spoils. It can last for thousands of years!",
-  "Bananas actually grow upside down reaching for the sun!",
-  "Wombats are the only animals in the world that have cube-shaped poop!",
-  "A day on Venus is longer than a year on Venus.",
-  "Butterflies can taste their food using their feet!",
-  "Sea otters hold hands when they sleep so they don't drift apart.",
-  "Sloths can hold their breath underwater for up to 40 minutes!",
-  "Cows have best friends and get stressed when separated.",
-  "A snail can sleep for three years at a time.",
-  "Elephants are the only animals that can't jump.",
-  "A blue whale's heart is the size of a small car.",
-  "Starfish don't have brains; they use a complex nervous system instead.",
-  "Kangaroos can't walk backward because of their thick muscular tail.",
-  "A crocodile cannot stick its tongue out.",
-  "Rabbits can see behind them without turning their heads.",
-  "Tigers have striped skin, not just striped fur.",
-  "Cats can't taste sweetness.",
-  "A polar bear's skin is actually black, and its fur is clear, not white!",
-  "Penguins can jump up to 6 feet in the air.",
-  "Giraffes have no vocal cords.",
-  "The unicorn is the national animal of Scotland.",
-  "Pigs can't look up into the sky.",
-  "Chameleons change color to communicate and regulate their body temperature.",
-  "Dolphins sleep with one eye open to stay alert.",
-  "An ostrich's eye is bigger than its brain.",
-  "A group of porcupines is called a prickle.",
-  "Koalas sleep up to 22 hours a day!",
-  "Hippos secrete a red oily liquid that acts like sunscreen.",
-  "A cheetah can go from 0 to 60 mph in just 3 seconds."
-];
+import { getFunFactsForLanguage } from "../../utils/translatedFunFacts";
 
 // Array of animal emojis to cycle through
 const ANIMAL_EMOJIS = [
@@ -43,8 +10,9 @@ const ANIMAL_EMOJIS = [
   "🐘", "🦒", "🦓", "🦋", "🐢", "🐳"
 ];
 
-const LoadingScreen = () => {
-  const [factIndex, setFactIndex] = useState(() => Math.floor(Math.random() * FUN_FACTS.length));
+const LoadingScreen = ({ language = "English" }) => {
+  const activeFunFacts = useMemo(() => getFunFactsForLanguage(language), [language]);
+  const [factIndex, setFactIndex] = useState(() => Math.floor(Math.random() * activeFunFacts.length));
   const [iconIndex, setIconIndex] = useState(0);
 
   // Generate random data for background floating animals
@@ -69,8 +37,8 @@ const LoadingScreen = () => {
       setFactIndex((prev) => {
         let next;
         do {
-          next = Math.floor(Math.random() * FUN_FACTS.length);
-        } while (next === prev);
+          next = Math.floor(Math.random() * activeFunFacts.length);
+        } while (next === prev && activeFunFacts.length > 1);
         return next;
       });
     }, 4000);
@@ -84,7 +52,7 @@ const LoadingScreen = () => {
       clearInterval(factInterval);
       clearInterval(iconInterval);
     };
-  }, []);
+  }, [activeFunFacts]);
 
   const CurrentAnimal = ANIMAL_EMOJIS[iconIndex];
 
@@ -148,7 +116,7 @@ const LoadingScreen = () => {
             }}
             className="font-extrabold text-2xl md:text-3xl lg:text-4xl px-4 leading-tight tracking-tight text-center text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-fuchsia-600 to-orange-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-orange-400 drop-shadow-sm"
           >
-            {FUN_FACTS[factIndex]}
+            {activeFunFacts[factIndex]}
           </motion.p>
         </AnimatePresence>
       </div>

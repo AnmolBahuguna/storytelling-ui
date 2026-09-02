@@ -6,7 +6,7 @@ import { LANDING_THEME } from "../../constants/theme-landing";
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://127.0.0.1:5000";
+    : "";
 
 export function PricingSection() {
   const navigate = useNavigate();
@@ -138,7 +138,7 @@ export function PricingSection() {
               key={index}
               className={`relative rounded-[2rem] p-8 flex flex-col h-full transition-all duration-300 ${
                 plan.isPopular
-                  ? `bg-transparent backdrop-blur-xl border-2 border-[#2b7fff] shadow-xl lg:-mt-8 lg:mb-8 z-10`
+                  ? `bg-transparent backdrop-blur-xl border-2 border-violet-500 shadow-xl shadow-violet-500/10 lg:-mt-8 lg:mb-8 z-10`
                   : "bg-transparent backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md"
               }`}
             >

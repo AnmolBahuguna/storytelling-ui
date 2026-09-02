@@ -6,7 +6,7 @@ import { LANDING_THEME } from "../../constants/theme-landing.js";
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://127.0.0.1:5000";
+    : "";
 
 const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
   const [email, setEmail] = useState("");
@@ -112,10 +112,11 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
           <X size={20} />
         </button>
         <div className="mb-8 text-center">
+          <div className="text-5xl mb-3">🐘</div>
           <h2
             className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
           >
-            Welcome Back
+            Welcome Back!
           </h2>
           <p className={`text-sm ${LANDING_THEME.colors.text.subtitle}`}>
             Login to continue your magical story journey.
@@ -138,7 +139,7 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="hello@storyai.com"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff]"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
               required
             />
           </div>
@@ -153,7 +154,7 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff]"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
               required
             />
           </div>

@@ -16,7 +16,7 @@ import { StarsBackground as StarsBackgroundWhite } from "../components/animate-u
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://127.0.0.1:5000";
+    : "";
 
 const CreateStory = () => {
   const navigate = useNavigate();
@@ -52,6 +52,7 @@ const CreateStory = () => {
   const [formData, setFormData] = useState({
     heroName: "",
     ageGroup: "5-8",
+    subject: "maths",
     theme: "space",
     mediaType: "read",
     duration: "short",
@@ -119,7 +120,7 @@ const CreateStory = () => {
         const payload = {
           ...formData,
           age: ageNum,
-          lesson: `A story set in ${formData.locationName || "a magical place"}. Language: ${formData.language}. Duration: ${formData.duration}.`,
+          lesson: `A story set in ${formData.locationName || "a magical place"}. Learning Focus: ${formData.subject || "maths"}. Language: ${formData.language}. Duration: ${formData.duration}. ${formData.extraDetails ? `Extra Details & Requirements: ${formData.extraDetails}` : ""}`,
         };
 
         const response = await fetch(`${SERVER_URL}/api/generate-story`, {
@@ -174,7 +175,7 @@ const CreateStory = () => {
   const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-700">
+    <div className="flex h-screen overflow-hidden bg-amber-50/30 dark:bg-slate-950 transition-colors duration-700">
       {/* SIDEBAR ON THE LEFT */}
       <Sidebar
         onPlayStory={handlePlayStory}
@@ -190,7 +191,7 @@ const CreateStory = () => {
             <div className={`px-4 py-2 rounded-full shadow-lg border text-xs font-black uppercase tracking-widest backdrop-blur-md ${
               userTier === "LEGEND" 
                 ? "bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-600 text-slate-900 border-yellow-200" 
-                : "bg-blue-600 text-white border-blue-500"
+                : "bg-violet-600 text-white border-violet-500"
             }`}>
               {userTier}
             </div>
@@ -218,7 +219,7 @@ const CreateStory = () => {
         <div className="relative z-10 w-full flex flex-col items-center py-10 px-4 mt-12 md:mt-4">
           <AnimatePresence mode="wait">
             {loading ? (
-              <LoadingScreen key="loading" />
+              <LoadingScreen key="loading" language={formData.language} />
             ) : (
               <motion.div
                 key="form-content"
@@ -234,7 +235,7 @@ const CreateStory = () => {
                   className="mb-6"
                 >
                   <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-full shadow-lg text-sm font-medium transition-colors">
-                    <Stars size={16} className="text-blue-500" />
+                    <Stars size={16} className="text-violet-500" />
                     Step {activeSection} of 3 — {stepLabels[activeSection - 1]}
                   </div>
                 </motion.div>
@@ -248,7 +249,7 @@ const CreateStory = () => {
                         className="flex-1 h-2.5 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 backdrop-blur-sm transition-colors"
                       >
                         <motion.div
-                          className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
+                          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"
                           initial={{ width: "0%" }}
                           animate={{
                             width: activeSection >= step ? "100%" : "0%",
@@ -270,7 +271,7 @@ const CreateStory = () => {
                   <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 drop-shadow-sm transition-colors">
                     Let's Build a Story!
                   </h1>
-                  <p className="text-blue-600 dark:text-blue-400 font-bold text-base drop-shadow-sm transition-colors">
+                  <p className="text-violet-600 dark:text-violet-400 font-bold text-base drop-shadow-sm transition-colors">
                     {activeSection === 1 && "Tell us about your hero! 🦸"}
                     {activeSection === 2 &&
                       "Where does the adventure take place? 🗺️"}
@@ -325,16 +326,16 @@ const CreateStory = () => {
                   {activeSection < 3 ? (
                     <button
                       onClick={handleNext}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl border-0"
+                      className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-violet-500/25 border-0"
                     >
-                      Next Step <ArrowRight size={20} />
+                      Continue Adventure ✨ <ArrowRight size={20} />
                     </button>
                   ) : (
                     <button
                       onClick={handleSubmit}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl border-0"
+                      className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-violet-500/25 border-0"
                     >
-                      <Wand2 /> Create Story
+                      <Wand2 /> Cast the Magic Spell 🪄
                     </button>
                   )}
                 </div>

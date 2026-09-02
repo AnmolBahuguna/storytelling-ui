@@ -36,7 +36,7 @@ const HeroSection = () => {
           transition={{ duration: 0.5 }}
           className={`px-4 py-1.5 rounded-full mb-8 ${LANDING_THEME.components.badge.container} ${LANDING_THEME.components.badge.text}`}
         >
-          Magical Stories In Seconds
+          Magical Stories In Seconds ✨
         </motion.div>
 
         {/* Main Heading using Theme Typography */}
@@ -48,7 +48,7 @@ const HeroSection = () => {
         >
           Unleash Your Child's <br />
           <span
-            className={`${LANDING_THEME.colors.text.brand} inline-block mt-2`}
+            className={`bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-amber-400 bg-clip-text text-transparent inline-block mt-2`}
           >
             Imagination
           </span>
@@ -62,7 +62,7 @@ const HeroSection = () => {
           className={`${LANDING_THEME.typography.size.subtitle} ${LANDING_THEME.colors.text.subtitle} ${LANDING_THEME.typography.weight.subtitle} max-w-2xl mx-auto leading-relaxed mb-10`}
         >
           Create magical, personalized stories for your children in seconds
-          using the power of AI. Designed to spark wonder and safe learning.
+          using the power of AI. Designed to spark wonder and safe learning. 🪄
         </motion.p>
 
         {/* Try Now Call-to-Action */}
@@ -75,7 +75,7 @@ const HeroSection = () => {
             onClick={handleTryNow}
             className={`inline-block px-10 py-4 rounded-full text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
           >
-            Try Now
+            Start My Adventure ✨
           </button>
         </motion.div>
       </div>

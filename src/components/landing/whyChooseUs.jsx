@@ -9,24 +9,24 @@ export function WhyChooseUs() {
       description:
         "Our AI weaves unique tales tailored to your child's specific interests and curiosities.",
       icon: Sparkles,
-      iconBg: "bg-emerald-50",
-      iconColor: "text-emerald-500",
+      iconBg: "bg-amber-50",
+      iconColor: "text-amber-500",
     },
     {
       title: "Safe & Kid-Friendly",
       description:
         "Built-in filters ensure every generated story is appropriate, educational, and positive.",
       icon: Shield,
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-600",
+      iconBg: "bg-violet-100",
+      iconColor: "text-violet-600",
     },
     {
       title: "Endless Stories",
       description:
         "The library never ends, with millions of possible character and theme combinations.",
       icon: BookCopy,
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-500",
+      iconBg: "bg-teal-50",
+      iconColor: "text-teal-500",
     },
   ];
 

@@ -6,7 +6,7 @@ import { LANDING_THEME } from "../../constants/theme-landing";
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://127.0.0.1:5000";
+    : "";
 
 const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
   // Form State
@@ -150,6 +150,7 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
 
         {/* Header */}
         <div className="mb-8 text-center mt-2">
+          <div className="text-5xl mb-3">🪄</div>
           <h2
             className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
           >
@@ -187,7 +188,7 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Jane Doe"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff] transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all"
               required
             />
           </div>
@@ -202,7 +203,7 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="hello@storyai.com"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff] transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all"
               required
             />
           </div>
@@ -217,7 +218,7 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2b7fff] transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all"
               required
             />
           </div>

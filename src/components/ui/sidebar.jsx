@@ -15,7 +15,7 @@ import {
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "http://127.0.0.1:5000";
+    : "";
 
 const getToken = () => {
   const match = document.cookie.match(new RegExp("(^| )access_token=([^;]+)"));
@@ -196,7 +196,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
               <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md shadow-sm ${
                 subscriptionTier === "LEGEND" 
                 ? "bg-gradient-to-r from-yellow-400 to-amber-600 text-white" 
-                : "bg-blue-600 text-white"
+                : "bg-violet-600 text-white"
               }`}>
                 {subscriptionTier}
               </span>
@@ -207,7 +207,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
               onClick={() => setActiveTab("history")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === "history"
-                  ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-blue-400"
+                  ? "bg-white dark:bg-slate-700 shadow-sm text-violet-600 dark:text-violet-400"
                   : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
               }`}
             >
@@ -217,7 +217,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
               onClick={() => setActiveTab("playlists")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === "playlists"
-                  ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-blue-400"
+                  ? "bg-white dark:bg-slate-700 shadow-sm text-violet-600 dark:text-violet-400"
                   : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
               }`}
             >
@@ -236,7 +236,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
             // --- History View ---
             stories.length === 0 ? (
               <p className="text-center text-slate-500 text-sm mt-10">
-                No stories yet. Go create one!
+                📚 No stories yet. Create your first magical adventure!
               </p>
             ) : (
               stories.map((story) => (
@@ -249,7 +249,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
                     onClick={() => onPlayStory(story)}
                     className="group flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
                   >
-                    <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 rounded-lg flex items-center justify-center flex-shrink-0">
                       <BookOpen size={20} />
                     </div>
                     <div className="flex-1 overflow-hidden">
@@ -270,7 +270,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
                             addingToPlaylistId === story.id ? null : story.id,
                           );
                         }}
-                        className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-md transition-colors"
                         title="Add to Playlist"
                       >
                         <PlusCircle size={18} />
@@ -343,7 +343,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
               {!isCreatingPlaylist ? (
                 <button
                   onClick={() => setIsCreatingPlaylist(true)}
-                  className="w-full flex items-center justify-center gap-2 py-3 mb-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 text-slate-500 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-500 transition-colors text-sm font-bold"
+                  className="w-full flex items-center justify-center gap-2 py-3 mb-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 text-slate-500 hover:border-violet-500 hover:text-violet-600 dark:hover:text-violet-400 dark:hover:border-violet-500 transition-colors text-sm font-bold"
                 >
                   <Plus size={18} /> Create Playlist
                 </button>
@@ -358,7 +358,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
                     placeholder="Playlist name..."
                     value={newPlaylistName}
                     onChange={(e) => setNewPlaylistName(e.target.value)}
-                    className="w-full px-3 py-2 mb-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                    className="w-full px-3 py-2 mb-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 dark:text-white"
                     disabled={isSaving}
                   />
                   <div className="flex gap-2">
@@ -375,7 +375,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex justify-center items-center"
+                      className="flex-1 py-2 text-xs font-bold bg-violet-600 hover:bg-violet-700 text-white rounded-lg transition-colors flex justify-center items-center"
                       disabled={isSaving || !newPlaylistName.trim()}
                     >
                       {isSaving ? "Saving..." : "Save"}
@@ -386,7 +386,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
 
               {playlists.length === 0 && !isCreatingPlaylist ? (
                 <p className="text-center text-slate-500 text-sm mt-6">
-                  You don't have any playlists yet.
+                  🎨 No playlists yet. Create your first collection!
                 </p>
               ) : (
                 playlists.map((playlist) => (
@@ -412,7 +412,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
                       {playlist.stories && playlist.stories.length > 0 && (
                         <button
                           onClick={() => onPlayPlaylist(playlist)}
-                          className="p-2 bg-blue-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-700 shadow-md flex-shrink-0 ml-2"
+                          className="p-2 bg-violet-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-violet-700 shadow-md flex-shrink-0 ml-2"
                         >
                           <PlayCircle size={18} fill="currentColor" />
                         </button>
@@ -429,7 +429,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`absolute top-6 left-full z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-r-xl shadow-md text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 ${isOpen ? "border-l-0" : "border-l"}`}
+        className={`absolute top-6 left-full z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-r-xl shadow-md text-slate-500 hover:text-violet-600 dark:hover:text-violet-400 transition-all duration-300 ${isOpen ? "border-l-0" : "border-l"}`}
         title={isOpen ? "Close Library" : "Open Library"}
       >
         {isOpen ? <ChevronLeft size={20} /> : <Menu size={20} />}

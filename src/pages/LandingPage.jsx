@@ -45,12 +45,12 @@ const LandingPage = () => {
   return (
     <div
       className={`relative min-h-screen transition-colors duration-700 ${
-        isDarkMode ? "bg-gradient-to-b from-blue-900 to-blue-950" : "bg-white"
+        isDarkMode ? "bg-gradient-to-b from-violet-950 via-indigo-950 to-slate-950" : "bg-amber-50/30"
       } ${LANDING_THEME.typography.family.main} overflow-hidden`}
     >
       {/* Spark color matches the active theme */}
       <ClickSpark
-        sparkColor={isDarkMode ? "#ffffff" : "#2b7fff"}
+        sparkColor={isDarkMode ? "#F59E0B" : "#7C3AED"}
         sparkSize={12}
         sparkRadius={20}
         sparkCount={10}
