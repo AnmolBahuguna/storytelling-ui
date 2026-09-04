@@ -72,7 +72,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-7 text-[9px] font-bold uppercase tracking-[0.22em] text-[#A9472F] dark:text-[#ffb58d] lg:text-[10px] lg:tracking-[0.3em]"
+            className="mb-7 text-[9px] font-bold uppercase tracking-[0.22em] text-[#9E3F1F] dark:text-[#ffb58d] lg:text-[10px] lg:tracking-[0.3em]"
           >
             ✦ Magical Learning Stories
           </motion.div>
@@ -109,8 +109,8 @@ const HeroSection = () => {
             className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#111111] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
           >
             Tara Story AI turns learning into an adventure with{" "}
-            <span className="text-[#C9553D]">personalized stories</span>, magical
-            worlds, and <span className="text-[#C9553D]">age-appropriate lessons</span>{" "}
+            <span className="text-[#B84A24]">personalized stories</span>, magical
+            worlds, and <span className="text-[#B84A24]">age-appropriate lessons</span>{" "}
             designed for curious kids.
           </motion.p>
 
