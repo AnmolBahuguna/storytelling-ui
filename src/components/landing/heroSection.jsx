@@ -55,8 +55,8 @@ const HeroSection = () => {
         aria-hidden="true"
         className="landing-hero__background hero-image absolute z-[3] hidden object-contain object-[center_right] opacity-95 lg:block"
       />
-      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-[#d4b5ff]/70 via-[#d4b5ff]/35 to-transparent dark:from-[#08052f]/85 dark:via-[#08052f]/65 dark:to-transparent" />
-      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#c9a8ff]/40 via-transparent to-[#e8d5ff]/20 dark:from-[#08052f]/75 dark:to-[#08052f]/10" />
+      <div className="absolute inset-0 z-[2] bg-transparent dark:bg-gradient-to-r dark:from-[#08052f]/85 dark:via-[#08052f]/65 dark:to-transparent" />
+      <div className="absolute inset-0 z-[2] bg-transparent dark:bg-gradient-to-t dark:from-[#08052f]/75 dark:via-transparent dark:to-[#08052f]/10" />
       <div className="pointer-events-none absolute inset-0 z-[2] hidden opacity-80 dark:block">
         <StarsBackgroundBlue
           speed={100}
