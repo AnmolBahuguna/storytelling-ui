@@ -61,5 +61,3 @@ export const LANDING_THEME = {
     },
   },
 };
-
-export default LANDING_THEME;

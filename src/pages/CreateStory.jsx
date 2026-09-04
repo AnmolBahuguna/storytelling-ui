@@ -175,7 +175,7 @@ const CreateStory = () => {
   const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
 
   return (
-    <div className="create-story-page flex h-screen overflow-hidden bg-amber-50/30 dark:bg-slate-950 transition-colors duration-700">
+    <div className="create-story-page flex h-[100dvh] w-full max-w-[100vw] overflow-x-hidden bg-amber-50/30 dark:bg-slate-950 transition-colors duration-700">
       {/* SIDEBAR ON THE LEFT */}
       <Sidebar
         onPlayStory={handlePlayStory}

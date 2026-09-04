@@ -20,10 +20,10 @@ const LoadingScreen = ({ language = "English" }) => {
     return Array.from({ length: 25 }).map((_, i) => ({
       id: i,
       animal: ANIMAL_EMOJIS[Math.floor(Math.random() * ANIMAL_EMOJIS.length)],
-      startX: Math.random() * 100, // vw
-      startY: Math.random() * 100, // vh
-      endX: Math.random() * 100,   // vw
-      endY: Math.random() * 100,   // vh
+      startX: Math.random() * 100, // %
+      startY: Math.random() * 100, // %
+      endX: Math.random() * 100,   // %
+      endY: Math.random() * 100,   // %
       duration: 20 + Math.random() * 40, 
       delay: Math.random() * -30, 
       size: 2 + Math.random() * 4, // rem
@@ -63,10 +63,10 @@ const LoadingScreen = ({ language = "English" }) => {
         {floatingAnimals.map((item) => (
           <motion.div
             key={item.id}
-            initial={{ x: `${item.startX}vw`, y: `${item.startY}vh` }}
+            initial={{ x: `${item.startX}%`, y: `${item.startY}%` }}
             animate={{ 
-              x: [`${item.startX}vw`, `${item.endX}vw`, `${item.startX}vw`],
-              y: [`${item.startY}vh`, `${item.endY}vh`, `${item.startY}vh`],
+              x: [`${item.startX}%`, `${item.endX}%`, `${item.startX}%`],
+              y: [`${item.startY}%`, `${item.endY}%`, `${item.startY}%`],
               rotate: [0, 45, -45, 0]
             }}
             transition={{ 

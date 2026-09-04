@@ -41,7 +41,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="landing-hero relative min-h-screen overflow-hidden bg-transparent text-[#294B58] dark:text-white"
+      className="landing-hero relative min-h-[100dvh] w-full max-w-[100vw] overflow-x-hidden bg-transparent text-[#294B58] dark:text-white"
     >
 
       <img
@@ -66,7 +66,7 @@ const HeroSection = () => {
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1440px] items-start px-5 pb-10 pt-24 lg:px-16 lg:pb-16 lg:pt-[10.5rem]">
+      <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-[1440px] items-start px-5 pb-10 pt-24 lg:px-16 lg:pb-16 lg:pt-[10.5rem]">
         <div className="flex w-full max-w-xl flex-col items-center text-center lg:max-w-[39rem] lg:items-start lg:text-left">
           {/* Top Badge from Theme */}
           <motion.div

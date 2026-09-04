@@ -1,4 +1,4 @@
-export const translatedFunFacts = {
+const translatedFunFacts = {
   English: [
     "Did you know? Octopuses have three hearts and blue blood!",
     "Space is completely silent because there's no air to carry sound.",

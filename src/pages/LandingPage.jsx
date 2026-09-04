@@ -45,11 +45,11 @@ const LandingPage = () => {
 
   return (
     <div
-      className={`relative min-h-screen transition-colors duration-700 ${
+      className={`relative min-h-[100dvh] w-full max-w-[100vw] transition-colors duration-700 ${
         isDarkMode
           ? LANDING_THEME.colors.background.dark
           : LANDING_THEME.colors.background.main
-      } ${LANDING_THEME.typography.family.main} overflow-hidden`}
+      } ${LANDING_THEME.typography.family.main} overflow-x-hidden`}
     >
       {/* Spark color matches the active theme */}
       <ClickSpark
@@ -80,7 +80,7 @@ const LandingPage = () => {
         </div>
 
         {/* Main Content Layer */}
-        <div className="relative z-10 flex flex-col min-h-screen bg-transparent">
+        <div className="relative z-10 flex flex-col min-h-[100dvh] w-full bg-transparent">
           <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
           <main className="flex-grow">
             <HeroSection />
