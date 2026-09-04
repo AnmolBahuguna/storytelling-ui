@@ -41,7 +41,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="landing-hero relative min-h-screen overflow-hidden bg-transparent text-[#493B6B] dark:text-white"
+      className="landing-hero relative min-h-screen overflow-hidden bg-transparent text-[#294B58] dark:text-white"
     >
       <img
         src="/clouds-background.png"
@@ -72,7 +72,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-7 text-[9px] font-bold uppercase tracking-[0.22em] text-[#B85D47] dark:text-[#ffb58d] lg:text-[10px] lg:tracking-[0.3em]"
+            className="mb-7 text-[9px] font-bold uppercase tracking-[0.22em] text-[#D7653F] dark:text-[#ffb58d] lg:text-[10px] lg:tracking-[0.3em]"
           >
             ✦ Magical Learning Stories
           </motion.div>
@@ -82,7 +82,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#3B2463] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
+            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#173B4D] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
           >
             Every Story{" "}
             <br className="lg:hidden" />
@@ -90,7 +90,7 @@ const HeroSection = () => {
             <br />
             With a Little
             <br />
-            <span className="bg-gradient-to-r from-[#FF7A66] via-[#D96BFF] to-[#A95CFF] bg-clip-text text-transparent dark:from-[#ff9b70] dark:via-[#e56bff] dark:to-[#b96cff]">
+            <span className="bg-gradient-to-r from-[#FF795F] to-[#C85BE8] bg-clip-text text-transparent dark:from-[#ff9b70] dark:via-[#e56bff] dark:to-[#b96cff]">
               Magic.
             </span>
           </motion.h1>
@@ -106,11 +106,11 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#5C4B7A] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
+            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#294B58] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
           >
             Tara Story AI turns learning into an adventure with{" "}
-            <span className="text-[#E66F50]">personalized stories</span>, magical
-            worlds, and <span className="text-[#E66F50]">age-appropriate lessons</span>{" "}
+            <span className="text-[#E87555]">personalized stories</span>, magical
+            worlds, and <span className="text-[#E87555]">age-appropriate lessons</span>{" "}
             designed for curious kids.
           </motion.p>
 
@@ -130,7 +130,7 @@ const HeroSection = () => {
               <Link
                 to="/dashboard"
                 onClick={handleExplore}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white/95 px-7 py-3 text-sm font-bold text-[#3B2463] shadow-lg shadow-white/20 transition hover:-translate-y-1 hover:bg-white hover:text-[#FF6848] dark:border-violet-300/60 dark:bg-violet-600/90 dark:text-white dark:shadow-lg dark:shadow-violet-900/30 dark:hover:bg-violet-500"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white/95 px-7 py-3 text-sm font-bold text-[#315064] shadow-lg shadow-white/20 transition hover:-translate-y-1 hover:bg-white hover:text-[#E9684A] dark:border-violet-300/60 dark:bg-violet-600/90 dark:text-white dark:shadow-lg dark:shadow-violet-900/30 dark:hover:bg-violet-500"
               >
                 <BookOpen size={17} className="text-violet-600 dark:text-violet-300" />
                 Explore Story Library

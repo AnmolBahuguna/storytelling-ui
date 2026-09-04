@@ -55,14 +55,14 @@ const Footer = () => {
             >
               <a
                 href="#"
-                className="hover:text-[#FF6848] dark:hover:text-white transition-colors"
+                className="hover:text-[#E9684A] dark:hover:text-white transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter size={20} />
               </a>
               <a
                 href="#"
-                className="hover:text-[#FF6848] dark:hover:text-white transition-colors"
+                className="hover:text-[#E9684A] dark:hover:text-white transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
@@ -81,7 +81,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#features"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   Features
                 </a>
@@ -89,7 +89,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#pricing"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   Pricing
                 </a>
@@ -97,7 +97,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   App Download
                 </a>
@@ -106,7 +106,7 @@ const Footer = () => {
                 <Link
                   to="/dashboard"
                   onClick={handleStoryLibrary}
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   Story Library
                 </Link>
@@ -125,7 +125,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   About Us
                 </a>
@@ -133,7 +133,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   Privacy Policy
                 </a>
@@ -141,7 +141,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   Terms of Service
                 </a>
@@ -160,7 +160,7 @@ const Footer = () => {
               <li>
                 <a
                   href="mailto:hello@storyai.com"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#E9684A] dark:hover:text-white transition-colors`}
                 >
                   hello@storyai.com
                 </a>
