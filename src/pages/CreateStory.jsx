@@ -175,7 +175,7 @@ const CreateStory = () => {
   const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-amber-50/30 dark:bg-slate-950 transition-colors duration-700">
+    <div className="create-story-page flex h-screen overflow-hidden bg-amber-50/30 dark:bg-slate-950 transition-colors duration-700">
       {/* SIDEBAR ON THE LEFT */}
       <Sidebar
         onPlayStory={handlePlayStory}
@@ -183,10 +183,10 @@ const CreateStory = () => {
       />
 
       {/* MAIN CONTENT AREA ON THE RIGHT */}
-      <main className="relative flex-1 flex flex-col items-center overflow-y-auto font-sans">
+      <main className="create-story-main relative flex-1 flex flex-col items-center overflow-y-auto font-sans">
         
         {/* Top Right Controls Overlay: Theme & Badge */}
-        <div className="absolute top-6 right-6 flex items-center gap-4 z-50">
+        <div className="create-story-controls absolute top-6 right-6 flex items-center gap-4 z-50">
           {userTier !== "BASIC" && (
             <div className={`px-4 py-2 rounded-full shadow-lg border text-xs font-black uppercase tracking-widest backdrop-blur-md ${
               userTier === "LEGEND" 
@@ -285,7 +285,7 @@ const CreateStory = () => {
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.15 }}
-                  className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-2xl relative transition-colors duration-700"
+                  className="create-story-form w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-2xl relative transition-colors duration-700"
                 >
                   <AnimatePresence mode="wait">
                     {activeSection === 1 && (
@@ -313,7 +313,7 @@ const CreateStory = () => {
                 </motion.div>
 
                 {/* Navigation Controls */}
-                <div className="mt-8 flex gap-4 w-full max-w-2xl justify-end">
+                <div className="create-story-nav mt-8 flex gap-4 w-full max-w-2xl justify-end">
                   {activeSection > 1 && (
                     <button
                       onClick={handleBack}

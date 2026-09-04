@@ -585,10 +585,10 @@ const StoryViewer = () => {
 
   return (
     <div
-      className={`fixed inset-0 w-full h-full flex flex-col font-sans overflow-hidden transition-colors duration-700 ${isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"}`}
+      className={`story-viewer-page fixed inset-0 w-full h-full flex flex-col font-sans overflow-hidden transition-colors duration-700 ${isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"}`}
     >
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-50 px-4 py-3 md:px-6 md:py-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-white/20 shadow-sm transition-colors duration-700">
+      <div className="story-viewer-header absolute top-0 left-0 right-0 z-50 px-4 py-3 md:px-6 md:py-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-white/20 shadow-sm transition-colors duration-700">
         <div className="flex items-center gap-4">
           <Link
             to="/"
@@ -709,9 +709,9 @@ const StoryViewer = () => {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className="flex flex-col md:flex-row h-full w-full pt-[60px] md:pt-[72px]">
+      <div className="story-viewer-content flex flex-col md:flex-row h-full w-full pt-[60px] md:pt-[72px]">
         {/* Image Section */}
-        <div className="relative flex items-center justify-center w-full h-[45%] sm:h-[50%] md:h-full md:w-[50%] lg:w-[55%] bg-slate-200 dark:bg-slate-950 p-4 sm:p-6 md:p-8 lg:p-12 z-10 transition-colors duration-700">
+        <div className="story-viewer-image relative flex items-center justify-center w-full h-[45%] sm:h-[50%] md:h-full md:w-[50%] lg:w-[55%] bg-slate-200 dark:bg-slate-950 p-4 sm:p-6 md:p-8 lg:p-12 z-10 transition-colors duration-700">
           <div className="relative aspect-square w-full h-auto max-h-full md:w-auto md:h-full md:max-w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl bg-slate-300 dark:bg-slate-800">
             <AnimatePresence initial={false} custom={direction}>
               <motion.img
@@ -740,7 +740,7 @@ const StoryViewer = () => {
 
         {/* Text Section */}
         <div
-          className={`relative w-full h-[55%] sm:h-[50%] md:h-full md:flex-1 bg-white dark:bg-slate-900 flex flex-col justify-between p-6 md:p-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] md:shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-20 transition-colors duration-700`}
+          className={`story-viewer-text relative w-full h-[55%] sm:h-[50%] md:h-full md:flex-1 bg-white dark:bg-slate-900 flex flex-col justify-between p-6 md:p-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] md:shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-20 transition-colors duration-700`}
         >
           <div className="flex justify-center md:justify-start gap-1.5 mb-4">
             {slides.map((_, idx) => (

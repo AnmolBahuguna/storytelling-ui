@@ -180,11 +180,11 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
 
   return (
     <div
-      className={`relative h-full transition-all duration-300 ease-in-out z-50 flex-shrink-0 ${isOpen ? "w-80" : "w-0"}`}
+      className={`story-sidebar-shell relative h-full transition-all duration-300 ease-in-out z-50 flex-shrink-0 ${isOpen ? "w-80" : "w-0"}`}
     >
       {/* Sidebar Content Wrapper */}
       <aside
-        className={`absolute top-0 left-0 h-full w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`story-sidebar-panel absolute top-0 left-0 h-full w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Header & Tabs */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
