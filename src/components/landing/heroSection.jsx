@@ -82,7 +82,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#173B4D] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
+            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#111111] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
           >
             Every Story{" "}
             <br className="lg:hidden" />
