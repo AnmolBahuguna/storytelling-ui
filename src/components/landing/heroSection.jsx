@@ -72,7 +72,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-7 text-[9px] font-bold uppercase tracking-[0.22em] text-[#C45A3C] dark:text-[#ffb58d] lg:text-[10px] lg:tracking-[0.3em]"
+            className="mb-7 text-[9px] font-bold uppercase tracking-[0.22em] text-[#A95743] dark:text-[#ffb58d] lg:text-[10px] lg:tracking-[0.3em]"
           >
             ✦ Magical Learning Stories
           </motion.div>
@@ -82,7 +82,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#3B2463] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
+            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#211747] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
           >
             Every Story{" "}
             <br className="lg:hidden" />
@@ -90,7 +90,7 @@ const HeroSection = () => {
             <br />
             With a Little
             <br />
-            <span className="bg-gradient-to-r from-[#FF8A70] via-[#E56BFF] to-[#D05CFF] bg-clip-text text-transparent dark:from-[#ff9b70] dark:via-[#e56bff] dark:to-[#b96cff]">
+            <span className="bg-gradient-to-r from-[#F07867] via-[#D86BCF] to-[#B65CDB] bg-clip-text text-transparent dark:from-[#ff9b70] dark:via-[#e56bff] dark:to-[#b96cff]">
               Magic.
             </span>
           </motion.h1>
@@ -106,11 +106,11 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#493B6B] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
+            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#51466F] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
           >
             Tara Story AI turns learning into an adventure with{" "}
-            <span className="text-[#F47C5C]">personalized stories</span>, magical
-            worlds, and <span className="text-[#F47C5C]">age-appropriate lessons</span>{" "}
+            <span className="text-[#D96A4A]">personalized stories</span>, magical
+            worlds, and <span className="text-[#D96A4A]">age-appropriate lessons</span>{" "}
             designed for curious kids.
           </motion.p>
 
