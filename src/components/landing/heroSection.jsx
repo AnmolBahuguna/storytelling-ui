@@ -40,7 +40,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="landing-hero relative min-h-screen overflow-hidden bg-transparent text-[#211747] dark:text-white"
+      className="landing-hero relative min-h-screen overflow-hidden bg-transparent text-[#160D35] dark:text-white"
     >
       <img
         src="/clouds-background.png"
@@ -74,7 +74,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#211747] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
+            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#160D35] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
           >
             Every Story{" "}
             <br className="lg:hidden" />
@@ -98,7 +98,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#211747] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
+            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#160D35] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
           >
             Tara Story AI turns learning into an adventure with{" "}
             <span className="text-[#ff9b70]">personalized stories</span>, magical
@@ -122,7 +122,7 @@ const HeroSection = () => {
               <Link
                 to="/dashboard"
                 onClick={handleExplore}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white/95 px-7 py-3 text-sm font-bold text-[#211747] shadow-lg shadow-white/20 transition hover:-translate-y-1 hover:bg-white hover:text-[#FF6848] dark:border-violet-300/60 dark:bg-violet-600/90 dark:text-white dark:shadow-lg dark:shadow-violet-900/30 dark:hover:bg-violet-500"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white/95 px-7 py-3 text-sm font-bold text-[#160D35] shadow-lg shadow-white/20 transition hover:-translate-y-1 hover:bg-white hover:text-[#FF6848] dark:border-violet-300/60 dark:bg-violet-600/90 dark:text-white dark:shadow-lg dark:shadow-violet-900/30 dark:hover:bg-violet-500"
               >
                 <BookOpen size={17} className="text-violet-600 dark:text-violet-300" />
                 Explore Story Library
