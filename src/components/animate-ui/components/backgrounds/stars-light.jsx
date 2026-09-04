@@ -88,7 +88,7 @@ function StarsBackgroundWhite({
     <div
       data-slot="stars-background"
       className={cn(
-        "relative size-full overflow-hidden bg-[radial-gradient(ellipse_at_top,_#f8fcff_0%,_#e8f5ff_48%,_#d5eaff_100%)]",
+        "relative size-full overflow-hidden bg-transparent",
         className,
       )}
       onMouseMove={handleMouseMove}

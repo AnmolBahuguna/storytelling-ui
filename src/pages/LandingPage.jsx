@@ -47,8 +47,8 @@ const LandingPage = () => {
     <div
       className={`relative min-h-screen transition-colors duration-700 ${
         isDarkMode
-          ? "bg-gradient-to-b from-[#07052d] via-[#17104b] to-[#09052b]"
-          : "bg-gradient-to-br from-[#f7f3ff] via-[#eee9ff] to-[#e3dcfa]"
+          ? LANDING_THEME.colors.background.dark
+          : LANDING_THEME.colors.background.main
       } ${LANDING_THEME.typography.family.main} overflow-hidden`}
     >
       {/* Spark color matches the active theme */}

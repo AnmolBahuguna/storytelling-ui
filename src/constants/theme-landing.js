@@ -12,7 +12,8 @@ export const LANDING_THEME = {
   colors: {
     // Backgrounds
     background: {
-      main: "bg-amber-50/40 dark:bg-transparent", // Warm cream in light, gradient in dark
+      main: "bg-gradient-to-br from-[#f2edff] via-[#eee9ff] to-[#e9e3fc]",
+      dark: "bg-gradient-to-b from-[#07052d] via-[#17104b] to-[#09052b]",
       transparent: "bg-transparent",
     },
     // Typography Colors
