@@ -17,10 +17,10 @@ export const LANDING_THEME = {
     },
     // Typography Colors
     text: {
-      heading: "text-[#160D35] dark:text-amber-50",
-      subtitle: "text-[#160D35] dark:text-slate-300",
+      heading: "text-[#3B2463] dark:text-amber-50",
+      subtitle: "text-[#493B6B] dark:text-slate-300",
       brand: "text-violet-600 dark:text-violet-400",
-      light: "text-[#160D35] dark:text-stone-400",
+      light: "text-[#51466F] dark:text-stone-400",
     },
     // Accents & Decorations
     accent: {

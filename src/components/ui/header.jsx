@@ -115,7 +115,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
                 key={link.name}
                 to={link.href}
                 onClick={(event) => handleNavClick(event, link.href)}
-                className={`relative py-2 text-base ${LANDING_THEME.typography.weight.subtitle} text-[#160D35] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-[#FF6848] transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#ff7043] after:transition-all ${link.href === "/" && location.pathname === "/" ? "after:w-full" : "after:w-0"}`}
+                className={`relative py-2 text-base ${LANDING_THEME.typography.weight.subtitle} text-[#51466F] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-[#FF6848] transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#ff7043] after:transition-all ${link.href === "/" && location.pathname === "/" ? "after:w-full" : "after:w-0"}`}
               >
                 {link.name}
               </Link>
@@ -138,7 +138,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               <>
                 <button
                   onClick={handleLogout}
-                    className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-[#160D35] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-white transition-colors`}
+                    className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-[#51466F] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-white transition-colors`}
                 >
                   Logout
                 </button>
@@ -153,7 +153,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               <>
                 <button
                   onClick={() => setIsLoginOpen(true)}
-                  className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-[#160D35] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-white transition-colors`}
+                  className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-[#51466F] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-white transition-colors`}
                 >
                   Login
                 </button>
@@ -197,7 +197,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
                   handleNavClick(event, link.href);
                   setMobileMenuOpen(false);
                 }}
-                className={`${LANDING_THEME.typography.weight.bold} text-[#160D35] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-[#FF6848]`}
+                className={`${LANDING_THEME.typography.weight.bold} text-[#51466F] hover:text-[#FF6848] dark:text-slate-300 dark:hover:text-[#FF6848]`}
               >
                 {link.name}
               </Link>
