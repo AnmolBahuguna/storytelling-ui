@@ -12,8 +12,8 @@ export const LANDING_THEME = {
   colors: {
     // Backgrounds
     background: {
-      main: "bg-gradient-to-br from-[#f2edff] via-[#eee9ff] to-[#e9e3fc]",
-      dark: "bg-gradient-to-b from-[#07052d] via-[#17104b] to-[#09052b]",
+      main: "bg-gradient-to-br from-[#f2edff] via-[#eee9ff] to-[#e9e3fc] bg-no-repeat bg-top bg-cover",
+      dark: "bg-gradient-to-b from-[#07052d] via-[#17104b] to-[#09052b] bg-no-repeat bg-top bg-cover",
       transparent: "bg-transparent",
     },
     // Typography Colors
