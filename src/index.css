@@ -134,9 +134,82 @@ body {
 }
 
 @media (max-width: 639px) {
+  header {
+    top: 0.5rem;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+  }
+
+  header > div {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  header img {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  header > div > a {
+    gap: 0.35rem;
+  }
+
+  header > div > a > div {
+    padding: 0.25rem;
+  }
+
+  header > div > a > span {
+    font-size: 1rem;
+  }
+
+  header > div > div {
+    gap: 0.25rem;
+  }
+
+  header > div > div button {
+    padding: 0.4rem 0.7rem;
+  }
+
+  .landing-hero > div.relative {
+    padding-top: 5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .landing-hero h1 {
+    font-size: clamp(2.625rem, 11.8vw, 3.375rem);
+    line-height: 1.02;
+  }
+
   .landing-hero__mobile-art {
-    height: clamp(11rem, 48vw, 15rem);
-    max-width: 20rem;
+    width: clamp(14rem, 62vw, 16.5rem);
+    height: auto;
+    max-width: 100%;
+    margin-top: 0.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .landing-hero p {
+    max-width: min(92vw, 22rem);
+    font-size: clamp(0.9rem, 3.8vw, 1rem);
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+  }
+
+  .landing-hero > div.relative > div > div:last-child {
+    width: 100%;
+    padding: 0 0.5rem;
+  }
+
+  .landing-hero > div.relative > div > div:last-child > div {
+    width: 100%;
+    max-width: 22rem;
+    margin: 0 auto;
+  }
+
+  .landing-hero > div.relative > div > div:last-child button,
+  .landing-hero > div.relative > div > div:last-child a {
+    min-height: 3.5rem;
+    width: 100%;
   }
 }
 
@@ -159,8 +232,22 @@ body {
 
 @media (min-width: 640px) and (max-width: 1023px) {
   .landing-hero__mobile-art {
-    height: 18rem;
-    max-width: 28rem;
+    width: min(42vw, 26rem);
+    height: auto;
+    max-width: 100%;
+  }
+
+  @media (max-width: 767px) {
+    #features,
+    #pricing {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+
+    #features > div > div:first-child,
+    #pricing > div > div:first-child {
+      margin-bottom: 2.5rem;
+    }
   }
 }
 
