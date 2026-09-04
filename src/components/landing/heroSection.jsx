@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
+import { StarsBackground as StarsBackgroundBlue } from "../animate-ui/components/backgrounds/stars-blue";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -56,6 +57,13 @@ const HeroSection = () => {
       />
       <div className="absolute inset-0 z-[2] bg-gradient-to-r from-[#d4b5ff]/70 via-[#d4b5ff]/35 to-transparent dark:from-[#08052f]/85 dark:via-[#08052f]/65 dark:to-transparent" />
       <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#c9a8ff]/40 via-transparent to-[#e8d5ff]/20 dark:from-[#08052f]/75 dark:to-[#08052f]/10" />
+      <div className="pointer-events-none absolute inset-0 z-[2] hidden opacity-80 dark:block">
+        <StarsBackgroundBlue
+          speed={100}
+          pointerEvents={false}
+          className="bg-transparent"
+        />
+      </div>
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-[1440px] items-start px-5 pb-10 pt-24 lg:px-16 lg:pb-16 lg:pt-[10.5rem]">
         <div className="flex w-full max-w-xl flex-col items-center text-center lg:max-w-[39rem] lg:items-start lg:text-left">
