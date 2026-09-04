@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CreateStory from "./pages/CreateStory";
 import StoryViewer from "./pages/StoryViewer";
 import LandingPage from "./pages/LandingPage";

@@ -17,15 +17,15 @@ export const LANDING_THEME = {
     },
     // Typography Colors
     text: {
-      heading: "text-slate-900 dark:text-amber-50",
-      subtitle: "text-slate-600 dark:text-slate-300",
+      heading: "text-[#211747] dark:text-amber-50",
+      subtitle: "text-[#211747] dark:text-slate-300",
       brand: "text-violet-600 dark:text-violet-400",
-      light: "text-slate-500 dark:text-stone-400",
+      light: "text-[#211747] dark:text-stone-400",
     },
     // Accents & Decorations
     accent: {
-      brandBg: "bg-violet-600 dark:bg-violet-500",
-      blurEffect: "bg-violet-200/40 dark:bg-violet-900/40",
+      brandBg: "bg-[#ff7043] dark:bg-[#ff7043]",
+      blurEffect: "bg-violet-200/40 dark:bg-[#5b2a9d]/40",
     },
   },
 
@@ -54,7 +54,7 @@ export const LANDING_THEME = {
     },
     button: {
       primary:
-        "bg-violet-600 hover:bg-violet-700 dark:bg-amber-400 dark:hover:bg-amber-300 text-white dark:text-slate-900 shadow-md shadow-violet-500/25 dark:shadow-amber-400/25 transition-all border border-transparent",
+        "bg-[#ff7043] hover:bg-[#ff8a5c] dark:bg-[#ff7043] dark:hover:bg-[#ff8a5c] text-white dark:text-white shadow-md shadow-[#ff7043]/30 transition-all border border-transparent",
       secondary:
         "bg-white dark:bg-slate-800/50 text-violet-600 dark:text-white border border-violet-200 dark:border-slate-700 hover:bg-violet-50 dark:hover:bg-slate-800 backdrop-blur-sm transition-all",
     },

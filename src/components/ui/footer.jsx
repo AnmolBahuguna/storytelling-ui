@@ -10,6 +10,16 @@ import {
 } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing";
 const Footer = () => {
+  const handleStoryLibrary = (event) => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="));
+    if (!token) {
+      event.preventDefault();
+      window.dispatchEvent(new Event("open-signup"));
+    }
+  };
+
   return (
     <footer
       className={`${LANDING_THEME.colors.background.transparent} pt-16 pb-8`}
@@ -45,14 +55,14 @@ const Footer = () => {
             >
               <a
                 href="#"
-                className={`hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                className="hover:text-[#FF6848] dark:hover:text-white transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter size={20} />
               </a>
               <a
                 href="#"
-                className={`hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                className="hover:text-[#FF6848] dark:hover:text-white transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
@@ -71,7 +81,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#features"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   Features
                 </a>
@@ -79,7 +89,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#pricing"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   Pricing
                 </a>
@@ -87,18 +97,19 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   App Download
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                <Link
+                  to="/dashboard"
+                  onClick={handleStoryLibrary}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   Story Library
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -114,7 +125,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   About Us
                 </a>
@@ -122,7 +133,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   Privacy Policy
                 </a>
@@ -130,7 +141,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   Terms of Service
                 </a>
@@ -149,7 +160,7 @@ const Footer = () => {
               <li>
                 <a
                   href="mailto:hello@storyai.com"
-                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+                  className={`text-sm ${LANDING_THEME.colors.text.subtitle} hover:text-[#FF6848] dark:hover:text-white transition-colors`}
                 >
                   hello@storyai.com
                 </a>

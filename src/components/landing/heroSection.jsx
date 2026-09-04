@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { ArrowRight, BookOpen } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
 
 const HeroSection = () => {
@@ -24,60 +25,112 @@ const HeroSection = () => {
     }
   };
 
+  const handleExplore = (e) => {
+    e.preventDefault();
+    const hasToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="));
+
+    if (hasToken) {
+      navigate("/dashboard");
+    } else {
+      window.dispatchEvent(new Event("open-signup"));
+    }
+  };
+
   return (
     <section
-      className={`${LANDING_THEME.colors.background.transparent} pt-32 pb-10 md:pt-40 md:pb-14 overflow-hidden text-center relative ${LANDING_THEME.typography.family.main}`}
+      className="landing-hero relative min-h-screen overflow-hidden bg-transparent text-[#211747] dark:text-white"
     >
-      <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center">
-        {/* Top Badge from Theme */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className={`px-4 py-1.5 rounded-full mb-8 ${LANDING_THEME.components.badge.container} ${LANDING_THEME.components.badge.text}`}
-        >
-          Magical Stories In Seconds ✨
-        </motion.div>
+      <img
+        src="/clouds-background.png"
+        alt=""
+        aria-hidden="true"
+        className="landing-hero__cloud-background pointer-events-none absolute inset-0 z-0 block h-full w-full object-cover opacity-30 dark:opacity-90"
+      />
+      <img
+        src="/magic-hero.png"
+        alt=""
+        aria-hidden="true"
+        className="landing-hero__background hero-image absolute z-[3] hidden object-contain object-[center_right] opacity-95 lg:block"
+      />
+      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-[#d4b5ff]/70 via-[#d4b5ff]/35 to-transparent dark:from-[#08052f]/85 dark:via-[#08052f]/65 dark:to-transparent" />
+      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#c9a8ff]/40 via-transparent to-[#e8d5ff]/20 dark:from-[#08052f]/75 dark:to-[#08052f]/10" />
 
-        {/* Main Heading using Theme Typography */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className={`${LANDING_THEME.typography.size.h1} ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} leading-[1.1] mb-6 tracking-tight`}
-        >
-          Unleash Your Child's <br />
-          <span
-            className={`bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-amber-400 bg-clip-text text-transparent inline-block mt-2`}
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1440px] items-start px-5 pb-10 pt-24 lg:px-16 lg:pb-16 lg:pt-[10.5rem]">
+        <div className="flex w-full max-w-xl flex-col items-center text-center lg:max-w-[39rem] lg:items-start lg:text-left">
+          {/* Top Badge from Theme */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-7 text-[9px] font-bold uppercase tracking-[0.22em] text-[#c85d38] dark:text-[#ffb58d] lg:text-[10px] lg:tracking-[0.3em]"
           >
-            Imagination
-          </span>
-        </motion.h1>
+            ✦ Magical Learning Stories
+          </motion.div>
 
-        {/* Subtitle using Theme Typography */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className={`${LANDING_THEME.typography.size.subtitle} ${LANDING_THEME.colors.text.subtitle} ${LANDING_THEME.typography.weight.subtitle} max-w-2xl mx-auto leading-relaxed mb-10`}
-        >
-          Create magical, personalized stories for your children in seconds
-          using the power of AI. Designed to spark wonder and safe learning. 🪄
-        </motion.p>
-
-        {/* Try Now Call-to-Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <button
-            onClick={handleTryNow}
-            className={`inline-block px-10 py-4 rounded-full text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+          {/* Main Heading using Theme Typography */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-5 text-[2.65rem] font-black leading-[1.02] tracking-tight text-[#211747] drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:text-white dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] lg:text-[5.6rem] lg:leading-[0.94]"
           >
-            Start My Adventure ✨
-          </button>
-        </motion.div>
+            Every Story{" "}
+            <br className="lg:hidden" />
+            Begins
+            <br />
+            With a Little
+            <br />
+            <span className="bg-gradient-to-r from-[#ff9b70] via-[#e56bff] to-[#b96cff] bg-clip-text text-transparent">
+              Magic.
+            </span>
+          </motion.h1>
+
+          <img
+            src="/magic-hero-mobile.png"
+            alt="Magical elephant reading a storybook beside an enchanted castle"
+            className="landing-hero__mobile-art mb-7 block h-[14rem] w-full max-w-[20rem] object-contain object-center lg:hidden"
+          />
+
+          {/* Subtitle using Theme Typography */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#211747] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
+          >
+            Tara Story AI turns learning into an adventure with{" "}
+            <span className="text-[#ff9b70]">personalized stories</span>, magical
+            worlds, and <span className="text-[#ff9b70]">age-appropriate lessons</span>{" "}
+            designed for curious kids.
+          </motion.p>
+
+          {/* Try Now Call-to-Action */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row">
+              <button
+                onClick={handleTryNow}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#ffb08e] bg-gradient-to-b from-[#ff986b] to-[#ed5d43] px-7 py-3 text-sm font-extrabold text-white shadow-lg shadow-orange-950/40 transition hover:-translate-y-1 hover:brightness-110"
+              >
+                ✦ Create a Story
+              </button>
+              <Link
+                to="/dashboard"
+                onClick={handleExplore}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white/95 px-7 py-3 text-sm font-bold text-[#211747] shadow-lg shadow-white/20 transition hover:-translate-y-1 hover:bg-white hover:text-[#FF6848] dark:border-violet-300/60 dark:bg-violet-600/90 dark:text-white dark:shadow-lg dark:shadow-violet-900/30 dark:hover:bg-violet-500"
+              >
+                <BookOpen size={17} className="text-violet-600 dark:text-violet-300" />
+                Explore Story Library
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

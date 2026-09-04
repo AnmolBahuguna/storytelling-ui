@@ -50,8 +50,7 @@ export function PricingSection() {
       ?.split("=")[1];
 
     if (!token) {
-      alert("Please login or create an account first to upgrade your plan!");
-      // Optionally scroll or trigger login modal if possible here
+      window.dispatchEvent(new Event("open-signup"));
       return;
     }
 

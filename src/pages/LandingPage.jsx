@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import HeroSection from "../components/landing/heroSection";
-import { PricingSection } from "../components/landing/pricing";
 import { WhyChooseUs } from "../components/landing/whyChooseUs";
-import Footer from "../components/ui/footer";
+import { PricingSection } from "../components/landing/pricing";
 import Header from "../components/ui/header";
+import Footer from "../components/ui/footer";
 
 import ClickSpark from "../components/ClickSpark";
 import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui/components/backgrounds/stars-blue";
@@ -26,7 +26,8 @@ const LandingPage = () => {
         return true;
       }
     }
-    return false;
+    // The home page follows the magical navy/purple reference theme by default.
+    return true;
   });
 
   // Toggle class on the HTML document and save choice to localStorage
@@ -45,7 +46,9 @@ const LandingPage = () => {
   return (
     <div
       className={`relative min-h-screen transition-colors duration-700 ${
-        isDarkMode ? "bg-gradient-to-b from-violet-950 via-indigo-950 to-slate-950" : "bg-amber-50/30"
+        isDarkMode
+          ? "bg-gradient-to-b from-[#07052d] via-[#17104b] to-[#09052b]"
+          : "bg-gradient-to-br from-[#f7f3ff] via-[#eee9ff] to-[#e3dcfa]"
       } ${LANDING_THEME.typography.family.main} overflow-hidden`}
     >
       {/* Spark color matches the active theme */}
@@ -56,13 +59,23 @@ const LandingPage = () => {
         sparkCount={10}
         duration={500}
       >
-        {/* Background Layer Container */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          {/* Dynamically swap background component based on theme */}
+        {/* Keep the animated theme background visible behind all landing content. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-[4] block select-none"
+        >
           {isDarkMode ? (
-            <StarsBackgroundBlue speed={100} />
+            <StarsBackgroundBlue
+              speed={100}
+              pointerEvents={false}
+              className="bg-transparent"
+            />
           ) : (
-            <StarsBackgroundWhite speed={100} />
+            <StarsBackgroundWhite
+              speed={100}
+              pointerEvents={false}
+              className="bg-transparent"
+            />
           )}
         </div>
 

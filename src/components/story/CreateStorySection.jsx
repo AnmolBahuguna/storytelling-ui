@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { PenLine } from "lucide-react";
 
 const CreateStorySection = ({ formData, updateFormData }) => {

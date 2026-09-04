@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Bike, Rocket, Gamepad2, Plane, Car, Palette, Music, Trophy, Dribbble, Tent } from "lucide-react";
 
 import { getFunFactsForLanguage } from "../../utils/translatedFunFacts";

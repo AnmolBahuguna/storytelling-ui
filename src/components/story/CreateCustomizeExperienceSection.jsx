@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Calculator, FlaskConical, Landmark, Sparkles, CheckCircle2 } from "lucide-react";
 
 const CustomizeExperienceSection = ({ formData, updateFormData }) => {
