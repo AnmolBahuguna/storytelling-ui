@@ -106,7 +106,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#294B58] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
+            className="mb-8 max-w-[20rem] text-[13px] font-semibold leading-relaxed text-[#111111] drop-shadow-md dark:text-white dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] lg:max-w-md lg:text-base"
           >
             Tara Story AI turns learning into an adventure with{" "}
             <span className="text-[#C9553D]">personalized stories</span>, magical
