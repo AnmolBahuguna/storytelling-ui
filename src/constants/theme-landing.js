@@ -20,13 +20,13 @@ export const LANDING_THEME = {
     text: {
       heading: "text-[#173B4D] dark:text-amber-50",
       subtitle: "text-[#294B58] dark:text-slate-300",
-      brand: "text-violet-600 dark:text-violet-400",
+      brand: "text-sky-600 dark:text-sky-400",
       light: "text-[#355361] dark:text-stone-400",
     },
     // Accents & Decorations
     accent: {
       brandBg: "bg-[#ff7043] dark:bg-[#ff7043]",
-      blurEffect: "bg-violet-200/40 dark:bg-[#5b2a9d]/40",
+      blurEffect: "bg-sky-200/40 dark:bg-[#0EA5E9]/20",
     },
   },
 
@@ -50,14 +50,14 @@ export const LANDING_THEME = {
   components: {
     badge: {
       container:
-        "bg-violet-50 dark:bg-white/10 border border-violet-200 dark:border-white/20 shadow-sm backdrop-blur-md",
-      text: "text-violet-700 dark:text-violet-300 text-xs font-bold uppercase tracking-wider",
+        "bg-sky-50 dark:bg-white/10 border border-sky-200 dark:border-white/20 shadow-sm backdrop-blur-md",
+      text: "text-sky-700 dark:text-sky-300 text-xs font-bold uppercase tracking-wider",
     },
     button: {
       primary:
         "bg-[#ff7043] hover:bg-[#ff8a5c] dark:bg-[#ff7043] dark:hover:bg-[#ff8a5c] text-white dark:text-white shadow-md shadow-[#ff7043]/30 transition-all border border-transparent",
       secondary:
-        "bg-white dark:bg-slate-800/50 text-violet-600 dark:text-white border border-violet-200 dark:border-slate-700 hover:bg-violet-50 dark:hover:bg-slate-800 backdrop-blur-sm transition-all",
+        "bg-white dark:bg-slate-800/50 text-sky-600 dark:text-white border border-sky-200 dark:border-slate-700 hover:bg-sky-50 dark:hover:bg-slate-800 backdrop-blur-sm transition-all",
     },
   },
 };

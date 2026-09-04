@@ -43,11 +43,12 @@ const HeroSection = () => {
     <section
       className="landing-hero relative min-h-screen overflow-hidden bg-transparent text-[#294B58] dark:text-white"
     >
+
       <img
-        src="/clouds-background.png"
+        src="/clouds-background1.png"
         alt=""
         aria-hidden="true"
-        className="landing-hero__cloud-background pointer-events-none absolute inset-0 z-0 block h-full w-full object-cover opacity-30 dark:opacity-90"
+        className="landing-hero__cloud-background pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover object-bottom opacity-65 mix-blend-screen"
       />
       <img
         src="/magic-hero.png"
@@ -90,7 +91,7 @@ const HeroSection = () => {
             <br />
             With a Little
             <br />
-            <span className="bg-gradient-to-r from-[#E85B4D] to-[#A944C7] bg-clip-text text-transparent dark:from-[#ff9b70] dark:via-[#e56bff] dark:to-[#b96cff]">
+            <span className="bg-gradient-to-r from-[#FF6848] via-[#FF985C] to-[#0EA5E9] bg-clip-text text-transparent dark:from-[#ff9b70] dark:via-[#ffb86c] dark:to-[#38bdf8]">
               Magic.
             </span>
           </motion.h1>
@@ -130,9 +131,9 @@ const HeroSection = () => {
               <Link
                 to="/dashboard"
                 onClick={handleExplore}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white/95 px-7 py-3 text-sm font-bold text-[#315064] shadow-lg shadow-white/20 transition hover:-translate-y-1 hover:bg-white hover:text-[#E9684A] dark:border-violet-300/60 dark:bg-violet-600/90 dark:text-white dark:shadow-lg dark:shadow-violet-900/30 dark:hover:bg-violet-500"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white/95 px-7 py-3 text-sm font-bold text-[#315064] shadow-lg shadow-white/20 transition hover:-translate-y-1 hover:bg-white hover:text-[#E9684A] dark:border-sky-300/60 dark:bg-sky-600/90 dark:text-white dark:shadow-lg dark:shadow-sky-900/30 dark:hover:bg-sky-500"
               >
-                <BookOpen size={17} className="text-violet-600 dark:text-violet-300" />
+                <BookOpen size={17} className="text-sky-600 dark:text-sky-300" />
                 Explore Story Library
                 <ArrowRight size={15} />
               </Link>

@@ -17,8 +17,8 @@ export function WhyChooseUs() {
       description:
         "Built-in filters ensure every generated story is appropriate, educational, and positive.",
       icon: Shield,
-      iconBg: "bg-violet-100",
-      iconColor: "text-violet-600",
+      iconBg: "bg-amber-100",
+      iconColor: "text-amber-600",
     },
     {
       title: "Endless Stories",

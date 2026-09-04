@@ -112,7 +112,7 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
           <X size={20} />
         </button>
         <div className="mb-8 text-center">
-          <div className="text-5xl mb-3">🐘</div>
+          <img src="/elephant.jpg" alt="Elephant" className="w-16 h-16 mx-auto mb-3 rounded-full object-cover" />
           <h2
             className={`text-2xl mb-2 ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading}`}
           >

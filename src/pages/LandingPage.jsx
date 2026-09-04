@@ -53,7 +53,7 @@ const LandingPage = () => {
     >
       {/* Spark color matches the active theme */}
       <ClickSpark
-        sparkColor={isDarkMode ? "#F59E0B" : "#7C3AED"}
+        sparkColor={isDarkMode ? "#F59E0B" : "#FF6848"}
         sparkSize={12}
         sparkRadius={20}
         sparkCount={10}

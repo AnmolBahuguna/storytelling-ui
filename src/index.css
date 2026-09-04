@@ -52,7 +52,7 @@
 
 body {
   font-family: 'Nunito', sans-serif;
-  background-color: #e7e4fb;
+  background-color: #ffffff;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -215,17 +215,17 @@ body {
 
 @media (max-width: 767px) {
   .landing-hero__cloud-background {
-    left: 50%;
+    left: -10%;
     right: auto;
     top: 0;
-    bottom: auto;
-    width: auto;
+    bottom: 0;
+    width: 120%;
     min-width: 0;
     max-width: none;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center bottom;
-    transform: translateX(-50%);
+    transform: translateX(0);
     animation: mobileCloudFloat 18s ease-in-out infinite alternate;
   }
 }
@@ -262,8 +262,8 @@ body {
   50% { transform: translateY(-10px); }
 }
 
-/* Slowly shifting glow adds movement to the light and dark hero backgrounds. */
-.landing-hero::before {
+/* Slowly shifting glow adds movement to the dark hero background. */
+.dark .landing-hero::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -287,8 +287,8 @@ body {
 }
 
 @keyframes mobileCloudFloat {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(calc(-50% - 10px)); }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-5%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -300,12 +300,16 @@ body {
   }
 }
 
-/* Animated bubbly background */
+/* Clean Light Mode background */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
+  background: #ffffff;
+}
+
+.dark body::before {
   background:
     radial-gradient(ellipse at 10% 20%, rgba(167, 180, 255, 0.3) 0%, transparent 50%),
     radial-gradient(ellipse at 90% 80%, rgba(241, 151, 220, 0.18) 0%, transparent 50%),
