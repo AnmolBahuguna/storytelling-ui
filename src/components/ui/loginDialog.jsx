@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
-
-const SERVER_URL =
-  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
-    ? import.meta.env.VITE_SERVER_URL
-    : "";
+import { authAPI } from "../../services/api.js";
 
 const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
   const [email, setEmail] = useState("");
@@ -30,23 +26,7 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
     setError("");
 
     try {
-      const response = await fetch(`${SERVER_URL}/api/auth/google`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Google authentication failed");
-      }
-
-      // Store token in cookies
-      const maxAge = 24 * 60 * 60;
-      document.cookie = `access_token=${data.access_token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+      await authAPI.googleAuth(credentialResponse.credential);
 
       if (onLoginSuccess) onLoginSuccess();
       onClose();
@@ -63,27 +43,7 @@ const LoginDialog = ({ isOpen, onClose, onSignupClick, onLoginSuccess }) => {
     setError("");
 
     try {
-      const formData = new URLSearchParams();
-      formData.append("username", email);
-      formData.append("password", password);
-
-      const response = await fetch(`${SERVER_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Incorrect username or password");
-      }
-
-      // Store token in cookies (expires in 1 day)
-      const maxAge = 24 * 60 * 60;
-      document.cookie = `access_token=${data.access_token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+      await authAPI.login(email, password);
 
       // Notify parent component
       if (onLoginSuccess) onLoginSuccess();

@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Loader2, CheckCircle2 } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import { LANDING_THEME } from "../../constants/theme-landing";
-
-const SERVER_URL =
-  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
-    ? import.meta.env.VITE_SERVER_URL
-    : "";
+import { authAPI } from "../../services/api.js";
 
 const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
   // Form State
@@ -54,23 +50,7 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
     setError("");
 
     try {
-      const response = await fetch(`${SERVER_URL}/api/auth/google`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Google authentication failed");
-      }
-
-      // Store token in cookies
-      const maxAge = 24 * 60 * 60;
-      document.cookie = `access_token=${data.access_token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+      await authAPI.googleAuth(credentialResponse.credential);
 
       setSuccess(true);
       setTimeout(() => {
@@ -98,23 +78,7 @@ const SignupDialog = ({ isOpen, onClose, onLoginClick }) => {
     }
 
     try {
-      const response = await fetch(`${SERVER_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: name,
-          email: email,
-          password: password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          parseFastAPIError(data, "Registration failed. Please try again."),
-        );
-      }
+      await authAPI.register(name, email, password);
 
       setSuccess(true);
 

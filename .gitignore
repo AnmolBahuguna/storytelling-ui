@@ -28,3 +28,6 @@ dist-ssr
 code.py
 *.exe
 cloudflared.exe
+
+# Local workspace directories
+frontend/

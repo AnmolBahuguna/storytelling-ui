@@ -4,6 +4,7 @@ import { Sun, Moon } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
 import LoginDialog from "./loginDialog.jsx";
 import SignupDialog from "./signupDialog.jsx";
+import { authAPI } from "../../services/api.js";
 
 const Header = ({ isDarkMode, toggleTheme }) => {
   const navigate = useNavigate();
@@ -16,10 +17,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
 
   // Check auth status by looking for the JWT token in cookies
   const checkAuthStatus = () => {
-    const hasToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("access_token="));
-    setIsLoggedIn(!!hasToken);
+    setIsLoggedIn(authAPI.isAuthenticated());
   };
 
   useEffect(() => {
@@ -47,9 +45,7 @@ const Header = ({ isDarkMode, toggleTheme }) => {
   ];
 
   const handleLogout = () => {
-    // Clear the access token cookie
-    document.cookie =
-      "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    authAPI.logout();
     setIsLoggedIn(false);
     navigate("/");
   };

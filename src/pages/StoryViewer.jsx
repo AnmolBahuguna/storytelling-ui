@@ -21,11 +21,12 @@ import {
 import jsPDF from "jspdf";
 import { toJpeg } from "html-to-image";
 import confetti from "canvas-confetti";
+import { storyAPI, authAPI } from "../services/api.js";
 
 const SERVER_URL =
   import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
     ? import.meta.env.VITE_SERVER_URL
-    : "";
+    : "http://localhost:5000";
 
 const MOCK_STORY_FALLBACK = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
@@ -161,27 +162,12 @@ const StoryViewer = () => {
 
         // Fetch or load current audio from cache
         if (!audioCache.current[currentIndex]) {
-          audioCache.current[currentIndex] = fetch(
-            `${SERVER_URL}/api/generate-speech`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${
-                  document.cookie
-                    .split("; ")
-                    .find((row) => row.startsWith("access_token="))
-                    ?.split("=")[1]
-                }`,
-              },
-              body: JSON.stringify({ text: slides[currentIndex].text }),
-            },
-          )
-            .then((res) => {
-              if (!res.ok) throw new Error("Failed to fetch audio");
-              return res.blob();
-            })
-            .then((blob) => URL.createObjectURL(blob));
+          audioCache.current[currentIndex] = storyAPI.generateSpeech(slides[currentIndex].text)
+            .then((blob) => URL.createObjectURL(blob))
+            .catch((error) => {
+              console.error("Failed to generate speech:", error);
+              throw error;
+            });
         }
 
         const url = await audioCache.current[currentIndex];
@@ -196,26 +182,7 @@ const StoryViewer = () => {
         // Prefetch NEXT audio to prevent buffering
         const nextIndex = currentIndex + 1;
         if (nextIndex < slides.length && !audioCache.current[nextIndex]) {
-          audioCache.current[nextIndex] = fetch(
-            `${SERVER_URL}/api/generate-speech`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${
-                  document.cookie
-                    .split("; ")
-                    .find((row) => row.startsWith("access_token="))
-                    ?.split("=")[1]
-                }`,
-              },
-              body: JSON.stringify({ text: slides[nextIndex].text }),
-            },
-          )
-            .then((res) => {
-              if (!res.ok) throw new Error("Failed to fetch audio");
-              return res.blob();
-            })
+          audioCache.current[nextIndex] = storyAPI.generateSpeech(slides[nextIndex].text)
             .then((blob) => URL.createObjectURL(blob))
             .catch((err) => {
               delete audioCache.current[nextIndex];

@@ -7,16 +7,11 @@ import FinalTouchesSection from "../components/story/FinalTouchesSection.jsx";
 import Sidebar from "../components/ui/sidebar.jsx";
 import LoadingScreen from "../components/ui/LoadingScreen.jsx";
 import { ArrowRight, Wand2, Stars, Sun, Moon } from "lucide-react";
+import { storyAPI, paymentsAPI, authAPI } from "../services/api.js";
 
 // Import BOTH backgrounds to swap them seamlessly
 import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui/components/backgrounds/stars-blue";
 import { StarsBackground as StarsBackgroundWhite } from "../components/animate-ui/components/backgrounds/stars-light";
-
-// Hardcoded for preview environment to prevent 'import.meta' build errors
-const SERVER_URL =
-  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
-    ? import.meta.env.VITE_SERVER_URL
-    : "";
 
 const CreateStory = () => {
   const navigate = useNavigate();
@@ -60,30 +55,19 @@ const CreateStory = () => {
     language: "English",
   });
 
-  const getAccessToken = () => {
-    return document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("access_token="))
-      ?.split("=")[1];
-  };
-
   const [userTier, setUserTier] = useState("BASIC");
 
   useEffect(() => {
-    const token = getAccessToken();
-    if (!token) {
+    if (!authAPI.isAuthenticated()) {
       navigate("/");
     } else {
       setIsAuthorized(true);
       // Fetch tier for top right badge!
-      fetch(`${SERVER_URL}/api/payments/status`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.tier) setUserTier(data.tier);
-      })
-      .catch(err => console.error("Error fetching tier", err));
+      paymentsAPI.getStatus()
+        .then(data => {
+          if (data && data.tier) setUserTier(data.tier);
+        })
+        .catch(err => console.error("Error fetching tier", err));
     }
   }, [navigate]);
 
@@ -105,12 +89,6 @@ const CreateStory = () => {
 
     const generateStory = async () => {
       try {
-        const token = getAccessToken();
-        if (!token) {
-          alert("Session expired. Please log in again.");
-          return navigate("/");
-        }
-
         let ageNum = 7;
         if (formData.ageGroup === "1-3") ageNum = 2;
         if (formData.ageGroup === "3-5") ageNum = 4;
@@ -123,30 +101,16 @@ const CreateStory = () => {
           lesson: `A story set in ${formData.locationName || "a magical place"}. Learning Focus: ${formData.subject || "maths"}. Language: ${formData.language}. Duration: ${formData.duration}. ${formData.extraDetails ? `Extra Details & Requirements: ${formData.extraDetails}` : ""}`,
         };
 
-        const response = await fetch(`${SERVER_URL}/api/generate-story`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
+        const data = await storyAPI.generateStory(payload);
 
-        const data = await response.json();
-
-        if (response.ok && data.success) {
+        if (data.success) {
           navigate("/story-view", { state: { story: data.story } });
         } else {
-          if (response.status === 401) {
-            alert("Unauthorized! Please login again.");
-            navigate("/");
-          } else {
-            alert("Error: " + (data.message || "Failed to generate story"));
-          }
+          alert("Error: " + (data.message || "Failed to generate story"));
         }
       } catch (error) {
         console.error("Connection Error:", error);
-        alert(`Failed to connect to server.`);
+        alert(`Failed to generate story: ${error.message}`);
       } finally {
         setLoading(false);
       }

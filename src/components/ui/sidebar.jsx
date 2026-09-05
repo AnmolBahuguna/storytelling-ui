@@ -11,16 +11,7 @@ import {
   Menu,
   Trash2,
 } from "lucide-react";
-
-const SERVER_URL =
-  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
-    ? import.meta.env.VITE_SERVER_URL
-    : "";
-
-const getToken = () => {
-  const match = document.cookie.match(new RegExp("(^| )access_token=([^;]+)"));
-  return match ? match[2] : null;
-};
+import { storyAPI, playlistAPI, paymentsAPI, authAPI } from "../../services/api.js";
 
 const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768); // Closed by default on mobile screens
@@ -42,39 +33,26 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const token = getToken();
-      if (!token) return;
+      if (!authAPI.isAuthenticated()) return;
 
       try {
-        const storyRes = await fetch(`${SERVER_URL}/api/my-stories`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        // Fetch stories and playlists in parallel
+        const [fetchedStories, fetchedPlaylists, subData] = await Promise.allSettled([
+          storyAPI.getMyStories(),
+          playlistAPI.getMyPlaylists(),
+          paymentsAPI.getStatus().catch(() => ({ tier: "BASIC" }))
+        ]);
 
-        const playlistRes = await fetch(`${SERVER_URL}/api/playlists`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (storyRes.ok) {
-          const fetchedStories = await storyRes.json();
-          setStories(fetchedStories);
+        if (fetchedStories.status === "fulfilled") {
+          setStories(fetchedStories.value);
         }
 
-        if (playlistRes.ok) {
-          const fetchedPlaylists = await playlistRes.json();
-          setPlaylists(fetchedPlaylists);
+        if (fetchedPlaylists.status === "fulfilled") {
+          setPlaylists(fetchedPlaylists.value);
         }
 
-        // Fetch Subscription Status
-        try {
-          const subRes = await fetch(`${SERVER_URL}/api/payments/status`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (subRes.ok) {
-            const data = await subRes.json();
-            setSubscriptionTier(data.tier);
-          }
-        } catch (subErr) {
-          console.error("Failed to fetch sub status", subErr);
+        if (subData.status === "fulfilled" && subData.value.tier) {
+          setSubscriptionTier(subData.value.tier);
         }
 
       } catch (error) {
@@ -92,33 +70,22 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
     if (!newPlaylistName.trim()) return;
 
     setIsSaving(true);
-    const token = getToken();
 
     try {
-      const response = await fetch(`${SERVER_URL}/api/playlists`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const createdPlaylist = await playlistAPI.createPlaylist(newPlaylistName);
+      setPlaylists([
+        {
+          id: createdPlaylist.id || createdPlaylist._id,
+          name: createdPlaylist.name,
+          stories: [],
         },
-        body: JSON.stringify({ name: newPlaylistName }),
-      });
-
-      if (response.ok) {
-        const createdPlaylist = await response.json();
-        setPlaylists([
-          {
-            id: createdPlaylist.id || createdPlaylist._id,
-            name: createdPlaylist.name,
-            stories: [],
-          },
-          ...playlists,
-        ]);
-        setNewPlaylistName("");
-        setIsCreatingPlaylist(false);
-      }
+        ...playlists,
+      ]);
+      setNewPlaylistName("");
+      setIsCreatingPlaylist(false);
     } catch (error) {
       console.error("Error creating playlist:", error);
+      alert("Failed to create playlist: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -127,30 +94,21 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   const handleAddToPlaylist = async (e, playlistId, story) => {
     e.stopPropagation();
     setIsAddingToPlaylist(true);
-    const token = getToken();
 
     try {
-      const response = await fetch(
-        `${SERVER_URL}/api/playlists/${playlistId}/add/${story.id}`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+      await playlistAPI.addStoryToPlaylist(playlistId, story.id);
+      setPlaylists(
+        playlists.map((p) => {
+          if (p.id === playlistId) {
+            return { ...p, stories: [...p.stories, story] };
+          }
+          return p;
+        }),
       );
-
-      if (response.ok) {
-        setPlaylists(
-          playlists.map((p) => {
-            if (p.id === playlistId) {
-              return { ...p, stories: [...p.stories, story] };
-            }
-            return p;
-          }),
-        );
-        setAddingToPlaylistId(null);
-      }
+      setAddingToPlaylistId(null);
     } catch (error) {
       console.error("Error adding to playlist:", error);
+      alert("Failed to add to playlist: " + error.message);
     } finally {
       setIsAddingToPlaylist(false);
     }
@@ -159,22 +117,17 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   const handleDeleteStory = async (e, storyId) => {
     e.stopPropagation();
     if (!window.confirm("Are you sure you want to delete this story?")) return;
-    
-    const token = getToken();
+
     try {
-      const response = await fetch(`${SERVER_URL}/api/my-stories/${storyId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        setStories(stories.filter(s => s.id !== storyId));
-        setPlaylists(playlists.map(p => ({
-          ...p,
-          stories: p.stories ? p.stories.filter(s => s.id !== storyId) : []
-        })));
-      }
+      await storyAPI.deleteStory(storyId);
+      setStories(stories.filter(s => s.id !== storyId));
+      setPlaylists(playlists.map(p => ({
+        ...p,
+        stories: p.stories ? p.stories.filter(s => s.id !== storyId) : []
+      })));
     } catch (error) {
       console.error("Failed to delete story:", error);
+      alert("Failed to delete story: " + error.message);
     }
   };
 
