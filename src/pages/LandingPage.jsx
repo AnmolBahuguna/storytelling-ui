@@ -5,7 +5,6 @@ import { WhyChooseUs } from "../components/landing/whyChooseUs";
 import Footer from "../components/ui/footer";
 import Header from "../components/ui/header";
 import { LANDING_THEME } from "../constants/theme-landing";
-import { StarsBackground } from "../components/animate-ui/components/backgrounds/stars-light";
 
 const LandingPage = () => {
   // Theme state: Initialize from localStorage, fallback to system preference
@@ -65,13 +64,8 @@ const LandingPage = () => {
         backgroundAttachment: 'fixed'
       }}
     >
-      <StarsBackground
-        className="pointer-events-none absolute inset-0 z-10 h-full w-full opacity-90 mix-blend-screen"
-        speed={25}
-        starColor="#ffffff"
-      />
       {/* Main Content Layer */}
-      <div className="relative z-20 flex flex-col min-h-screen bg-transparent">
+      <div className="relative z-10 flex flex-col min-h-screen bg-transparent">
         <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         <main className="flex-grow">
           <HeroSection />
