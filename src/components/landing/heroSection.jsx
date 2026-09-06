@@ -45,10 +45,10 @@ const HeroSection = () => {
 
   return (
     <section
-      className={`flex-grow flex flex-col justify-center py-10 px-3 sm:py-14 sm:px-4 relative lg:min-h-[calc(100vh-80px)] lg:py-8 lg:px-8 ${LANDING_THEME.typography.family.main}`}
+      className={`flex-grow flex flex-col justify-center pt-28 pb-10 px-3 sm:pt-32 sm:pb-14 sm:px-4 relative lg:min-h-[calc(100vh-80px)] lg:py-8 lg:px-8 ${LANDING_THEME.typography.family.main}`}
     >
       {/* Main Content */}
-      <div       className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center px-1 sm:px-4 lg:relative lg:z-10 lg:items-start lg:justify-center lg:text-left lg:px-0 lg:pr-[46%] lg:translate-x-[2%] lg:translate-y-[20%]">
+      <div className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center px-1 sm:px-4 lg:relative lg:z-10 lg:items-start lg:justify-center lg:text-left lg:px-0 lg:pr-[46%] lg:translate-x-[2%] lg:translate-y-[20%]">
         {/* Magical Learning Stories Badge */}
         {/* Main Title */}
         <motion.h1
@@ -68,7 +68,7 @@ const HeroSection = () => {
 
         {/* Center Image for Mobile View */}
         <motion.div
-          className="hero-image-float w-full max-w-[360px] sm:max-w-[500px] mx-auto will-change-transform lg:absolute lg:right-[10%] lg:top-0 lg:w-[27%]"
+          className="hero-image-float relative z-10 w-[88vw] max-w-[330px] sm:max-w-[500px] mx-auto mb-4 shrink-0 will-change-transform lg:absolute lg:right-[10%] lg:top-0 lg:w-[27%] lg:mb-0"
         >
           <motion.img
             initial={{ opacity: 0, scale: 0.8 }}
@@ -76,7 +76,7 @@ const HeroSection = () => {
             transition={{ opacity: { duration: 0.5 }, scale: { duration: 0.5 } }}
             src="/heromid.jpeg"
             alt="Magical Scene"
-            className="block w-full h-auto mb-6 lg:mb-0"
+            className="block w-full h-auto"
             style={{ backfaceVisibility: "hidden" }}
           />
         </motion.div>
@@ -86,7 +86,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-slate-900 dark:text-white text-[1.05rem] sm:text-lg font-semibold dark:font-normal max-w-md mx-auto mb-5 leading-relaxed lg:mx-0 lg:max-w-md lg:text-sm"
+          className="relative z-10 text-slate-900 dark:text-white text-[1.05rem] sm:text-lg font-semibold dark:font-normal max-w-md mx-auto mb-5 leading-relaxed lg:mx-0 lg:max-w-md lg:text-sm"
         >
           Tara Story AI turns learning into an adventure with{" "}
           <span className="text-[#ff890b] dark:text-[#ffa600]">personalized stories, magical worlds,</span>{" "}
@@ -98,7 +98,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto lg:mx-0 lg:max-w-md"
+          className="relative z-10 flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto lg:mx-0 lg:max-w-md"
         >
           <button
             onClick={handleCreateStory}
