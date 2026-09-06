@@ -96,7 +96,10 @@ function StarsBackgroundWhite({
     >
       <motion.div
         style={{ x: springX, y: springY }}
-        className={cn({ "pointer-events-none": !pointerEvents })}
+        className={cn(
+          "relative h-full w-full",
+          { "pointer-events-none": !pointerEvents },
+        )}
       >
         <StarLayer
           count={1000}
