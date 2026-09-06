@@ -7,11 +7,16 @@ import FinalTouchesSection from "../components/story/FinalTouchesSection.jsx";
 import Sidebar from "../components/ui/sidebar.jsx";
 import LoadingScreen from "../components/ui/LoadingScreen.jsx";
 import { ArrowRight, Wand2, Stars, Sun, Moon } from "lucide-react";
-import { storyAPI, paymentsAPI, authAPI } from "../services/api.js";
 
 // Import BOTH backgrounds to swap them seamlessly
 import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui/components/backgrounds/stars-blue";
 import { StarsBackground as StarsBackgroundWhite } from "../components/animate-ui/components/backgrounds/stars-light";
+
+// Hardcoded for preview environment to prevent 'import.meta' build errors
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "";
 
 const CreateStory = () => {
   const navigate = useNavigate();
@@ -55,19 +60,30 @@ const CreateStory = () => {
     language: "English",
   });
 
+  const getAccessToken = () => {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="))
+      ?.split("=")[1];
+  };
+
   const [userTier, setUserTier] = useState("BASIC");
 
   useEffect(() => {
-    if (!authAPI.isAuthenticated()) {
+    const token = getAccessToken();
+    if (!token) {
       navigate("/");
     } else {
       setIsAuthorized(true);
       // Fetch tier for top right badge!
-      paymentsAPI.getStatus()
-        .then(data => {
-          if (data && data.tier) setUserTier(data.tier);
-        })
-        .catch(err => console.error("Error fetching tier", err));
+      fetch(`${SERVER_URL}/api/payments/status`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.tier) setUserTier(data.tier);
+      })
+      .catch(err => console.error("Error fetching tier", err));
     }
   }, [navigate]);
 
@@ -89,6 +105,12 @@ const CreateStory = () => {
 
     const generateStory = async () => {
       try {
+        const token = getAccessToken();
+        if (!token) {
+          alert("Session expired. Please log in again.");
+          return navigate("/");
+        }
+
         let ageNum = 7;
         if (formData.ageGroup === "1-3") ageNum = 2;
         if (formData.ageGroup === "3-5") ageNum = 4;
@@ -101,16 +123,30 @@ const CreateStory = () => {
           lesson: `A story set in ${formData.locationName || "a magical place"}. Learning Focus: ${formData.subject || "maths"}. Language: ${formData.language}. Duration: ${formData.duration}. ${formData.extraDetails ? `Extra Details & Requirements: ${formData.extraDetails}` : ""}`,
         };
 
-        const data = await storyAPI.generateStory(payload);
+        const response = await fetch(`${SERVER_URL}/api/generate-story`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
 
-        if (data.success) {
+        const data = await response.json();
+
+        if (response.ok && data.success) {
           navigate("/story-view", { state: { story: data.story } });
         } else {
-          alert("Error: " + (data.message || "Failed to generate story"));
+          if (response.status === 401) {
+            alert("Unauthorized! Please login again.");
+            navigate("/");
+          } else {
+            alert("Error: " + (data.message || "Failed to generate story"));
+          }
         }
       } catch (error) {
         console.error("Connection Error:", error);
-        alert(`Failed to generate story: ${error.message}`);
+        alert(`Failed to connect to server.`);
       } finally {
         setLoading(false);
       }
@@ -139,7 +175,7 @@ const CreateStory = () => {
   const stepLabels = ["The Hero", "The Adventure", "Final Touches"];
 
   return (
-    <div className="create-story-page flex h-[100dvh] w-full max-w-[100vw] overflow-x-hidden bg-amber-50/30 dark:bg-slate-950 transition-colors duration-700">
+    <div className="flex min-h-screen h-screen overflow-hidden bg-amber-50/30 dark:bg-slate-950 transition-colors duration-700">
       {/* SIDEBAR ON THE LEFT */}
       <Sidebar
         onPlayStory={handlePlayStory}
@@ -147,12 +183,12 @@ const CreateStory = () => {
       />
 
       {/* MAIN CONTENT AREA ON THE RIGHT */}
-      <main className="create-story-main relative flex-1 flex flex-col items-center overflow-y-auto font-sans">
+      <main className="relative flex-1 flex flex-col items-center overflow-y-auto font-sans">
         
         {/* Top Right Controls Overlay: Theme & Badge */}
-        <div className="create-story-controls absolute top-6 right-6 flex items-center gap-4 z-50">
+        <div className="absolute top-3 right-3 sm:top-6 sm:right-6 flex items-center gap-2 sm:gap-4 z-50">
           {userTier !== "BASIC" && (
-            <div className={`px-4 py-2 rounded-full shadow-lg border text-xs font-black uppercase tracking-widest backdrop-blur-md ${
+            <div className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg border text-[10px] sm:text-xs font-black uppercase tracking-widest backdrop-blur-md ${
               userTier === "LEGEND" 
                 ? "bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-600 text-slate-900 border-yellow-200" 
                 : "bg-violet-600 text-white border-violet-500"
@@ -180,7 +216,7 @@ const CreateStory = () => {
         </div>
 
         {/* Form Container with AnimatePresence for Loading Swap */}
-        <div className="relative z-10 w-full flex flex-col items-center py-10 px-4 mt-12 md:mt-4">
+        <div className="relative z-10 w-full flex flex-col items-center py-6 sm:py-10 px-3 sm:px-4 mt-12 md:mt-4">
           <AnimatePresence mode="wait">
             {loading ? (
               <LoadingScreen key="loading" language={formData.language} />
@@ -198,7 +234,7 @@ const CreateStory = () => {
                   animate={{ y: 0, opacity: 1 }}
                   className="mb-6"
                 >
-                  <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-full shadow-lg text-sm font-medium transition-colors">
+                  <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-3 sm:px-4 py-2 rounded-full shadow-lg text-xs sm:text-sm font-medium transition-colors">
                     <Stars size={16} className="text-violet-500" />
                     Step {activeSection} of 3 — {stepLabels[activeSection - 1]}
                   </div>
@@ -232,7 +268,7 @@ const CreateStory = () => {
                   transition={{ delay: 0.1 }}
                   className="text-center mb-6"
                 >
-                  <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 drop-shadow-sm transition-colors">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 drop-shadow-sm transition-colors">
                     Let's Build a Story!
                   </h1>
                   <p className="text-violet-600 dark:text-violet-400 font-bold text-base drop-shadow-sm transition-colors">
@@ -249,7 +285,7 @@ const CreateStory = () => {
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.15 }}
-                  className="create-story-form w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-2xl relative transition-colors duration-700"
+                  className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-4 sm:p-6 md:p-8 shadow-2xl relative transition-colors duration-700"
                 >
                   <AnimatePresence mode="wait">
                     {activeSection === 1 && (
@@ -277,11 +313,11 @@ const CreateStory = () => {
                 </motion.div>
 
                 {/* Navigation Controls */}
-                <div className="create-story-nav mt-8 flex gap-4 w-full max-w-2xl justify-end">
+                <div className="mt-6 sm:mt-8 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 w-full max-w-2xl justify-end">
                   {activeSection > 1 && (
                     <button
                       onClick={handleBack}
-                      className="px-6 py-3 rounded-xl font-bold transition-all bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold transition-all bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700"
                     >
                       ← Back
                     </button>
@@ -290,14 +326,14 @@ const CreateStory = () => {
                   {activeSection < 3 ? (
                     <button
                       onClick={handleNext}
-                      className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-violet-500/25 border-0"
+                      className="w-full sm:w-auto justify-center flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-violet-500/25 border-0"
                     >
                       Continue Adventure ✨ <ArrowRight size={20} />
                     </button>
                   ) : (
                     <button
                       onClick={handleSubmit}
-                      className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-violet-500/25 border-0"
+                      className="w-full sm:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-violet-500/25 border-0"
                     >
                       <Wand2 /> Cast the Magic Spell 🪄
                     </button>

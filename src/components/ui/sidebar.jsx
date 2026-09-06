@@ -11,7 +11,16 @@ import {
   Menu,
   Trash2,
 } from "lucide-react";
-import { storyAPI, playlistAPI, paymentsAPI, authAPI } from "../../services/api.js";
+
+const SERVER_URL =
+  import.meta && import.meta.env && import.meta.env.VITE_SERVER_URL
+    ? import.meta.env.VITE_SERVER_URL
+    : "";
+
+const getToken = () => {
+  const match = document.cookie.match(new RegExp("(^| )access_token=([^;]+)"));
+  return match ? match[2] : null;
+};
 
 const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768); // Closed by default on mobile screens
@@ -33,26 +42,39 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      if (!authAPI.isAuthenticated()) return;
+      const token = getToken();
+      if (!token) return;
 
       try {
-        // Fetch stories and playlists in parallel
-        const [fetchedStories, fetchedPlaylists, subData] = await Promise.allSettled([
-          storyAPI.getMyStories(),
-          playlistAPI.getMyPlaylists(),
-          paymentsAPI.getStatus().catch(() => ({ tier: "BASIC" }))
-        ]);
+        const storyRes = await fetch(`${SERVER_URL}/api/my-stories`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        if (fetchedStories.status === "fulfilled") {
-          setStories(fetchedStories.value);
+        const playlistRes = await fetch(`${SERVER_URL}/api/playlists`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (storyRes.ok) {
+          const fetchedStories = await storyRes.json();
+          setStories(fetchedStories);
         }
 
-        if (fetchedPlaylists.status === "fulfilled") {
-          setPlaylists(fetchedPlaylists.value);
+        if (playlistRes.ok) {
+          const fetchedPlaylists = await playlistRes.json();
+          setPlaylists(fetchedPlaylists);
         }
 
-        if (subData.status === "fulfilled" && subData.value.tier) {
-          setSubscriptionTier(subData.value.tier);
+        // Fetch Subscription Status
+        try {
+          const subRes = await fetch(`${SERVER_URL}/api/payments/status`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (subRes.ok) {
+            const data = await subRes.json();
+            setSubscriptionTier(data.tier);
+          }
+        } catch (subErr) {
+          console.error("Failed to fetch sub status", subErr);
         }
 
       } catch (error) {
@@ -70,22 +92,33 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
     if (!newPlaylistName.trim()) return;
 
     setIsSaving(true);
+    const token = getToken();
 
     try {
-      const createdPlaylist = await playlistAPI.createPlaylist(newPlaylistName);
-      setPlaylists([
-        {
-          id: createdPlaylist.id || createdPlaylist._id,
-          name: createdPlaylist.name,
-          stories: [],
+      const response = await fetch(`${SERVER_URL}/api/playlists`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        ...playlists,
-      ]);
-      setNewPlaylistName("");
-      setIsCreatingPlaylist(false);
+        body: JSON.stringify({ name: newPlaylistName }),
+      });
+
+      if (response.ok) {
+        const createdPlaylist = await response.json();
+        setPlaylists([
+          {
+            id: createdPlaylist.id || createdPlaylist._id,
+            name: createdPlaylist.name,
+            stories: [],
+          },
+          ...playlists,
+        ]);
+        setNewPlaylistName("");
+        setIsCreatingPlaylist(false);
+      }
     } catch (error) {
       console.error("Error creating playlist:", error);
-      alert("Failed to create playlist: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -94,21 +127,30 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   const handleAddToPlaylist = async (e, playlistId, story) => {
     e.stopPropagation();
     setIsAddingToPlaylist(true);
+    const token = getToken();
 
     try {
-      await playlistAPI.addStoryToPlaylist(playlistId, story.id);
-      setPlaylists(
-        playlists.map((p) => {
-          if (p.id === playlistId) {
-            return { ...p, stories: [...p.stories, story] };
-          }
-          return p;
-        }),
+      const response = await fetch(
+        `${SERVER_URL}/api/playlists/${playlistId}/add/${story.id}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
-      setAddingToPlaylistId(null);
+
+      if (response.ok) {
+        setPlaylists(
+          playlists.map((p) => {
+            if (p.id === playlistId) {
+              return { ...p, stories: [...p.stories, story] };
+            }
+            return p;
+          }),
+        );
+        setAddingToPlaylistId(null);
+      }
     } catch (error) {
       console.error("Error adding to playlist:", error);
-      alert("Failed to add to playlist: " + error.message);
     } finally {
       setIsAddingToPlaylist(false);
     }
@@ -117,27 +159,32 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
   const handleDeleteStory = async (e, storyId) => {
     e.stopPropagation();
     if (!window.confirm("Are you sure you want to delete this story?")) return;
-
+    
+    const token = getToken();
     try {
-      await storyAPI.deleteStory(storyId);
-      setStories(stories.filter(s => s.id !== storyId));
-      setPlaylists(playlists.map(p => ({
-        ...p,
-        stories: p.stories ? p.stories.filter(s => s.id !== storyId) : []
-      })));
+      const response = await fetch(`${SERVER_URL}/api/my-stories/${storyId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        setStories(stories.filter(s => s.id !== storyId));
+        setPlaylists(playlists.map(p => ({
+          ...p,
+          stories: p.stories ? p.stories.filter(s => s.id !== storyId) : []
+        })));
+      }
     } catch (error) {
       console.error("Failed to delete story:", error);
-      alert("Failed to delete story: " + error.message);
     }
   };
 
   return (
     <div
-      className={`story-sidebar-shell relative h-full transition-all duration-300 ease-in-out z-50 flex-shrink-0 ${isOpen ? "w-80" : "w-0"}`}
+      className={`relative h-full transition-all duration-300 ease-in-out z-50 flex-shrink-0 ${isOpen ? "w-0 md:w-80" : "w-0"}`}
     >
       {/* Sidebar Content Wrapper */}
       <aside
-        className={`story-sidebar-panel absolute top-0 left-0 h-full w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed md:absolute top-0 left-0 h-full w-[min(20rem,calc(100vw-2rem))] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Header & Tabs */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
@@ -382,7 +429,7 @@ const Sidebar = ({ onPlayStory, onPlayPlaylist }) => {
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`absolute top-6 left-full z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-r-xl shadow-md text-slate-500 hover:text-violet-600 dark:hover:text-violet-400 transition-all duration-300 ${isOpen ? "border-l-0" : "border-l"}`}
+        className={`fixed md:absolute top-6 left-0 md:left-full z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-r-xl shadow-md text-slate-500 hover:text-violet-600 dark:hover:text-violet-400 transition-all duration-300 ${isOpen ? "translate-x-full md:translate-x-0 border-l-0" : "translate-x-0 border-l"}`}
         title={isOpen ? "Close Library" : "Open Library"}
       >
         {isOpen ? <ChevronLeft size={20} /> : <Menu size={20} />}

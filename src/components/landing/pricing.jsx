@@ -50,7 +50,8 @@ export function PricingSection() {
       ?.split("=")[1];
 
     if (!token) {
-      window.dispatchEvent(new Event("open-signup"));
+      alert("Please login or create an account first to upgrade your plan!");
+      // Optionally scroll or trigger login modal if possible here
       return;
     }
 
@@ -113,11 +114,11 @@ export function PricingSection() {
   return (
     <section
       id="pricing"
-      className={`py-24 ${LANDING_THEME.colors.background.transparent} relative z-10`}
+      className={`py-16 sm:py-20 md:py-24 ${LANDING_THEME.colors.background.transparent} relative z-10`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 px-2">
           <h2
             className={`${LANDING_THEME.typography.size.h2} ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} mb-4 tracking-tight`}
           >
@@ -131,13 +132,13 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto items-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto items-center">
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`relative rounded-[2rem] p-8 flex flex-col h-full transition-all duration-300 ${
+              className={`relative rounded-[2rem] p-6 sm:p-8 flex flex-col h-full transition-all duration-300 ${
                 plan.isPopular
-                  ? `bg-transparent backdrop-blur-xl border-2 border-amber-500 shadow-xl shadow-amber-500/10 lg:-mt-8 lg:mb-8 z-10`
+                  ? `bg-transparent backdrop-blur-xl border-2 border-violet-500 shadow-xl shadow-violet-500/10 md:-mt-8 md:mb-8 z-10`
                   : "bg-transparent backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md"
               }`}
             >

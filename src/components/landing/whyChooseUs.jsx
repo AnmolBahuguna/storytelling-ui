@@ -33,11 +33,11 @@ export function WhyChooseUs() {
   return (
     <section
       id="features"
-      className={`py-20 ${LANDING_THEME.colors.background.transparent} relative z-10`}
+      className={`py-14 sm:py-20 ${LANDING_THEME.colors.background.transparent} relative z-10`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 px-2">
           <h2
             className={`${LANDING_THEME.typography.size.h2} ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} mb-4 tracking-tight`}
           >
@@ -52,13 +52,13 @@ export function WhyChooseUs() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <div
                 key={index}
-                className="p-8 rounded-[2rem] border border-white/60 bg-transparent backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 flex flex-col items-start"
+                className="p-6 sm:p-8 rounded-[2rem] border border-white/60 bg-transparent backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 flex flex-col items-start"
               >
                 <div
                   className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm ${feature.iconBg}`}

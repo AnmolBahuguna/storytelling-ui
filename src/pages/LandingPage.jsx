@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import HeroSection from "../components/landing/heroSection";
-import { WhyChooseUs } from "../components/landing/whyChooseUs";
 import { PricingSection } from "../components/landing/pricing";
-import Header from "../components/ui/header";
+import { WhyChooseUs } from "../components/landing/whyChooseUs";
 import Footer from "../components/ui/footer";
-
-import ClickSpark from "../components/ClickSpark";
-import { StarsBackground as StarsBackgroundBlue } from "../components/animate-ui/components/backgrounds/stars-blue";
-import { StarsBackground as StarsBackgroundWhite } from "../components/animate-ui/components/backgrounds/stars-light";
+import Header from "../components/ui/header";
 import { LANDING_THEME } from "../constants/theme-landing";
 
 const LandingPage = () => {
@@ -26,9 +22,21 @@ const LandingPage = () => {
         return true;
       }
     }
-    // The home page follows the magical navy/purple reference theme by default.
-    return true;
+    return false;
   });
+
+  // Screen size state for responsive background
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Toggle class on the HTML document and save choice to localStorage
   useEffect(() => {
@@ -45,51 +53,27 @@ const LandingPage = () => {
 
   return (
     <div
-      className={`relative min-h-[100dvh] w-full max-w-[100vw] transition-colors duration-700 ${
-        isDarkMode
-          ? LANDING_THEME.colors.background.dark
-          : LANDING_THEME.colors.background.main
-      } ${LANDING_THEME.typography.family.main} overflow-x-hidden`}
+      className={`landing-shell relative min-h-screen ${LANDING_THEME.typography.family.main} overflow-hidden`}
+      style={{
+        backgroundImage: isMobile
+          ? (isDarkMode ? 'url("/darkbackground.jpg")' : 'url("/lightmodebg.jpeg")')
+          : (isDarkMode ? 'url("/pcdarkbackground.jpeg")' : 'url("/pclightbg.jpeg")'),
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
     >
-      {/* Spark color matches the active theme */}
-      <ClickSpark
-        sparkColor={isDarkMode ? "#F59E0B" : "#FF6848"}
-        sparkSize={12}
-        sparkRadius={20}
-        sparkCount={10}
-        duration={500}
-      >
-        {/* Keep the animated theme background visible behind all landing content. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed inset-0 z-[4] block select-none"
-        >
-          {isDarkMode ? (
-            <StarsBackgroundBlue
-              speed={100}
-              pointerEvents={false}
-              className="bg-transparent"
-            />
-          ) : (
-            <StarsBackgroundWhite
-              speed={100}
-              pointerEvents={false}
-              className="bg-transparent"
-            />
-          )}
-        </div>
-
-        {/* Main Content Layer */}
-        <div className="relative z-10 flex flex-col min-h-[100dvh] w-full bg-transparent">
-          <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-          <main className="flex-grow">
-            <HeroSection />
-            <WhyChooseUs />
-            <PricingSection />
-          </main>
-          <Footer />
-        </div>
-      </ClickSpark>
+      {/* Main Content Layer */}
+      <div className="relative z-10 flex flex-col min-h-screen bg-transparent">
+        <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+        <main className="flex-grow">
+          <HeroSection />
+          <WhyChooseUs />
+          <PricingSection />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };

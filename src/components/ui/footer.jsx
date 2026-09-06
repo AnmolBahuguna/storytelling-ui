@@ -22,12 +22,12 @@ const Footer = () => {
 
   return (
     <footer
-      className={`${LANDING_THEME.colors.background.transparent} pt-16 pb-8`}
+      className={`${LANDING_THEME.colors.background.transparent} pt-12 sm:pt-16 pb-8`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 mb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-8 mb-12 sm:mb-16">
           {/* Brand & Description */}
-          <div className="md:col-span-1">
+          <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2.5 group mb-4">
               <div
                 className={`rounded-xl group-hover:scale-105 transition-transform duration-300 flex items-center justify-center`}
@@ -35,11 +35,11 @@ const Footer = () => {
                 <img
                   src="/elephant.jpg"
                   alt="StoryAI Logo"
-                  className="w-12 h-12 rounded-xl"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl"
                 />
               </div>
               <span
-                className={`text-xl md:text-2xl ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} tracking-tight ${LANDING_THEME.typography.family.main}`}
+                className={`text-lg sm:text-xl md:text-2xl ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} tracking-tight ${LANDING_THEME.typography.family.main}`}
               >
                 Tara Story AI
               </span>
@@ -184,7 +184,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-slate-200/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-slate-200/50 pt-6 sm:pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
           <p className={`text-xs ${LANDING_THEME.colors.text.light}`}>
             © {new Date().getFullYear()} StoryAI. All rights reserved.
           </p>

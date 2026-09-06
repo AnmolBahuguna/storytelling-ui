@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Sun, Moon } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { LANDING_THEME } from "../../constants/theme-landing.js";
 import LoginDialog from "./loginDialog.jsx";
 import SignupDialog from "./signupDialog.jsx";
-import { authAPI } from "../../services/api.js";
 
 const Header = ({ isDarkMode, toggleTheme }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -17,7 +15,10 @@ const Header = ({ isDarkMode, toggleTheme }) => {
 
   // Check auth status by looking for the JWT token in cookies
   const checkAuthStatus = () => {
-    setIsLoggedIn(authAPI.isAuthenticated());
+    const hasToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("access_token="));
+    setIsLoggedIn(!!hasToken);
   };
 
   useEffect(() => {
@@ -40,12 +41,14 @@ const Header = ({ isDarkMode, toggleTheme }) => {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Create Story", href: "/dashboard" },
-    { name: "Story Library", href: "/dashboard" },
+    { name: "Features", href: "#features" },
+    { name: "Pricing", href: "#pricing" },
   ];
 
   const handleLogout = () => {
-    authAPI.logout();
+    // Clear the access token cookie
+    document.cookie =
+      "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setIsLoggedIn(false);
     navigate("/");
   };
@@ -65,27 +68,16 @@ const Header = ({ isDarkMode, toggleTheme }) => {
     setIsLoginOpen(true);
   };
 
-  const handleNavClick = (event, href) => {
-    event.preventDefault();
-    if (href === "/") {
-      navigate("/");
-    } else if (isLoggedIn) {
-      navigate(href);
-    } else {
-      setIsSignupOpen(true);
-    }
-  };
-
   return (
     <>
       <header
-        className={`fixed left-3 right-3 top-3 z-50 rounded-2xl border border-violet-300/50 bg-white/90 shadow-lg shadow-violet-950/20 backdrop-blur-md transition-all duration-300 dark:bg-[#0d0a3d]/75 dark:border-violet-400/30 dark:shadow-violet-950/40 lg:left-[4.8%] lg:right-[4.8%] lg:top-7 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "py-3"
-            : "py-3.5"
+            ? " backdrop-blur-sm shadow-sm border-b border-none dark:border-white/10 py-3"
+            : "bg-transparent border-b border-transparent py-4"
         }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 sm:px-5 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex justify-between items-center lg:gap-10">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div
@@ -94,36 +86,40 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               <img
                 src="/elephant.jpg"
                 alt="StoryAI Logo"
-                className="h-10 w-10 rounded-full shadow-sm sm:h-11 sm:w-11 lg:h-12 lg:w-12"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl shadow-sm"
               />
             </div>
-            <span
-              className={`text-xl lg:text-[1.65rem] ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} tracking-tight ${LANDING_THEME.typography.family.main}`}
-            >
-              Tara Story AI
+            <span className="flex flex-col justify-center leading-none">
+              <span
+                className={`text-lg sm:text-xl md:text-2xl ${LANDING_THEME.typography.weight.heading} ${LANDING_THEME.colors.text.heading} tracking-tight ${LANDING_THEME.typography.family.main}`}
+              >
+                StoryAI
+              </span>
+              <span className="hidden lg:block mt-1 text-[10px] font-semibold tracking-[0.12em] text-slate-900/75 dark:text-white/75 whitespace-nowrap">
+                MAGICAL LEARNING STORIES
+              </span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-10">
+          <nav className="hidden lg:flex flex-1 items-center justify-center gap-12">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.name}
-                to={link.href}
-                onClick={(event) => handleNavClick(event, link.href)}
-                className={`relative py-2 text-base ${LANDING_THEME.typography.weight.subtitle} text-[#355361] hover:text-[#E9684A] dark:text-slate-300 dark:hover:text-[#FF6848] transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#ff7043] after:transition-all ${link.href === "/" && location.pathname === "/" ? "after:w-full" : "after:w-0"}`}
+                href={link.href}
+                className={`text-sm ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.brand} transition-colors`}
               >
                 {link.name}
-              </Link>
+              </a>
             ))}
           </nav>
 
           {/* Desktop Auth & Theme Toggle */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center justify-end gap-5">
             {toggleTheme && (
               <button
                 onClick={toggleTheme}
-                className={`p-2 mr-2 rounded-full transition-colors ${LANDING_THEME.colors.text.subtitle} hover:bg-slate-100 dark:hover:bg-white/10`}
+                className={`p-2 rounded-full transition-colors ${LANDING_THEME.colors.text.subtitle} hover:bg-slate-100 dark:hover:bg-white/10`}
                 aria-label="Toggle Theme"
               >
                 {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -134,30 +130,36 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               <>
                 <button
                   onClick={handleLogout}
-                    className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-[#355361] hover:text-[#E9684A] dark:text-slate-300 dark:hover:text-white transition-colors`}
+                  className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors`}
                 >
                   Logout
                 </button>
                 <button
                   onClick={() => navigate("/dashboard")}
-                  className={`text-sm px-6 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.components.button.primary} transform hover:-translate-y-0.5`}
+                  className="text-sm px-6 py-2.5 rounded-full font-semibold text-white transform hover:-translate-y-0.5 transition-all duration-300"
+                  style={{
+                    background: 'linear-gradient(to right, #FF7043, #FFA726)'
+                  }}
                 >
-                  Let's Go! ✦
+                  Dashboard
                 </button>
               </>
             ) : (
               <>
                 <button
                   onClick={() => setIsLoginOpen(true)}
-                  className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-[#355361] hover:text-[#E9684A] dark:text-slate-300 dark:hover:text-white transition-colors`}
+                  className={`text-sm px-4 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors`}
                 >
                   Login
                 </button>
                 <button
                   onClick={() => setIsSignupOpen(true)}
-                  className={`text-sm px-6 py-2.5 rounded-full ${LANDING_THEME.typography.weight.subtitle} ${LANDING_THEME.components.button.primary} transform hover:-translate-y-0.5 shadow-md`}
+                  className="text-sm px-6 py-2.5 rounded-full font-semibold text-white transform hover:-translate-y-0.5 shadow-md transition-all duration-300"
+                  style={{
+                    background: 'linear-gradient(to right, #FF7043, #FFA726)'
+                  }}
                 >
-                  Let's Go! ✦
+                  Let's Go! ⭐
                 </button>
               </>
             )}
@@ -174,29 +176,26 @@ const Header = ({ isDarkMode, toggleTheme }) => {
               </button>
             )}
             <button
-              onClick={isLoggedIn ? () => navigate("/dashboard") : () => setIsSignupOpen(true)}
-              className={`rounded-full px-4 py-2 text-xs ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+              className={`p-2 ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.heading} transition-colors`}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              Let's Go! ✦
+              {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 dark:border-white/10 shadow-xl py-4 px-6 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 dark:border-white/10 shadow-xl py-4 px-4 sm:px-6 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.name}
-                to={link.href}
-                onClick={(event) => {
-                  handleNavClick(event, link.href);
-                  setMobileMenuOpen(false);
-                }}
-                className={`${LANDING_THEME.typography.weight.bold} text-[#355361] hover:text-[#E9684A] dark:text-slate-300 dark:hover:text-[#FF6848]`}
+                href={link.href}
+                className={`${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.colors.text.subtitle} hover:${LANDING_THEME.colors.text.brand}`}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 {link.name}
-              </Link>
+              </a>
             ))}
             <hr className="border-slate-100 dark:border-white/10 my-2" />
 
@@ -208,7 +207,10 @@ const Header = ({ isDarkMode, toggleTheme }) => {
                       setMobileMenuOpen(false);
                       navigate("/dashboard");
                     }}
-                    className={`text-center py-3 rounded-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+                    className="text-center py-3 rounded-full font-bold text-white"
+                    style={{
+                      background: 'linear-gradient(to right, #FF7043, #FFA726)'
+                    }}
                   >
                     Dashboard
                   </button>
@@ -229,9 +231,12 @@ const Header = ({ isDarkMode, toggleTheme }) => {
                   </button>
                   <button
                     onClick={handleGetStartedMobile}
-                    className={`text-center py-3 rounded-full ${LANDING_THEME.typography.weight.bold} ${LANDING_THEME.components.button.primary}`}
+                    className="text-center py-3 rounded-full font-bold text-white"
+                    style={{
+                      background: 'linear-gradient(to right, #FF7043, #FFA726)'
+                    }}
                   >
-                    Get Started
+                    Let's Go! ⭐
                   </button>
                 </>
               )}
