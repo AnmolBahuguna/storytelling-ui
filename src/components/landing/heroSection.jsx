@@ -68,7 +68,7 @@ const HeroSection = () => {
 
         {/* Center Image for Mobile View */}
         <motion.div
-          className="hero-image-float relative z-10 w-[88vw] max-w-[330px] sm:max-w-[500px] mx-auto mb-4 shrink-0 will-change-transform lg:absolute lg:right-[10%] lg:top-0 lg:w-[27%] lg:mb-0"
+          className="hero-image-float relative z-10 w-[88vw] max-w-[330px] sm:max-w-[500px] mx-auto mb-4 shrink-0 will-change-transform lg:absolute lg:right-[14%] lg:top-0 lg:w-[20%] lg:mb-0 lg:-mt-[2%]"
         >
           <motion.img
             initial={{ opacity: 0, scale: 0.8 }}
