@@ -61,7 +61,7 @@ const HeroSection = () => {
           <br className="hidden lg:block" />
           With a Little{" "}
           <br className="hidden lg:block" />
-          <span className="text-[#5B21B6] dark:text-[#BB86FC]">Magic.</span>
+          <span className="text-[#d417c4] dark:text-[#d417c4]">Magic.</span>
           {/* Crescent Moon */}
           <span className="absolute -right-8 top-0 text-4xl"></span>
         </motion.h1>
@@ -89,9 +89,9 @@ const HeroSection = () => {
           className="relative z-10 text-slate-900 dark:text-white text-[1.05rem] sm:text-lg font-semibold dark:font-normal max-w-md mx-auto mb-5 leading-relaxed lg:mx-0 lg:max-w-md lg:text-sm"
         >
           Tara Story AI turns learning into an adventure with{" "}
-          <span className="text-[#ff890b] dark:text-[#ffa600]">personalized stories, magical worlds,</span>{" "}
+          <span className="font-bold text-[#fd7f11] dark:text-[#b119cc]">personalized stories, magical worlds,</span>{" "}
           and age-appropriate lessons designed for{" "}
-          <span className="text-[#fd7f11] dark:text-[#CE93D8]">curious kids.</span>
+          <span className="font-bold text-[#fd7f11] dark:text-[#12ceeb]">curious kids.</span>
         </motion.p>
         {/* Buttons */}
         <motion.div
