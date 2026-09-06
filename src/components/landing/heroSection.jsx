@@ -45,7 +45,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className={`flex-grow flex flex-col justify-center pt-28 pb-10 px-3 sm:pt-32 sm:pb-14 sm:px-4 relative lg:min-h-[calc(100vh-80px)] lg:py-8 lg:px-8 ${LANDING_THEME.typography.family.main}`}
+      className={`flex-grow flex flex-col justify-center pt-24 pb-10 px-3 sm:pt-25 sm:pb-14 sm:px-4 relative lg:min-h-[calc(100vh-80px)] lg:py-8 lg:px-8 ${LANDING_THEME.typography.family.main}`}
     >
       {/* Main Content */}
       <div className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center px-1 sm:px-4 lg:relative lg:z-10 lg:items-start lg:justify-center lg:text-left lg:px-0 lg:pr-[46%] lg:translate-x-[2%] lg:translate-y-[20%]">
