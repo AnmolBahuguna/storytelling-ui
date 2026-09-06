@@ -45,17 +45,17 @@ const HeroSection = () => {
 
   return (
     <section
-      className={`flex-grow flex flex-col justify-center py-20 px-4 relative lg:min-h-[calc(100vh-80px)] lg:py-8 lg:px-8 ${LANDING_THEME.typography.family.main}`}
+      className={`flex-grow flex flex-col justify-center py-10 px-3 relative sm:py-14 lg:min-h-[calc(100vh-80px)] lg:py-8 lg:px-8 ${LANDING_THEME.typography.family.main}`}
     >
       {/* Main Content */}
-      <div className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center px-4 lg:relative lg:z-10 lg:items-start lg:justify-center lg:text-left lg:px-0 lg:pr-[46%] lg:translate-x-[2%] lg:translate-y-[20%]">
+      <div       className="flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center px-1 sm:px-4 lg:relative lg:z-10 lg:items-start lg:justify-center lg:text-left lg:px-0 lg:pr-[46%] lg:translate-x-[2%] lg:translate-y-[20%]">
         {/* Magical Learning Stories Badge */}
         {/* Main Title */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-slate-900 dark:text-white text-3xl sm:text-4xl md:text-5xl lg:text-[2.25rem] font-extrabold dark:font-bold mb-3 leading-[1.08] relative max-w-xl"
+          className="text-slate-900 dark:text-white text-[1.8rem] sm:text-4xl md:text-5xl lg:text-[2.25rem] font-extrabold dark:font-bold mb-4 leading-[1.08] relative max-w-xl"
         >
           Every Story Begins{" "}
           <br className="hidden lg:block" />
@@ -68,7 +68,7 @@ const HeroSection = () => {
 
         {/* Center Image for Mobile View */}
         <motion.div
-          className="hero-image-float w-full max-w-[825px] mx-auto will-change-transform lg:absolute lg:right-[10%] lg:top-0 lg:w-[27%]"
+          className="hero-image-float w-full max-w-[360px] sm:max-w-[500px] mx-auto will-change-transform lg:absolute lg:right-[10%] lg:top-0 lg:w-[27%]"
         >
           <motion.img
             initial={{ opacity: 0, scale: 0.8 }}
