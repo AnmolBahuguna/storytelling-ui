@@ -1,4 +1,5 @@
-# AI Story Frontend
+# AI Story telling 
+https://calm-meadow-05fcf0a10.3.azurestaticapps.net/
 
 An interactive React application for creating personalized, educational stories with AI. Users can choose a hero, age group, subject, theme, language, media preferences, and story length, then read and interact with the generated story.
 
